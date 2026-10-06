@@ -189,3 +189,19 @@ Decisiones tomadas durante la redacción que complementan las secciones anterior
 - **Claves de configuración:** el máximo de días de subsanación es `SUBSANACION_DIAS_HABILES_MAX` (nombre único). El catálogo completo está en `catalogos_configuracion.md`.
 - **Rutas públicas adicionales:** `GET /catalogos/consentimiento/vigente` y `POST /notificaciones/webhooks/correo` (firma HMAC), ya incluidas en §7.
 - **Texto oficial de declaraciones:** el envío de postulaciones queda bloqueado hasta que el catálogo `DECLARACION_JURAMENTADA` tenga cargado el texto oficial del GE-F041 (ver `PENDIENTES.md` #5).
+
+---
+
+## 19. Cambio de plataforma: Supabase como persistencia y autenticación (sustituye a §1, §3 y §7 en lo que contradiga)
+
+Decisión del FOEST al pasar a implementación. Proyecto: `https://kixjejmewgynzrppowfv.supabase.co`.
+
+- **Autenticación:** Supabase Auth (correo + contraseña, verificación de correo, recuperación, invitaciones por `inviteUserByEmail`). Se elimina el JWT propio, la tabla `SESION`, la rotación manual de refresh tokens y `seed:admin` por contraseña en variable de entorno. El frontend usa `@supabase/supabase-js` para iniciar sesión y obtener el `access_token`; cada petición a la API lo envía como `Authorization: Bearer`.
+- **Rol:** un único rol por usuario en `auth.users.app_metadata.rol` (`ADMINISTRADOR | FUNCIONARIO | BENEFICIARIO`), escrito **solo** desde la API con la `service_role` key. El registro público siempre crea `BENEFICIARIO`. La tabla `public.usuario` (perfil) se crea por trigger `on_auth_user_created` y replica `rol` y `activo`.
+- **API (Node/Express):** verifica el token con `supabase.auth.getUser(token)` (rechaza usuarios inexistentes o deshabilitados), lee el rol de `app_metadata`, aplica `requirePermission` desde `rbac.matrix.ts` y ejecuta la lógica de negocio. Dos clientes: `supabaseAdmin` (service role, para operaciones de sistema, auditoría y cambios de rol) y `supabaseAsUser(token)` (cliente con el JWT del usuario, para lecturas/escrituras sujetas a RLS).
+- **RLS como segunda barrera:** todas las tablas de negocio tienen RLS activo con políticas basadas en `auth.uid()` y en la función `public.auth_rol()` (lee `app_metadata.rol` del JWT). La API sigue siendo la primera barrera (permisos + alcance); RLS evita fugas por acceso directo con la `anon` key.
+- **Migraciones:** SQL en `supabase/migrations/*.sql` (esquema, triggers, políticas, seeds de catálogos). Sin Prisma. Se aplican con `supabase db push` (CLI enlazada) o desde el editor SQL del proyecto.
+- **Archivos:** Supabase Storage (bucket privado `documentos`) con URLs firmadas, en lugar de S3/MinIO. Reglas de validación de §11 se mantienen.
+- **Colas:** para el prototipo, trabajos programados con `node-cron` dentro de la API; BullMQ/Redis queda para producción.
+- **Secretos:** `SUPABASE_URL`, `SUPABASE_ANON_KEY` (web y api), `SUPABASE_SERVICE_ROLE_KEY` (solo api), nunca en el repositorio.
+- **Diseño visual:** formal e institucional. Paleta: blanco `#ffffff`, azul `#238dc1` (y sus tintes por opacidad para fondos y estados), texto negro `#000000`. Sin emojis ni iconografía decorativa.

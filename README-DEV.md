@@ -1,0 +1,144 @@
+# FOEST - Guia de desarrollo
+
+Monorepo (npm workspaces, Node 22, TypeScript estricto) de la plataforma del Fondo para la Educacion Superior de Tocancipa. La especificacion funcional vive en `docs/` (`docs/DECISIONES.md` manda sobre el resto; su seccion 19 fija Supabase como persistencia y autenticacion).
+
+```
+.
+|- apps/api            Express + TypeScript (CommonJS). Capa de negocio/API bajo /api/v1
+|- apps/web            Vite + React 18 + TypeScript + react-router v6 + TanStack Query + Tailwind
+|- packages/shared     @foest/shared: enums, matriz de permisos, esquemas Zod y tipos compartidos
+|- supabase/migrations SQL plano (sin Prisma); 0001_base.sql es el esquema fundacional
+|- docs/               Especificacion (solo lectura para los agentes de modulo)
+```
+
+## 1. Instalar
+
+```bash
+# Node >= 22 y npm >= 10
+npm install            # instala las tres carpetas de trabajo y enlaza @foest/shared
+```
+
+## 2. Variables de entorno
+
+No hay claves en el repositorio. Copie los ejemplos y complete los valores desde Supabase -> Project Settings -> API (proyecto `kixjejmewgynzrppowfv`):
+
+```bash
+cp apps/api/.env.example apps/api/.env     # SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, PORT, WEB_ORIGIN
+cp apps/web/.env.example apps/web/.env     # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_URL
+```
+
+Sin claves la API arranca igual: `GET /api/v1/health` responde `{ ok: true, supabase: 'sin_credenciales' }` y las rutas autenticadas responden `503 SIN_CREDENCIALES_SUPABASE`. La web muestra un aviso en /login. La `service_role` NUNCA va en `apps/web`.
+
+## 3. Base de datos (Supabase)
+
+Ver `supabase/README.md`. Resumen:
+
+- **Editor SQL** (sin instalar nada): pegar `supabase/migrations/0001_base.sql` en SQL Editor y ejecutar.
+- **CLI** (sin instalacion global): `npx supabase login`, `npx supabase link --project-ref kixjejmewgynzrppowfv`, `npx supabase db push`.
+
+Luego:
+
+```bash
+# Primer administrador (idempotente). Requiere ADMIN_EMAIL y ADMIN_PASSWORD en apps/api/.env
+npm run seed:admin
+# Informe de conexion, tablas clave y RLS
+npm run verify:supabase
+```
+
+## 4. Correr
+
+```bash
+npm run dev                 # api en http://localhost:4000/api/v1 y web en http://localhost:5173 (concurrently)
+npm run dev -w apps/api     # solo API (tsx watch)
+npm run dev -w apps/web     # solo web (vite)
+```
+
+## 5. Verificar
+
+```bash
+npm run typecheck   # compila @foest/shared y comprueba tipos de api y web
+npm run build       # shared -> api (dist/) -> web (dist/)
+npm test            # jest (shared, api) + vitest (web)
+npm run lint
+```
+
+---
+
+## 6. Convenciones para los agentes de modulo
+
+### 6.1 Compartido (`packages/shared`)
+
+Todo enum, codigo de permiso, esquema Zod o tipo que usen API y web va en `packages/shared/src/<modulo>/` y se reexporta desde `packages/shared/src/index.ts`. Ya existen: `Rol`, `EstadoPostulacion`, `EstadoConvocatoria`, `TipoSolicitud`, `CodigoBeneficio`, `PERMISOS`/`MATRIZ_PERMISOS`, `ApiError`, `Paginado`, `PaginacionQuerySchema`, `PasswordSchema`, `EmailSchema`, `MotivoSchema`, `ConfirmarSchema`, `VersionSchema`, `IdParamSchema`. Tras cambiar shared: `npm run build -w packages/shared` (el typecheck de la raiz ya lo hace).
+
+### 6.2 API (`apps/api`)
+
+Estructura obligatoria por modulo:
+
+```
+apps/api/src/modules/<modulo>/
+  <modulo>.routes.ts       export const <modulo>Routes: Router
+  <modulo>.controller.ts   traduce HTTP <-> servicio; sin reglas de negocio
+  <modulo>.service.ts      reglas de negocio y acceso a datos
+  <modulo>.dto.ts          esquemas Zod (reutiliza @foest/shared)
+  <modulo>.types.ts        tipos internos
+  __tests__/<modulo>.test.ts   Jest + Supertest
+```
+
+Registrar el router en `apps/api/src/modules/index.ts`:
+
+```ts
+import { convocatoriasRoutes } from './convocatorias/convocatorias.routes';
+export const modulos: ModuloRegistrado[] = [
+  { prefijo: '/convocatorias', router: convocatoriasRoutes },
+  { prefijo: '/publico/convocatorias', router: convocatoriasPublicoRoutes },
+];
+```
+
+Cadena de middlewares (importar todo desde `../../shared`):
+
+```ts
+import { Router } from 'express';
+import { authenticate, requirePermission, validate, AppError, auditar, contextoDesdeRequest,
+         supabaseAdmin, supabaseAsUser, usuarioActual, parsearPaginacion, rangoSupabase, paginar } from '../../shared';
+
+router.patch('/:id/habilitar',
+  authenticate(),                               // 401 sin token; 403 CUENTA_INACTIVA si usuario.activo = false
+  requirePermission('convocatoria:habilitar'),  // 403 si el rol no tiene el permiso (matriz de @foest/shared)
+  validate({ params: IdParamSchema, body: HabilitarDto }), // 422 con details de Zod
+  controller.habilitar);
+```
+
+- `req.user = { id, email, rol, token }`. En el servicio: `supabaseAsUser(user.token)` para lecturas/escrituras del usuario (RLS aplica); `supabaseAdmin` solo para operaciones de sistema (auditoria, cambios de estado por jobs, cambios de rol en `auth.admin.updateUserById`).
+- Alcance (recurso ajeno / no asignado / excluido) -> `throw AppError.noEncontrado()` (404), nunca 403. Conflicto de estado/version -> `AppError.conflicto('VERSION_CONFLICTO', ...)` (409). Datos incompletos -> `AppError.datosInvalidos('PERFIL_INCOMPLETO', ...)` (422).
+- Auditoria: `await auditar({ ...contextoDesdeRequest(req), accion: 'HABILITAR', entidad: 'CONVOCATORIA', entidad_id: id, datos_antes, datos_despues, metadatos })`. Redacta campos sensibles automaticamente; si falla, lanza (la operacion debe fallar).
+- Paginacion: `const p = parsearPaginacion(req.query); const { desde, hasta } = rangoSupabase(p); ... res.json(paginar(data, p, count))`.
+- Rutas publicas: solo las de la lista cerrada de `DECISIONES.md` section 7 (sin `authenticate()`).
+- Migraciones: `supabase/migrations/000N_<modulo>.sql`, idempotentes, con RLS y politicas para cada tabla nueva.
+- Pruebas: deben pasar sin claves (`npm test`). Para servicios, inyectar/mockear el cliente de Supabase (`__setSupabaseAdminForTests`).
+
+### 6.3 Web (`apps/web`)
+
+Estructura por modulo:
+
+```
+apps/web/src/modules/<modulo>/
+  routes.tsx     export const <modulo>Routes: RutasModulo  ({ rutasPublicas?, rutasBeneficiario?, rutasFuncionario?, rutasAdmin? })
+  pages/         paginas (una por ruta)
+  components/    componentes propios del modulo
+  hooks/         hooks de datos (TanStack Query) sobre api.ts
+  api.ts         funciones que envuelven `api` de src/lib/api.ts
+  types.ts       tipos del modulo
+```
+
+- Registrar en `apps/web/src/modules/index.ts` (`modulos: RutasModulo[]`). Las rutas son relativas al arbol del rol: `rutasAdmin: [{ path: 'convocatorias', element: <ConvocatoriasAdminPage /> }]` se sirve en `/admin/convocatorias` dentro de `AppShell` y protegida por `ProtectedRoute roles={['ADMINISTRADOR']}`.
+- Navegacion lateral: agregar entradas en `apps/web/src/navigation.ts` (por rol).
+- Llamadas a la API: `api.get/post/put/patch/delete` de `src/lib/api.ts` (adjunta Bearer de la sesion de Supabase y refresca una vez ante 401; errores como `ApiRequestError { status, code, message, details }`).
+- Sesion: `useAuth()` de `src/lib/auth/AuthProvider.tsx` (`session`, `user`, `rol`, `loading`, `iniciarSesion`, `cerrarSesion`). `rol` viene de `app_metadata.rol` y es solo ergonomia; la autorizacion real es de la API.
+- UI: usar exclusivamente `src/components/ui` (Button, Input, Select, Textarea, Checkbox, Card, Table, Badge, Alert, Modal con doble intencion, PageHeader, EmptyState, Spinner, FormField). Paleta fija por Tailwind: `white`, `primary`, `primary-10`, `primary-20`, `ink` (ninguna otra clase de color compila). Sin emojis ni iconos decorativos; error/exito solo con texto y bordes (Alert).
+- Pruebas: Vitest + RTL en `__tests__/` junto al componente o pagina.
+
+### 6.4 Reglas transversales
+
+- Codigos de respuesta: 401 / 403 (rol o CUENTA_INACTIVA) / 404 (ajeno) / 409 (estado-version) / 422 (datos). Error siempre `{ code, message, details? }`.
+- `docs/` no se modifica. Si un modulo detecta una contradiccion con `DECISIONES.md`, gana `DECISIONES.md` (seccion 19 sobre el resto) y se deja nota en el PR.
+- No commits sin indicacion expresa. Nunca claves en el repositorio.

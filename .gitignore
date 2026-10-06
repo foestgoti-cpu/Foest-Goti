@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Compilados
+dist/
+build/
+*.tsbuildinfo
+
+# Entornos y secretos
+.env
+.env.local
+.env.*.local
+apps/**/.env
+apps/**/.env.local
+
+# Supabase CLI local
+supabase/.branches/
+supabase/.temp/
+
+# Pruebas y cobertura
+coverage/
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
