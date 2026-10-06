@@ -33,7 +33,7 @@ Sin claves la API arranca igual: `GET /api/v1/health` responde `{ ok: true, supa
 
 Ver `supabase/README.md`. Resumen:
 
-- **Editor SQL** (sin instalar nada): pegar `supabase/migrations/0001_base.sql` en SQL Editor y ejecutar.
+- **Editor SQL** (sin instalar nada): pegar cada archivo de `supabase/migrations/` en SQL Editor y ejecutarlo, en orden numerico (0001, 0002, ... ; no existe 0007). Todas son idempotentes. Estado al dia de hoy: 0001 a 0012 aplicadas en el proyecto.
 - **CLI** (sin instalacion global): `npx supabase login`, `npx supabase link --project-ref kixjejmewgynzrppowfv`, `npx supabase db push`.
 
 Luego:
@@ -137,7 +137,24 @@ apps/web/src/modules/<modulo>/
 - UI: usar exclusivamente `src/components/ui` (Button, Input, Select, Textarea, Checkbox, Card, Table, Badge, Alert, Modal con doble intencion, PageHeader, EmptyState, Spinner, FormField). Paleta fija por Tailwind: `white`, `primary`, `primary-10`, `primary-20`, `ink` (ninguna otra clase de color compila). Sin emojis ni iconos decorativos; error/exito solo con texto y bordes (Alert).
 - Pruebas: Vitest + RTL en `__tests__/` junto al componente o pagina.
 
-### 6.4 Reglas transversales
+### 6.4 Servicios transversales de los modulos P0 (usarlos, no recrearlos)
+
+- **Notificaciones y correo** (`apps/api/src/modules/notificaciones`): nunca insertar directo en `notificacion` ni enviar correo por cuenta propia.
+  ```ts
+  import { encolarNotificacion, alertarAdministradores, registrarFuenteRecordatorio } from '../notificaciones';
+  await encolarNotificacion({ usuario_id, tipo: 'CORRECCION_SOLICITADA', titulo, mensaje, entidad: 'POSTULACION', entidad_id, url_destino, clave_dedup?, correo?: true, payload?: { fecha_limite } });
+  ```
+  `tipo` debe pertenecer al catalogo cerrado de `@foest/shared` (`TIPOS_NOTIFICACION`); si falta uno, se agrega en `packages/shared/src/notificaciones` y en `plantillas/catalogo.ts`. El correo sale por el outbox (`evento_outbox`) con reintentos; sin variables SMTP se imprime en el log (`ConsoleMailer`). Las plantillas hacia beneficiarios firman "Equipo FOEST" y rechazan variables `evaluador*`. Recordatorios programados: registrar una `FuenteRecordatorio` con `registrarFuenteRecordatorio`.
+- **Configuracion, festivos, dias habiles, SNIES y declaraciones** (`apps/api/src/modules/catalogos_configuracion`):
+  ```ts
+  import { configuracionService, sniesService, declaracionService, sumarDiasHabiles, diasHabilesEntre, esDiaHabil } from '../catalogos_configuracion';
+  const dias = await configuracionService.getEntero('SUBSANACION_DIAS_HABILES', 5);   // cache 60 s
+  const limite = await sumarDiasHabiles('2026-10-06', dias);                           // usa la tabla festivo
+  ```
+  Claves y valores por defecto en `configuracion.defaults.ts` y en `@foest/shared` (`CLAVES_CONFIGURACION`). En SQL existen `fn_es_dia_habil`, `fn_sumar_dias_habiles`, `fn_dias_habiles_entre`.
+- **Auditoria** (`apps/api/src/shared/audit.ts` + modulo `auditoria`): `auditar({...contextoDesdeRequest(req), accion, entidad, ...})` dentro de la operacion; para eventos fuera de una peticion (jobs, login fallido) `auditarFueraDeTx()` de `../auditoria/auditoria.cola`. Acciones y entidades solo del catalogo cerrado de `@foest/shared` (`ACCIONES_AUDITORIA`, `ENTIDADES_AUDITORIA`); la cadena de hashes la calcula un trigger SQL.
+
+### 6.5 Reglas transversales
 
 - Codigos de respuesta: 401 / 403 (rol o CUENTA_INACTIVA) / 404 (ajeno) / 409 (estado-version) / 422 (datos). Error siempre `{ code, message, details? }`.
 - `docs/` no se modifica. Si un modulo detecta una contradiccion con `DECISIONES.md`, gana `DECISIONES.md` (seccion 19 sobre el resto) y se deja nota en el PR.

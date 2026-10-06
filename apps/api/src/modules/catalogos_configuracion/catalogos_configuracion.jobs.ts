@@ -1,6 +1,7 @@
 import cron, { type ScheduledTask } from 'node-cron';
 import { hasSupabaseCredentials } from '../../config/env';
 import { logger, supabaseAdmin } from '../../shared';
+import { alertarAdministradores } from '../notificaciones';
 import { ZONA_BOGOTA, fechaLocalBogota } from './business-days';
 
 /**
@@ -8,8 +9,7 @@ import { ZONA_BOGOTA, fechaLocalBogota } from './business-days';
  * hay festivos cargados para el anio siguiente, se alerta a los administradores
  * con una notificacion in-app SISTEMA (dedup por anio) al arrancar y, en
  * diciembre, cada dia a las 08:00 America/Bogota.
- * PROVISIONAL(notificaciones): inserta directamente en `notificacion`; cuando el
- * modulo notificaciones exponga su servicio, reemplazar por su API publica.
+ * Usa `alertarAdministradores` del modulo notificaciones (aviso SISTEMA, solo buzon).
  */
 let tareas: ScheduledTask[] = [];
 
@@ -23,24 +23,12 @@ export async function verificarFestivosAnioSiguiente(forzar = false): Promise<{ 
   if (error) throw new Error(`No fue posible verificar los festivos de ${anio}: ${error.message}`);
   if ((count ?? 0) > 0) return { anio, faltan: false, notificados: 0 };
 
-  const { data: admins, error: errAdm } = await supabaseAdmin.from('usuario').select('id').eq('rol', 'ADMINISTRADOR').eq('activo', true);
-  if (errAdm) throw new Error(`No fue posible listar administradores: ${errAdm.message}`);
-  let notificados = 0;
-  for (const a of (admins ?? []) as Array<{ id: string }>) {
-    const { error: errIns } = await supabaseAdmin.from('notificacion').insert({
-      usuario_id: a.id,
-      tipo: 'SISTEMA',
-      titulo: `Festivos de ${anio} sin cargar`,
-      mensaje: `No hay festivos registrados para el anio ${anio}. Cargue el calendario en Administracion > Festivos para que el calculo de dias habiles sea correcto.`,
-      entidad: 'FESTIVO',
-      entidad_id: String(anio),
-      url_destino: '/admin/festivos',
-      severidad: 'ADVERTENCIA',
-      clave_dedup: `FESTIVOS_FALTANTES_${anio}`,
-    });
-    if (!errIns) notificados += 1;
-    else if (errIns.code !== '23505') logger.warn({ err: errIns }, 'No fue posible notificar festivos faltantes');
-  }
+  const notificados = await alertarAdministradores(
+    `Festivos de ${anio} sin cargar`,
+    `No hay festivos registrados para el anio ${anio}. Cargue el calendario en Administracion > Festivos para que el calculo de dias habiles sea correcto.`,
+    `FESTIVOS_FALTANTES_${anio}`,
+    '/admin/festivos',
+  );
   return { anio, faltan: true, notificados };
 }
 

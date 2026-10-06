@@ -15,6 +15,7 @@ import { AppError, auditar, logger, paginar, rangoSupabase, supabaseAdmin, supab
 import { generarCsv } from './auditoria.csv';
 import type { AuditoriaExportarQuery, AuditoriaListarQuery } from './auditoria.dto';
 import type { AuditoriaEventoRow, AuditoriaIntegridadRow, CandidatosRetencionRpc, ExportacionAuditoria, ResumenIntegridadRpc } from './auditoria.types';
+import { encolarNotificacion } from '../notificaciones';
 
 /**
  * Consulta de la bitacora (auditoria.md). Solo lectura: la tabla es append-only.
@@ -91,19 +92,21 @@ async function notificarAdministradores(n: {
   }
   let enviadas = 0;
   for (const a of (admins ?? []) as Array<{ id: string }>) {
-    const { error: errN } = await supabaseAdmin.from('notificacion').insert({
-      usuario_id: a.id,
-      tipo: n.tipo,
-      titulo: n.titulo,
-      mensaje: n.mensaje,
-      entidad: 'AUDITORIA',
-      entidad_id: n.entidad_id,
-      url_destino: '/admin/auditoria',
-      severidad: n.severidad,
-      clave_dedup: n.clave_dedup,
-    });
-    if (!errN) enviadas += 1;
-    else if ((errN as { code?: string }).code !== '23505') logger.warn({ err: errN, usuario: a.id }, 'No fue posible crear la notificacion de auditoria');
+    try {
+      // Tipo SISTEMA del catalogo cerrado (el tipo especifico viaja en el titulo/clave_dedup); solo buzon.
+      const r = await encolarNotificacion({
+        usuario_id: a.id,
+        tipo: 'SISTEMA',
+        titulo: n.titulo,
+        mensaje: n.mensaje,
+        url_destino: '/admin/auditoria',
+        severidad: n.severidad,
+        clave_dedup: `${n.clave_dedup}:${a.id}`.slice(0, 200),
+      });
+      if (!r.duplicada) enviadas += 1;
+    } catch (e) {
+      logger.warn({ err: e, usuario: a.id }, 'No fue posible crear la notificacion de auditoria');
+    }
   }
   return enviadas;
 }

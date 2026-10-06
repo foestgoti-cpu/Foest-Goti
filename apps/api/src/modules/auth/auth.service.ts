@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { HTTP, type Rol } from '@foest/shared';
 import { AppError, auditar, logger, permisosDelRol, supabaseAdmin, supabaseAsUser, type UsuarioAutenticado } from '../../shared';
+import { encolarNotificacion } from '../notificaciones';
 import { getSupabaseAnon, urlWeb } from './auth.clients';
 import { quedaBloqueado, registrarIntento, verificarContadores } from './auth.intentos';
 import type { AceptarInvitacionBody, ChangePasswordBody, LoginBody, RegisterBody } from './auth.dto';
@@ -207,6 +208,27 @@ export const authService = {
       }
       await registrarIntento(body.email, ctx.ip, false);
       const bloqueado = await quedaBloqueado(body.email);
+      if (bloqueado) {
+        // Aviso de seguridad por correo (solo informativo; sin enlaces ni datos del intento).
+        try {
+          const { data: u } = await supabaseAdmin.from('usuario').select('id').eq('email', body.email).maybeSingle();
+          const uid = (u as { id: string } | null)?.id;
+          if (uid) {
+            await encolarNotificacion({
+              usuario_id: uid,
+              tipo: 'BLOQUEO_POR_INTENTOS',
+              titulo: 'Cuenta bloqueada temporalmente',
+              mensaje: 'Detectamos varios intentos fallidos de inicio de sesion y bloqueamos el acceso durante 15 minutos.',
+              entidad: 'USUARIO',
+              entidad_id: uid,
+              clave_dedup: `BLOQUEO_POR_INTENTOS:${uid}:${Math.floor(Date.now() / 900_000)}`,
+              correo: true,
+            });
+          }
+        } catch (e) {
+          logger.warn({ err: e }, 'No fue posible encolar el aviso de bloqueo por intentos');
+        }
+      }
       await auditar({
         actor_tipo: 'ANONIMO',
         accion: 'LOGIN_FALLIDO',
@@ -333,6 +355,21 @@ export const authService = {
       user_agent: ctx.user_agent,
       request_id: ctx.request_id,
     });
+    // Confirmacion informativa por correo; el restablecimiento (olvide) lo envia Supabase Auth y no se duplica.
+    try {
+      await encolarNotificacion({
+        usuario_id: user.id,
+        tipo: 'CAMBIO_CLAVE_CONFIRMACION',
+        titulo: 'Su contrasena fue cambiada',
+        mensaje: 'La contrasena de su cuenta FOEST fue cambiada y se cerraron las demas sesiones.',
+        entidad: 'USUARIO',
+        entidad_id: user.id,
+        clave_dedup: `CAMBIO_CLAVE_CONFIRMACION:${user.id}:${Date.now()}`,
+        correo: true,
+      });
+    } catch (e) {
+      logger.warn({ err: e }, 'No fue posible encolar la confirmacion de cambio de clave');
+    }
     return sesionSalida(nueva.data.session);
   },
 

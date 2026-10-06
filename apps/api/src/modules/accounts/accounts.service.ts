@@ -8,6 +8,7 @@ import {
 import {
   AppError,
   auditar,
+  logger,
   paginar,
   rangoSupabase,
   supabaseAdmin,
@@ -15,6 +16,7 @@ import {
   type EventoAuditoria,
   type UsuarioAutenticado,
 } from '../../shared';
+import { encolarNotificacion } from '../notificaciones';
 import { env } from '../../config/env';
 import type {
   ActualizarFuncionario,
@@ -77,6 +79,29 @@ function patronBusqueda(q: string): string {
 }
 
 /** Bloquea/desbloquea la cuenta en Supabase Auth (revoca el acceso de las sesiones vigentes). */
+/**
+ * Correo informativo CUENTA_DESHABILITADA. La invitacion (INVITACION_FUNCIONARIO) NO se encola
+ * aqui: la envia Supabase Auth (inviteUserByEmail) con su propio enlace de un solo uso y la
+ * plantilla exige `enlace_accion`, que este servicio no conoce; encolarla duplicaria el correo.
+ * El correo no debe bloquear la operacion de negocio.
+ */
+async function avisarCuentaDeshabilitada(usuarioId: string): Promise<void> {
+  try {
+    await encolarNotificacion({
+      usuario_id: usuarioId,
+      tipo: 'CUENTA_DESHABILITADA',
+      titulo: 'Su cuenta fue deshabilitada',
+      mensaje: 'Su cuenta en la plataforma FOEST fue deshabilitada por el Equipo FOEST. Si considera que se trata de un error, comuniquese con el Equipo FOEST.',
+      entidad: 'USUARIO',
+      entidad_id: usuarioId,
+      clave_dedup: `CUENTA_DESHABILITADA:${usuarioId}:${Date.now()}`,
+      correo: true,
+    });
+  } catch (e) {
+    logger.warn({ err: e, usuarioId }, 'No fue posible encolar el aviso de cuenta deshabilitada');
+  }
+}
+
 async function fijarBloqueoAuth(usuarioId: string, bloquear: boolean): Promise<void> {
   const { error } = await supabaseAdmin.auth.admin.updateUserById(usuarioId, {
     ban_duration: bloquear ? BAN_INDEFINIDO : 'none',
@@ -292,6 +317,7 @@ export const funcionariosService = {
     const { error } = await supabaseAdmin.from('usuario').update({ activo: dto.activo }).eq('id', cuenta.usuario_id);
     if (error) fallo('No fue posible cambiar el estado de la cuenta', error);
     await fijarBloqueoAuth(cuenta.usuario_id, !dto.activo);
+    if (!dto.activo) await avisarCuentaDeshabilitada(cuenta.usuario_id);
     await auditar({
       ...ctx,
       accion: dto.activo ? 'FUNCIONARIO_REACTIVADO' : 'FUNCIONARIO_DESHABILITADO',
@@ -367,6 +393,7 @@ export const administradoresService = {
     const { error: errUpd } = await supabaseAdmin.from('usuario').update({ activo: dto.activo }).eq('id', id);
     if (errUpd) fallo('No fue posible cambiar el estado de la cuenta', errUpd);
     await fijarBloqueoAuth(id, !dto.activo);
+    if (!dto.activo) await avisarCuentaDeshabilitada(id);
     await auditar({
       ...ctx,
       accion: dto.activo ? 'ADMINISTRADOR_REACTIVADO' : 'ADMINISTRADOR_DESHABILITADO',
@@ -646,6 +673,7 @@ export const beneficiariosService = {
     const { error } = await supabaseAdmin.from('usuario').update({ activo: dto.activo }).eq('id', usuario.id);
     if (error) fallo('No fue posible cambiar el estado de la cuenta', error);
     await fijarBloqueoAuth(usuario.id, !dto.activo);
+    if (!dto.activo) await avisarCuentaDeshabilitada(usuario.id);
     await auditar({
       ...ctx,
       accion: dto.activo ? 'BENEFICIARIO_REACTIVADO' : 'BENEFICIARIO_DESHABILITADO',

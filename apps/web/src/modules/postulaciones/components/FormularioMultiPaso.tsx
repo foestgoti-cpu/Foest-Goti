@@ -12,6 +12,7 @@ import {
 } from '@foest/shared';
 import { Alert, Button, Card, Checkbox, FormField, Input, Select, Spinner } from '../../../components/ui';
 import { api } from '../../../lib/api';
+import { IesProgramaSelect, type SeleccionSnies } from '../../catalogos_configuracion/components/IesProgramaSelect';
 import { BarraProgreso } from './BarraProgreso';
 import { ChecklistValidacion } from './ChecklistValidacion';
 import { DeclaracionesPaso } from './DeclaracionesPaso';
@@ -59,6 +60,7 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
   const [indice, setIndice] = useState(0);
   const seccionActual = secciones[Math.min(indice, secciones.length - 1)] ?? 'seccion_1';
   const [guardadoEn, setGuardadoEn] = useState<string | null>(null);
+  const [seleccionSnies, setSeleccionSnies] = useState<SeleccionSnies>({ ies: null, programa: null });
 
   // Sincroniza con el servidor cuando cambia la version (p. ej. tras recargar por conflicto).
   const versionRef = useRef(postulacion.version);
@@ -277,6 +279,19 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
 
         {seccionActual === 'seccion_4' && (
           <div>
+            <IesProgramaSelect
+              valor={seleccionSnies}
+              deshabilitado={deshabilitado('seccion_4', 'snies_codigo')}
+              onChange={(sel) => {
+                setSeleccionSnies(sel);
+                // Autocompleta los campos del esquema actual (siguen editables si el catalogo no lista el programa).
+                if (sel.programa) {
+                  cambiar('seccion_4', 'snies_codigo', sel.programa.codigo_snies);
+                  cambiar('seccion_4', 'programa', sel.programa.nombre);
+                }
+                if (sel.ies) cambiar('seccion_4', 'institucion', sel.ies.nombre);
+              }}
+            />
             <FormField etiqueta="Codigo SNIES del programa" nombre="snies_codigo" obligatorio ayuda="Consulte el codigo en el SNIES del Ministerio de Educacion.">
               <Input inputMode="numeric" value={valor('seccion_4', 'snies_codigo')} disabled={deshabilitado('seccion_4', 'snies_codigo')} onChange={(e) => cambiar('seccion_4', 'snies_codigo', e.target.value.replace(/\D/g, ''))} />
             </FormField>

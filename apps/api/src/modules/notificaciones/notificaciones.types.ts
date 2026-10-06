@@ -89,6 +89,12 @@ export interface EncolarNotificacionInput {
   clave_dedup?: string | null;
   /** Fuerza o suprime el correo; por defecto decide el catalogo del tipo. */
   correo?: boolean;
+  /**
+   * Canal a crear. `AMBOS` (defecto): segun el catalogo del tipo. `CORREO`: solo encola el
+   * evento de correo (util cuando el buzon in-app ya lo creo una funcion SQL con la misma
+   * `clave_dedup`, p. ej. fn_enviar_postulacion). `APP`: solo buzon, sin correo.
+   */
+  canal?: 'APP' | 'CORREO' | 'AMBOS';
   /** Variables adicionales de la plantilla (sin datos del evaluador ni secretos). */
   payload?: PayloadOutbox;
   /** Clave de idempotencia del correo; por defecto se deriva de tipo + usuario + clave_dedup/notificacion. */

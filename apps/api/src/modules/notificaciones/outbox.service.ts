@@ -74,8 +74,13 @@ export async function encolarNotificacion(input: EncolarNotificacionInput): Prom
   const mensaje = input.mensaje.trim();
   if (!titulo || !mensaje) throw AppError.datosInvalidos('NOTIFICACION_INCOMPLETA', 'La notificacion requiere titulo y mensaje');
 
+  const canal = input.canal ?? 'AMBOS';
   let notificacion_id: string | null = null;
-  if (tipoTieneBuzon(input.tipo)) {
+  if (canal === 'CORREO' && tipoTieneBuzon(input.tipo) && input.clave_dedup) {
+    // El buzon ya existe (creado por SQL u otro modulo): se enlaza por clave_dedup sin duplicarlo.
+    const { data: existente } = await supabaseAdmin.from('notificacion').select('id').eq('usuario_id', input.usuario_id).eq('clave_dedup', input.clave_dedup).maybeSingle();
+    notificacion_id = (existente as { id: string } | null)?.id ?? null;
+  } else if (canal !== 'CORREO' && tipoTieneBuzon(input.tipo)) {
     const { data, error } = await supabaseAdmin
       .from('notificacion')
       .insert({
@@ -101,9 +106,9 @@ export async function encolarNotificacion(input: EncolarNotificacionInput): Prom
     notificacion_id = (data as { id: string } | null)?.id ?? null;
   }
 
-  const quiereCorreo = input.correo ?? tipoEnviaCorreo(input.tipo);
+  const quiereCorreo = canal === 'APP' ? false : (input.correo ?? tipoEnviaCorreo(input.tipo));
   if (!quiereCorreo) {
-    return { notificacion_id, evento_outbox_id: null, duplicada: false, correo_omitido: input.correo === false ? 'DESACTIVADO' : 'TIPO_SIN_CORREO' };
+    return { notificacion_id, evento_outbox_id: null, duplicada: false, correo_omitido: input.correo === false || canal === 'APP' ? 'DESACTIVADO' : 'TIPO_SIN_CORREO' };
   }
   if (tipoCorreoDesactivable(input.tipo)) {
     const pref = await leerPreferencia(input.usuario_id);

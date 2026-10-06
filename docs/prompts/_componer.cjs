@@ -137,7 +137,8 @@ const modulos = [
   },
 ];
 
-for (const m of modulos) {
+const HECHOS = new Set(['catalogos_configuracion','auditoria','notificaciones']);
+for (const m of modulos.filter((x) => !HECHOS.has(x.modulo))) {
   const contenido = comun(m.modulo, m.fase, m.migracion) + m.especifico + '\n' + infra;
   fs.writeFileSync(path.join(dir, `${m.modulo}.md`), contenido, 'utf8');
   console.log(`${m.modulo}.md`, contenido.split('\n').length, 'líneas');

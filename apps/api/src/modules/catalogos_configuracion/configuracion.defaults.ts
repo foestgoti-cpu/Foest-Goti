@@ -59,6 +59,7 @@ export const CONFIGURACION_DEFAULTS: readonly DefinicionClave[] = [
   def('PERFIL_EDAD_MAYORIA', 'INT', 'JURIDICO', '18', ['18', '18'], 'Edad de mayoria para derivar es_menor'),
   def('REGISTRO_VERIFICACION_EMAIL_HORAS', 'INT', 'SEGURIDAD', '48', ['1', '168'], 'Vigencia del enlace de verificacion de correo'),
   def('NOTIF_REINTENTOS_MAX', 'INT', 'NOTIFICACIONES', '8', ['1', '20'], 'Reintentos del worker de correo'),
+  def('BLOQUEAR_ENVIO_SIN_TEXTO_OFICIAL', 'BOOL', 'JURIDICO', 'false', [null, null], 'Si es true, /enviar responde 422 DECLARACIONES_SIN_TEXTO_OFICIAL mientras existan declaraciones vigentes sin texto oficial confirmado (GE-F041)', true),
 ];
 
 const porClave = new Map<string, DefinicionClave>(CONFIGURACION_DEFAULTS.map((d) => [d.clave, d]));

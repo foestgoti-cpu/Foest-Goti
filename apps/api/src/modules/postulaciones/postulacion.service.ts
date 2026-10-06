@@ -18,6 +18,8 @@ import {
   type EventoAuditoria,
   type UsuarioAutenticado,
 } from '../../shared';
+import { configuracionService, declaracionService, sniesService } from '../catalogos_configuracion';
+import { encolarNotificacion } from '../notificaciones';
 import { estaAbierta as estaAbiertaConvocatoria } from '../convocatorias/convocatorias.fechas';
 import { cifrarNumero, enmascarar } from './datos-pago.service';
 import { pesosEnLetras } from './numero-a-letras';
@@ -311,6 +313,9 @@ export const postulacionService = {
           }
         }
       }
+      if (seccion === 'seccion_4' && 'snies_codigo' in valores) {
+        await validarSniesSeccion4(valores.snies_codigo, valores.ies_codigo ?? actual.seccion_4?.ies_codigo);
+      }
       actual[seccion] = { ...(actual[seccion] ?? {}), ...valores };
       seccionesTocadas.push(seccion);
     }
@@ -594,6 +599,29 @@ export const postulacionService = {
 
 export type { PostulacionRow };
 
+/**
+ * Valida el codigo SNIES de la seccion 4 contra el catalogo. Si la tabla aun no existe o esta
+ * vacia (catalogo sin importar) no bloquea y solo registra un warning; si el catalogo tiene
+ * datos y el codigo no figura como programa activo -> 422 SNIES_INVALIDO.
+ */
+async function validarSniesSeccion4(codigo: unknown, codigoIes?: unknown): Promise<void> {
+  if (typeof codigo !== 'string' || codigo.trim() === '') return;
+  let existe: boolean;
+  try {
+    existe = await sniesService.existeProgramaActivo(codigo.trim(), typeof codigoIes === 'string' && codigoIes ? codigoIes : undefined);
+  } catch (e) {
+    logger.warn({ err: e }, 'Catalogo SNIES no disponible; no se valida el codigo SNIES');
+    return;
+  }
+  if (existe) return;
+  const { count, error } = await supabaseAdmin.from('programa_snies').select('codigo_snies', { count: 'exact', head: true });
+  if (error || !count) {
+    logger.warn({ err: error }, 'Catalogo SNIES vacio; no se valida el codigo SNIES');
+    return;
+  }
+  throw AppError.datosInvalidos('SNIES_INVALIDO', 'El codigo SNIES no corresponde a un programa activo del catalogo', { campo: 'seccion_4.snies_codigo' });
+}
+
 async function ejecutarEnvio(
   user: UsuarioAutenticado,
   ctx: ContextoAuditoria,
@@ -651,6 +679,13 @@ async function ejecutarEnvio(
     throw AppError.datosInvalidos('PERFIL_INCOMPLETO', 'Debe completar su perfil antes de enviar');
   }
 
+  // Bloqueo opcional hasta cargar el texto oficial GE-F041 (DECISIONES 18); apagado por defecto.
+  if (await configuracionService.getBool('BLOQUEAR_ENVIO_SIN_TEXTO_OFICIAL', false)) {
+    if (await declaracionService.hayDeclaracionesSinTextoOficial()) {
+      throw AppError.datosInvalidos('DECLARACIONES_SIN_TEXTO_OFICIAL', 'Las declaraciones aun no tienen el texto oficial confirmado; el envio esta bloqueado');
+    }
+  }
+
   const resultado = await validarExpediente(
     supabaseAdmin,
     p,
@@ -687,7 +722,32 @@ async function ejecutarEnvio(
     entidad_id: p.id,
     metadatos: { ciclo: r.ciclo, idempotency_key: llave, repetido: r.repetido },
   });
-  // TODO(notificaciones): correo al correo principal y alterno/acudiente via outbox.
+  // Correo via outbox. El buzon in-app ya lo creo fn_enviar_postulacion con la misma clave_dedup,
+  // por eso canal 'CORREO' (no duplica la notificacion). El tipo SUBSANADA no existe en el
+  // catalogo cerrado: se usa POSTULACION_ENVIADA con texto propio.
+  if (!r.repetido) {
+    try {
+      const conv = await cargarConvocatoria(p.convocatoria_id);
+      await encolarNotificacion({
+        usuario_id: user.id,
+        tipo: 'POSTULACION_ENVIADA',
+        titulo: modo === 'ENVIO' ? 'Postulacion enviada' : 'Subsanacion enviada',
+        mensaje:
+          modo === 'ENVIO'
+            ? `Su postulacion fue recibida (ciclo ${r.ciclo}). Sera revisada por el Comite FOEST.`
+            : `Su subsanacion fue recibida (ciclo ${r.ciclo}). Sera revisada por el Comite FOEST.`,
+        entidad: 'POSTULACION',
+        entidad_id: p.id,
+        url_destino: `/beneficiario/postulaciones/${p.id}`,
+        clave_dedup: `POSTULACION_ENVIADA:${p.id}:${r.ciclo}`,
+        canal: 'CORREO',
+        correo: true,
+        payload: { ciclo: r.ciclo, ...(conv?.nombre ? { convocatoria_nombre: conv.nombre } : {}) },
+      });
+    } catch (e) {
+      logger.warn({ err: e, postulacion: p.id }, 'No fue posible encolar el correo del envio');
+    }
+  }
 
   const { data: actualizada } = await supabaseAdmin.from('postulacion').select('*').eq('id', p.id).maybeSingle();
   const fila = (actualizada as PostulacionRow | null) ?? { ...p, estado: r.estado, ciclo: r.ciclo, version: r.version };

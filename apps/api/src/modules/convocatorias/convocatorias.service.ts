@@ -12,6 +12,8 @@ import {
   type EventoAuditoria,
   type UsuarioAutenticado,
 } from '../../shared';
+import { configuracionService } from '../catalogos_configuracion';
+import { encolarNotificacion } from '../notificaciones';
 import {
   camposCalculados,
   cierreExclusivoDesdeFechaLocal,
@@ -137,17 +139,24 @@ function sinDatosInternos(resumen: ConvocatoriaResumen): ConvocatoriaResumen {
   };
 }
 
+/** Lecturas de configuracion delegadas a catalogos_configuracion (cache 60 s; defecto del catalogo si no hay fila). */
 async function leerConfigInt(clave: string, defecto: number): Promise<number> {
-  const { data, error } = await supabaseAdmin.from('configuracion_sistema').select('valor').eq('clave', clave).maybeSingle();
-  if (error || !data?.valor) return defecto;
-  const n = Number.parseInt(String(data.valor), 10);
-  return Number.isFinite(n) ? n : defecto;
+  try {
+    return await configuracionService.getEntero(clave, defecto);
+  } catch (e) {
+    logger.warn({ err: e, clave }, 'No fue posible leer la configuracion; se usa el valor por defecto');
+    return defecto;
+  }
 }
 
 async function leerConfigTexto(clave: string): Promise<string | null> {
-  const { data, error } = await supabaseAdmin.from('configuracion_sistema').select('valor').eq('clave', clave).maybeSingle();
-  if (error || !data?.valor) return null;
-  return String(data.valor);
+  try {
+    const v = await configuracionService.get(clave);
+    return v && v.trim() !== '' ? v : null;
+  } catch (e) {
+    logger.warn({ err: e, clave }, 'No fue posible leer la configuracion');
+    return null;
+  }
 }
 
 /**
@@ -617,19 +626,25 @@ export const convocatoriasService = {
       for (const p of (conBorrador ?? []) as Array<{ id: string; beneficiario: { usuario_id: string } | Array<{ usuario_id: string }> | null }>) {
         const usuarioId = unoDe(p.beneficiario)?.usuario_id;
         if (!usuarioId) continue;
-        const { error: errN } = await supabaseAdmin.from('notificacion').insert({
-          usuario_id: usuarioId,
-          tipo: 'CONVOCATORIA_SUSPENDIDA',
-          titulo: 'Convocatoria suspendida temporalmente',
-          mensaje: `La convocatoria ${actual.nombre} fue suspendida temporalmente por el FOEST. Su borrador se conserva y podra enviarlo cuando la convocatoria sea rehabilitada.`,
-          entidad: 'CONVOCATORIA',
-          entidad_id: id,
-          url_destino: '/beneficiario/postulaciones',
-          severidad: 'ADVERTENCIA',
-          clave_dedup: `CONVOCATORIA_SUSPENDIDA:${id}:${actualizada.version}`,
-        });
-        if (!errN) notificados += 1;
-        else if ((errN as { code?: string }).code !== '23505') logger.warn({ err: errN }, 'No fue posible notificar la suspension');
+        // Buzon + correo (outbox) via el modulo notificaciones; idempotente por clave_dedup.
+        try {
+          const r = await encolarNotificacion({
+            usuario_id: usuarioId,
+            tipo: 'CONVOCATORIA_SUSPENDIDA',
+            titulo: 'Convocatoria suspendida temporalmente',
+            mensaje: `La convocatoria ${actual.nombre} fue suspendida temporalmente por el FOEST. Su borrador se conserva y podra enviarlo cuando la convocatoria sea rehabilitada.`,
+            entidad: 'CONVOCATORIA',
+            entidad_id: id,
+            url_destino: '/beneficiario/postulaciones',
+            severidad: 'ADVERTENCIA',
+            clave_dedup: `CONVOCATORIA_SUSPENDIDA:${id}:${actualizada.version}`,
+            correo: true,
+            payload: { convocatoria_nombre: actual.nombre },
+          });
+          if (!r.duplicada) notificados += 1;
+        } catch (e) {
+          logger.warn({ err: e }, 'No fue posible notificar la suspension');
+        }
       }
     }
     await auditar({
@@ -892,18 +907,24 @@ export const convocatoriasService = {
       const fechaCierre = fechaCierrePresentada(c.fecha_cierre_exclusiva);
       const restantes = diasRestantes(c.fecha_cierre_exclusiva, ahora);
       for (const usuarioId of destinatarios) {
-        const { error: errN } = await supabaseAdmin.from('notificacion').insert({
-          usuario_id: usuarioId,
-          tipo: 'CONVOCATORIA_POR_CERRAR',
-          titulo: 'Convocatoria proxima a cerrar',
-          mensaje: `La convocatoria ${c.nombre} (${c.anio}-${c.semestre}) cierra el ${fechaCierre} a las 23:59. Faltan ${restantes} dia(s).`,
-          entidad: 'CONVOCATORIA',
-          entidad_id: c.id,
-          url_destino: adminIds.includes(usuarioId) ? `/admin/convocatorias/${c.id}` : '/funcionario/convocatorias',
-          severidad: 'ADVERTENCIA',
-          clave_dedup: `CONVOCATORIA_POR_CERRAR:${c.id}:${c.fecha_cierre_exclusiva}`,
-        });
-        if (errN && (errN as { code?: string }).code !== '23505') logger.warn({ err: errN, convocatoria: c.id }, 'No fue posible crear la notificacion de cierre');
+        // Buzon + correo (outbox) via el modulo notificaciones; idempotente por clave_dedup.
+        try {
+          await encolarNotificacion({
+            usuario_id: usuarioId,
+            tipo: 'CONVOCATORIA_POR_CERRAR',
+            titulo: 'Convocatoria proxima a cerrar',
+            mensaje: `La convocatoria ${c.nombre} (${c.anio}-${c.semestre}) cierra el ${fechaCierre} a las 23:59. Faltan ${restantes} dia(s).`,
+            entidad: 'CONVOCATORIA',
+            entidad_id: c.id,
+            url_destino: adminIds.includes(usuarioId) ? `/admin/convocatorias/${c.id}` : '/funcionario/convocatorias',
+            severidad: 'ADVERTENCIA',
+            clave_dedup: `CONVOCATORIA_POR_CERRAR:${c.id}:${c.fecha_cierre_exclusiva}`,
+            correo: true,
+            payload: { convocatoria_nombre: c.nombre, fecha_cierre_texto: fechaCierre, dias_restantes: restantes },
+          });
+        } catch (e) {
+          logger.warn({ err: e, convocatoria: c.id }, 'No fue posible crear la notificacion de cierre');
+        }
       }
       const { error: errU } = await supabaseAdmin
         .from('convocatoria')
