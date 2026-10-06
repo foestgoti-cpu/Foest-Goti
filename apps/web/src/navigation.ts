@@ -62,9 +62,12 @@ export const NAVEGACION: Readonly<Record<Rol, GrupoNavegacion[]>> = {
       items: [
         { etiqueta: 'Configuracion', ruta: '/admin/configuracion' },
         { etiqueta: 'Festivos', ruta: '/admin/festivos' },
+        { etiqueta: 'Catalogo SNIES', ruta: '/admin/catalogos/snies' },
+        { etiqueta: 'Declaraciones juramentadas', ruta: '/admin/catalogos/declaraciones' },
         { etiqueta: 'Auditoria', ruta: '/admin/auditoria' },
         { etiqueta: 'Reportes', ruta: '/admin/reportes' },
-        { etiqueta: 'Notificaciones', ruta: '/admin/notificaciones' },
+        { etiqueta: 'Notificaciones', ruta: '/admin/notificaciones', exacta: true },
+        { etiqueta: 'Entregas de correo', ruta: '/admin/notificaciones/entregas' },
       ],
     },
     {

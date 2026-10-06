@@ -1,6 +1,9 @@
 import { AppError, logger, supabaseAsUser, type UsuarioAutenticado } from '../../shared';
-import { conCache, TTL_DASHBOARD_MS } from './cache';
-import { configuracionService } from './configuracion.service';
+import { conCache, invalidarCache, TTL_DASHBOARD_MS } from './cache';
+import { configuracionService } from '../catalogos_configuracion/configuracion.service';
+
+// Un cambio de configuracion (umbrales de alerta, KANON_UMBRAL) invalida la cache del panel.
+configuracionService.suscribirCambios(() => invalidarCache('admin:'));
 import type { AlertasQuery, CargaEvaluadoresQuery, MetricasPeriodoQuery } from './admin_dashboard.dto';
 import type {
   AlertaDto,

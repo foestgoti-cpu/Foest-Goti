@@ -5,3 +5,6 @@ export * from './schemas';
 export * from './postulaciones';
 export * from './accounts/accounts.types';
 export * from './accounts/accounts.schemas';
+export * from './auditoria';
+export * from './catalogos_configuracion';
+export * from './notificaciones';

@@ -17,7 +17,7 @@ jest.mock('../../../shared/supabase', () => ({
 // Importar despues de los mocks
 import { createApp } from '../../../app';
 import { invalidarCache } from '../cache';
-import { configuracionService } from '../configuracion.service';
+import { configuracionService } from '../../catalogos_configuracion/configuracion.service';
 import { aplicarKAnonimato } from '../admin_dashboard.service';
 import { CODIGOS_ALERTA } from '../admin_dashboard.types';
 

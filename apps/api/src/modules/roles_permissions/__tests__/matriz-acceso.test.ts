@@ -93,6 +93,8 @@ const RUTAS_SOLO_AUTENTICADAS: string[] = [
   'POST /auth/password/change',
   'POST /auth/invitacion/aceptar',
   'GET /permisos/mios',
+  // catalogos_configuracion.md: subconjunto no sensible de configuracion para la UI de cualquier rol.
+  'GET /configuracion/publica',
 ];
 
 /**

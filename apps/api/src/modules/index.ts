@@ -2,11 +2,13 @@ import type { Express, Router } from 'express';
 import { ejemploRoutes } from './ejemplo/ejemplo.routes';
 import { authRoutes } from './auth/auth.routes';
 import { rolesRoutes, permisosRoutes } from './roles_permissions/roles_permissions.routes';
-import { adminDashboardRoutes, auditoriaRoutes, configuracionRoutes, festivosRoutes } from './admin_dashboard/admin_dashboard.routes';
+import { adminDashboardRoutes } from './admin_dashboard/admin_dashboard.routes';
+import { configuracionRoutes, festivosRoutes, catalogosRoutes, catalogosAdminRoutes } from './catalogos_configuracion/catalogos_configuracion.routes';
+import { auditoriaRoutes } from './auditoria/auditoria.routes';
 import { dashboardFuncionarioRoutes } from './dashboard_funcionario/dashboard_funcionario.routes';
 import { funcionariosRoutes, administradoresRoutes, beneficiariosRoutes, habeasDataRoutes } from './accounts/accounts.routes';
 import { beneficiarioDashboardRoutes } from './beneficiario_dashboard/beneficiario_dashboard.routes';
-import { notificacionesRoutes } from './beneficiario_dashboard/notificaciones.routes';
+import { notificacionesRoutes } from './notificaciones/notificaciones.routes';
 import { convocatoriasRoutes, convocatoriasPublicoRoutes, beneficiosRoutes } from './convocatorias/convocatorias.routes';
 import { postulacionesRoutes } from './postulaciones/postulaciones.routes';
 
@@ -35,6 +37,8 @@ export const modulos: ModuloRegistrado[] = [
   { prefijo: '/auditoria', router: auditoriaRoutes },
   { prefijo: '/configuracion', router: configuracionRoutes },
   { prefijo: '/festivos', router: festivosRoutes },
+  { prefijo: '/catalogos', router: catalogosRoutes },
+  { prefijo: '/admin/catalogos', router: catalogosAdminRoutes },
   { prefijo: '/dashboard/funcionario', router: dashboardFuncionarioRoutes },
   { prefijo: '/funcionarios', router: funcionariosRoutes },
   { prefijo: '/administradores', router: administradoresRoutes },
