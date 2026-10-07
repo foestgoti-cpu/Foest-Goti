@@ -11,6 +11,8 @@ import { beneficiarioDashboardRoutes } from './beneficiario_dashboard/beneficiar
 import { notificacionesRoutes } from './notificaciones/notificaciones.routes';
 import { convocatoriasRoutes, convocatoriasPublicoRoutes, beneficiosRoutes } from './convocatorias/convocatorias.routes';
 import { postulacionesRoutes } from './postulaciones/postulaciones.routes';
+import { documentoRouter } from './documentos/documento.routes';
+import { formatoRouter } from './formatos_oficiales/formato.routes';
 
 /**
  * Registro de routers por modulo.
@@ -50,6 +52,8 @@ export const modulos: ModuloRegistrado[] = [
   { prefijo: '/publico/convocatorias', router: convocatoriasPublicoRoutes },
   { prefijo: '/beneficios', router: beneficiosRoutes },
   { prefijo: '/postulaciones', router: postulacionesRoutes },
+  { prefijo: '/', router: documentoRouter },
+  { prefijo: '/', router: formatoRouter },
 ];
 
 export function registrarModulos(app: Express, apiPrefix: string): void {

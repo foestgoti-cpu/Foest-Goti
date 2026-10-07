@@ -8,3 +8,7 @@ export * from './accounts/accounts.schemas';
 export * from './auditoria';
 export * from './catalogos_configuracion';
 export * from './notificaciones';
+export * from './documentos/enums';
+export * from './documentos/documento.schema';
+export * from './formatos_oficiales/enums';
+export * from './formatos_oficiales/formato.schema';

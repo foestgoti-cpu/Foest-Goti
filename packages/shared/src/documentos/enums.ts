@@ -1,0 +1,23 @@
+export enum EstadoCarga {
+  SUBIENDO = 'SUBIENDO',
+  ESCANEANDO = 'ESCANEANDO',
+  DISPONIBLE = 'DISPONIBLE',
+  RECHAZADO_ARCHIVO = 'RECHAZADO_ARCHIVO'
+}
+
+export enum TipoDocumento {
+  DOC_ID = 'DOC_ID',
+  DIP_BACH = 'DIP_BACH',
+  RES_ICFES = 'RES_ICFES',
+  CERT_ESC = 'CERT_ESC',
+  SISBEN = 'SISBEN',
+  CERT_RES = 'CERT_RES',
+  LIQ_MAT = 'LIQ_MAT',
+  PAG_CART = 'PAG_CART',
+  FORM_INS = 'FORM_INS',
+  CERT_NOT = 'CERT_NOT',
+  LAB_SOC = 'LAB_SOC',
+  HOR_CLA = 'HOR_CLA',
+  SOP_ESP = 'SOP_ESP'
+}
+
