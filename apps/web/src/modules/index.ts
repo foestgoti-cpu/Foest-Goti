@@ -11,6 +11,13 @@ import { convocatoriasRoutes } from './convocatorias/routes';
 import { accountsRoutes } from './accounts/routes';
 import { postulacionesRoutes } from './postulaciones/routes';
 import { notificacionesRoutes } from './notificaciones/routes';
+import { formatosOficialesRoutes } from './formatos_oficiales/routes';
+import { documentosRoutes } from './documentos/routes';
+import { asignacionesRoutes } from './asignaciones/routes';
+import { evaluacionRoutes } from './evaluacion/routes';
+import { exportReportsRoutes } from './export_reports/routes';
+import { seguimientoBeneficiosRoutes } from './seguimiento_beneficios/routes';
+import { laborSocialRoutes } from './labor_social/routes';
 
 /**
  * Registro de rutas por modulo (README-DEV.md).
@@ -42,6 +49,13 @@ export const modulos: RutasModulo[] = [
   accountsRoutes,
   postulacionesRoutes,
   notificacionesRoutes,
+  formatosOficialesRoutes,
+  documentosRoutes,
+  asignacionesRoutes,
+  evaluacionRoutes,
+  exportReportsRoutes,
+  seguimientoBeneficiosRoutes,
+  laborSocialRoutes,
 ];
 
 export function rutasDe(clave: keyof RutasModulo): RouteObject[] {

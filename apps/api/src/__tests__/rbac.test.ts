@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import express from 'express';
 import request from 'supertest';
@@ -48,7 +48,15 @@ describe('seed SQL de rol_permiso coincide con la matriz TS', () => {
     const fin = sql.indexOf('-- END SEED rol_permiso');
     expect(inicio).toBeGreaterThan(-1);
     expect(fin).toBeGreaterThan(inicio);
-    const bloque = sql.slice(inicio, fin);
+    let bloque = sql.slice(inicio, fin);
+    // Permisos incorporados por migraciones posteriores: bloque `-- BEGIN SEED rol_permiso (NNNN)` ... `-- END SEED rol_permiso (NNNN)`.
+    const dir = resolve(__dirname, '../../../../supabase/migrations');
+    for (const f of readdirSync(dir).filter((n) => n.endsWith('.sql') && !n.startsWith('0001_'))) {
+      const otro = readFileSync(resolve(dir, f), 'utf8');
+      const i = otro.indexOf('-- BEGIN SEED rol_permiso');
+      const j = otro.indexOf('-- END SEED rol_permiso');
+      if (i > -1 && j > i) bloque += otro.slice(i, j);
+    }
     const pares = new Set<string>();
     for (const m of bloque.matchAll(/\('(ADMINISTRADOR|FUNCIONARIO|BENEFICIARIO)',\s*'([a-z_]+:[a-z_]+)'\)/g)) {
       pares.add(`${m[1]}|${m[2]}`);

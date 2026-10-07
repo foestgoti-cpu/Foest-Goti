@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import request from 'supertest';
 import { MATRIZ_PERMISOS, PERMISOS, ROLES, type Rol } from '@foest/shared';
@@ -118,10 +118,24 @@ describe('roles_permissions - consistencia catalogo TS <-> seed SQL (0001_base.s
   });
 
   it('categoria, alcance y descripcion coinciden con `insert into public.permiso`', () => {
-    const inicio = sql.indexOf('insert into public.permiso (codigo, categoria, alcance, descripcion) values');
-    expect(inicio).toBeGreaterThan(-1);
-    const fin = sql.indexOf('on conflict (codigo) do update', inicio);
-    const bloque = sql.slice(inicio, fin);
+    // El catalogo se compone de 0001 y de los permisos que incorporan migraciones posteriores
+    // (cada una con su propio `insert into public.permiso ... on conflict (codigo) do update`).
+    const dir = resolve(__dirname, '../../../../../../supabase/migrations');
+    const marca = 'insert into public.permiso (codigo, categoria, alcance, descripcion) values';
+    let bloque = '';
+    for (const f of readdirSync(dir).filter((n) => n.endsWith('.sql')).sort()) {
+      const texto = readFileSync(resolve(dir, f), 'utf8');
+      let desde = 0;
+      for (;;) {
+        const ini = texto.indexOf(marca, desde);
+        if (ini === -1) break;
+        const fin = texto.indexOf('on conflict (codigo) do update', ini);
+        if (fin === -1) break;
+        bloque += texto.slice(ini, fin) + String.fromCharCode(10);
+        desde = fin;
+      }
+    }
+    expect(bloque.length).toBeGreaterThan(0);
     const enSql = new Map<string, { categoria: string; alcance: string; descripcion: string }>();
     for (const m of bloque.matchAll(/\('([a-z_]+:[a-z_]+)',\s*'([A-Z_]+)',\s*'([A-Z]+)',\s*'((?:[^']|'')*)'\)/g)) {
       const [, codigo = '', categoria = '', alcance = '', descripcion = ''] = m;

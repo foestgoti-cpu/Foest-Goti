@@ -6,6 +6,7 @@ import { ApiRequestError } from '../../../lib/api';
 import { postulacionesApi } from '../api';
 import { useGuardarPostulacion, useInvalidarPostulacion, usePostulacion, useValidacion } from '../hooks/usePostulaciones';
 import { FormularioMultiPaso } from '../components/FormularioMultiPaso';
+import { DescargarFormulariosCard } from '../../formatos_oficiales/components/DescargarFormulariosCard';
 import { ConfirmacionEnvioModal } from '../components/ConfirmacionEnvioModal';
 import { cierrePresentado, fechaLarga, TEXTO_TIPO_SOLICITUD } from '../formato';
 import type { GuardarPayload } from '../types';
@@ -156,6 +157,12 @@ export function PostulacionDetallePage() {
           <p>{postulacion.estado_texto}</p>
           {postulacion.correccion_vigente?.observaciones && <p className="mt-2 border-l-2 border-ink pl-2 text-sm">{postulacion.correccion_vigente.observaciones} (Equipo FOEST)</p>}
         </Card>
+      )}
+
+      {['BORRADOR', 'EN_CORRECCION'].includes(postulacion.estado) && (
+        <div className="mb-4">
+          <DescargarFormulariosCard postulacionId={postulacion.id} enlaceDetalle />
+        </div>
       )}
 
       <FormularioMultiPaso

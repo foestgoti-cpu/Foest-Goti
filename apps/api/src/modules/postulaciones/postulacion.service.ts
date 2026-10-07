@@ -20,6 +20,7 @@ import {
 } from '../../shared';
 import { configuracionService, declaracionService, sniesService } from '../catalogos_configuracion';
 import { encolarNotificacion } from '../notificaciones';
+import { purgarDocumentosDePostulacion } from '../documentos';
 import { estaAbierta as estaAbiertaConvocatoria } from '../convocatorias/convocatorias.fechas';
 import { cifrarNumero, enmascarar } from './datos-pago.service';
 import { pesosEnLetras } from './numero-a-letras';
@@ -33,7 +34,8 @@ import {
   type PostulacionAdminDTO,
   type PostulacionBeneficiarioDTO,
 } from './postulacion.serializer';
-import { crearElegibilidadProvisional, type ElegibilidadPort } from './ports/elegibilidad.port';
+import type { ElegibilidadPort } from './ports/elegibilidad.port';
+import { elegibilidadSeguimiento } from '../seguimiento_beneficios/seguimiento_beneficios.elegibilidad';
 import { validar as validarExpediente, type ResultadoValidacion } from './validacion.service';
 import type {
   CrearPostulacionInput,
@@ -60,16 +62,8 @@ const COLUMNAS_CONVOCATORIA = 'id, nombre, anio, semestre, estado, fecha_apertur
 // ---------------------------------------------------------------------------
 // Puerto de elegibilidad (provisional P1; seguimiento_beneficios lo reemplazara)
 // ---------------------------------------------------------------------------
-let elegibilidadPort: ElegibilidadPort = crearElegibilidadProvisional(async (beneficiarioId, convocatoriaId) => {
-  const { count, error } = await supabaseAdmin
-    .from('postulacion')
-    .select('id', { count: 'exact', head: true })
-    .eq('beneficiario_id', beneficiarioId)
-    .eq('estado', 'APROBADA')
-    .neq('convocatoria_id', convocatoriaId);
-  if (error) throw AppError.interno(`No fue posible verificar la elegibilidad: ${error.message}`);
-  return count ?? 0;
-});
+// Implementacion real: seguimiento_beneficios (reglas RENOVACION / REINTEGRO sobre otorgamientos).
+let elegibilidadPort: ElegibilidadPort = elegibilidadSeguimiento;
 
 /** Permite a `seguimiento_beneficios` (o a las pruebas) inyectar la implementacion real. */
 export function setElegibilidadPort(port: ElegibilidadPort): void {
@@ -389,7 +383,13 @@ export const postulacionService = {
     if (p.estado !== 'BORRADOR') {
       throw AppError.conflicto('TRANSICION_INVALIDA', 'Solo se puede eliminar una postulacion en borrador');
     }
-    // TODO(documentos, formatos_oficiales): purga de soportes y formatos asociados.
+    // Purga de los objetos de soporte (las filas de `documento` caen en cascada con la postulacion).
+    // TODO(formatos_oficiales): purga de formatos asociados.
+    try {
+      await purgarDocumentosDePostulacion(p.id);
+    } catch (e) {
+      logger.warn({ err: e, postulacion_id: p.id }, 'No fue posible purgar los soportes del borrador');
+    }
     const { error } = await supabaseAdmin.from('postulacion').delete().eq('id', p.id).eq('estado', 'BORRADOR');
     if (error) throw AppError.interno(`No fue posible eliminar el borrador: ${error.message}`);
     await auditar({
@@ -518,7 +518,13 @@ export const postulacionService = {
       versionEsperada: input.version ?? null,
       contexto: { ip: ctx.ip, user_agent: ctx.user_agent, request_id: ctx.request_id, actor_rol: 'BENEFICIARIO' },
     });
-    // TODO(asignaciones): evento interno POSTULACION_DESISTIDA para liberar la asignacion ACTIVA.
+    // La asignacion ACTIVA (si existe) se cierra; un fallo aqui no revierte el desistimiento ya registrado.
+    try {
+      const { liberarPorDesistimiento } = await import('../asignaciones');
+      await liberarPorDesistimiento(p.id);
+    } catch (e) {
+      logger.error({ err: e, postulacion_id: p.id }, 'No fue posible liberar la asignacion por desistimiento');
+    }
     const beneficios = await cargarBeneficios(supabaseAdmin, [p.id]);
     return aBeneficiarioDTO(actualizada, beneficios.get(p.id) ?? [], await convocatoriaConOferta(p.convocatoria_id));
   },
@@ -693,6 +699,13 @@ async function ejecutarEnvio(
     beneficiario.perfil_completo,
     input.declaraciones_aceptadas.length > 0 ? input.declaraciones_aceptadas : undefined,
   );
+  if (!resultado.formatos.pendiente_modulo && resultado.formatos.desactualizados.length > 0) {
+    throw AppError.datosInvalidos(
+      'FORMATOS_DESACTUALIZADOS',
+      'Los datos cambiaron despues de generar los formatos oficiales; regenere, firme de nuevo y vuelva a cargar los formatos desactualizados',
+      { desactualizados: resultado.formatos.desactualizados },
+    );
+  }
   if (!resultado.completo) {
     throw AppError.datosInvalidos('EXPEDIENTE_INCOMPLETO', 'El expediente tiene pendientes; revise la validacion', {
       errores: resultado.errores,
@@ -722,6 +735,16 @@ async function ejecutarEnvio(
     entidad_id: p.id,
     metadatos: { ciclo: r.ciclo, idempotency_key: llave, repetido: r.repetido },
   });
+  // Tras subsanar la postulacion vuelve al pool: no hereda al evaluador anterior. Normalmente su asignacion
+  // ya se cerro con el dictamen; si quedara una ACTIVA residual se libera aqui (no-op si no existe).
+  if (modo === 'SUBSANACION' && !r.repetido) {
+    try {
+      const { liberarAsignacionActiva } = await import('../asignaciones');
+      await liberarAsignacionActiva(p.id, 'DICTAMEN_EMITIDO', null);
+    } catch (e) {
+      logger.warn({ err: e, postulacion: p.id }, 'No fue posible cerrar la asignacion residual tras la subsanacion');
+    }
+  }
   // Correo via outbox. El buzon in-app ya lo creo fn_enviar_postulacion con la misma clave_dedup,
   // por eso canal 'CORREO' (no duplica la notificacion). El tipo SUBSANADA no existe en el
   // catalogo cerrado: se usa POSTULACION_ENVIADA con texto propio.

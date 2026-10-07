@@ -267,6 +267,7 @@ describe('API /api/v1/convocatorias', () => {
     mockDb.manejadores.asignacion_funcionario = (q) =>
       q.op === 'select' ? { data: [{ funcionario_id: ID_FUNC, asignado_en: futuro(-1), usuario: { email: 'f@x.co', activo: true, funcionario: null } }] } : { data: null };
     mockDb.manejadores.postulacion = () => ({ data: [{ id: 'p1', estado: 'EN_EVALUACION' }] });
+    mockDb.manejadores.postulacion_asignacion = () => ({ data: [{ id: 'a1', postulacion_id: 'p1' }] });
     const OTRO = '33333333-3333-4333-8333-333333333333';
     mockDb.manejadores.usuario = () => ({ data: [{ id: OTRO, rol: 'FUNCIONARIO', activo: true }] });
     const res = await request(app).put(`/api/v1/convocatorias/${ID}/funcionarios`).set(ADMIN).send({ funcionario_ids: [OTRO] });

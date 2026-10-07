@@ -1,28 +1,37 @@
 import crypto from 'node:crypto';
-import { TipoFormato } from '@foest/shared';
+import type { TipoFormato } from '@foest/shared';
 
+/**
+ * Serializacion canonica (claves ordenadas, sin valores undefined, sin marcas de tiempo
+ * de generacion) y SHA-256 del contenido que se imprime en cada formato.
+ */
 export class HashContenidoService {
-  /**
-   * Genera el hash_contenido canónico.
-   */
-  calcularHash(tipo: TipoFormato, datos: any): string {
-    const canonicalStr = this.serializeCanonical(datos);
-    return crypto.createHash('sha256').update(canonicalStr).digest('hex');
+  /** hash_contenido canonico: SHA-256 hexadecimal de la serializacion de los datos usados. */
+  calcularHash(tipo: TipoFormato, datos: unknown): string {
+    const canonica = this.serializar({ tipo, datos });
+    return crypto.createHash('sha256').update(canonica, 'utf8').digest('hex');
   }
 
-  private serializeCanonical(obj: any): string {
-    if (obj === null || obj === undefined) return 'null';
-    if (typeof obj !== 'object') return String(obj);
-    if (Array.isArray(obj)) {
-      const arrStr = obj.map(item => this.serializeCanonical(item)).join(',');
-      return `[${arrStr}]`;
+  serializar(valor: unknown): string {
+    if (valor === null || valor === undefined) return 'null';
+    if (valor instanceof Date) return JSON.stringify(valor.toISOString());
+    if (typeof valor === 'string') return JSON.stringify(valor);
+    if (typeof valor === 'number' || typeof valor === 'boolean') return JSON.stringify(valor);
+    if (Array.isArray(valor)) return `[${valor.map((item) => this.serializar(item)).join(',')}]`;
+    if (typeof valor === 'object') {
+      const objeto = valor as Record<string, unknown>;
+      const claves = Object.keys(objeto)
+        .filter((k) => objeto[k] !== undefined)
+        .sort();
+      return `{${claves.map((k) => `${JSON.stringify(k)}:${this.serializar(objeto[k])}`).join(',')}}`;
     }
-
-    const keys = Object.keys(obj).sort();
-    const props = keys.map(k => `${k}:${this.serializeCanonical(obj[k])}`).join('|');
-    return `{${props}}`;
+    return JSON.stringify(String(valor));
   }
 }
 
 export const hashContenidoService = new HashContenidoService();
 
+/** SHA-256 hexadecimal de un buffer (archivo final). */
+export function sha256Hex(contenido: Buffer): string {
+  return crypto.createHash('sha256').update(contenido).digest('hex');
+}

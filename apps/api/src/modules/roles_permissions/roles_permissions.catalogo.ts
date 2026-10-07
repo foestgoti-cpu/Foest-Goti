@@ -139,6 +139,7 @@ export const META_PERMISOS: Readonly<Partial<Record<Permiso, MetaPermiso>>> = {
   'dashboard:admin': m('DASHBOARDS', 'GLOBAL', 'Panel gerencial', 'Global, incluida la comparativa nominal por evaluador'),
   'reportes:solicitar': m('REPORTES', 'COMITE', 'Admin: global; funcionario: su comite', 'Administrador: global. Funcionario: convocatorias de su comite'),
   'reportes:descargar': m('REPORTES', 'PROPIO', 'Solo reportes solicitados por el propio usuario', 'Solo reportes solicitados por el propio usuario'),
+  'reportes:exportar_sensible': m('REPORTES', 'GLOBAL', 'Incluir estrato, SISBEN y documento en consolidados', 'Solo administrador; sin este permiso los consolidados omiten las columnas sensibles'),
   'auditoria:consultar': m('AUDITORIA', 'GLOBAL', 'Consultar bitacora', 'Global'),
   'auditoria:exportar': m('AUDITORIA', 'GLOBAL', 'Exportar bitacora (genera EXPORTACION)', 'Global; la exportacion genera EXPORTACION'),
   // Seguridad

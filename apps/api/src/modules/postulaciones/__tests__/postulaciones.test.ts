@@ -426,6 +426,6 @@ describe('desistir, eliminar e historial', () => {
     expect(res.body.secciones_aplicables).toEqual(['seccion_1', 'seccion_2', 'seccion_3', 'seccion_4', 'seccion_5', 'seccion_7', 'seccion_9']);
     expect(res.body.declaraciones.pendientes).toHaveLength(6);
     expect(res.body.documentos).toEqual({ pendiente_modulo: true });
-    expect(res.body.formatos).toEqual({ pendiente_modulo: true });
+    expect(res.body.formatos).toEqual({ pendiente_modulo: false, vigentes: false, faltantes: ['GE-F041', 'GE-F043'], desactualizados: [] });
   });
 });

@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { BENEFICIOS_CATALOGO, TITULOS_SECCION, type SeccionFormulario } from '@foest/shared';
 import { Alert, Badge, Card, PageHeader, Spinner } from '../../../components/ui';
+import { DescargarResumenButton } from '../../export_reports';
 import { useHistorialAdmin, usePostulacionAdmin } from '../hooks/usePostulaciones';
 import { fechaLarga, TEXTO_TIPO_SOLICITUD } from '../formato';
 
@@ -36,6 +37,7 @@ export function AdminPostulacionDetallePage() {
   return (
     <>
       <PageHeader
+        acciones={<DescargarResumenButton postulacionId={p.id} />}
         titulo={`Postulacion de ${p.beneficiario ? `${p.beneficiario.nombres ?? ''} ${p.beneficiario.apellidos ?? ''}`.trim() : p.beneficiario_id}`}
         migas={[{ etiqueta: 'Postulaciones', ruta: '/admin/postulaciones' }, { etiqueta: 'Detalle' }]}
         descripcion={

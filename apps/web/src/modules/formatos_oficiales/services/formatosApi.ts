@@ -1,24 +1,16 @@
-import { api } from '../../../../packages/shared/src/api';
+import { api } from '../../../lib/api';
+import type { DescargaFormatoDto, FormatoGeneradoDto, ListadoFormatosDto, TipoFormato, VerificarFormatoDto } from '../types';
 
+/** Cliente HTTP del modulo (envuelve `api` de lib/api.ts, que adjunta el Bearer). */
 export const formatosApi = {
-  generarFormato: async (postulacionId: string, tipo: string) => {
-    const { data } = await api.post(`/postulaciones/${postulacionId}/formatos/${tipo}/generar`);
-    return data;
-  },
+  generarFormato: (postulacionId: string, tipo: TipoFormato) =>
+    api.post<FormatoGeneradoDto>(`/postulaciones/${postulacionId}/formatos/${tipo}/generar`),
 
-  getFormatos: async (postulacionId: string) => {
-    const { data } = await api.get(`/postulaciones/${postulacionId}/formatos`);
-    return data;
-  },
+  getFormatos: (postulacionId: string) => api.get<ListadoFormatosDto>(`/postulaciones/${postulacionId}/formatos`),
 
-  getUrlDescarga: async (formatoId: string) => {
-    const { data } = await api.get(`/formatos/${formatoId}/descarga`);
-    return data;
-  },
+  getFormato: (formatoId: string) => api.get<FormatoGeneradoDto>(`/formatos/${formatoId}`),
 
-  verificarPublico: async (codigo: string) => {
-    const { data } = await api.get(`/publico/verificar/${codigo}`);
-    return data;
-  }
+  getUrlDescarga: (formatoId: string) => api.get<DescargaFormatoDto>(`/formatos/${formatoId}/descarga`),
+
+  verificarPublico: (codigo: string) => api.get<VerificarFormatoDto>(`/publico/verificar/${encodeURIComponent(codigo)}`, { auth: false }),
 };
-

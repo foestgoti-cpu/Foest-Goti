@@ -7,6 +7,8 @@ import {
   type SeccionFormulario,
   type TipoSolicitud,
 } from '@foest/shared';
+import { documentosFaltantes } from '../documentos';
+import { FormatosNoDisponiblesError, formatosVigentes } from '../formatos_oficiales/vigencia.service';
 import type { DeclaracionVigente, PostulacionRow } from './postulaciones.types';
 
 /**
@@ -33,7 +35,9 @@ export interface ResultadoValidacion {
     texto_oficial_confirmado: boolean;
   };
   documentos: { pendiente_modulo: true } | { pendiente_modulo: false; faltantes: Array<{ tipo: string; obligatorio: boolean; estado: string }> };
-  formatos: { pendiente_modulo: true };
+  formatos:
+    | { pendiente_modulo: true }
+    | { pendiente_modulo: false; vigentes: boolean; faltantes: string[]; desactualizados: string[] };
   perfil_completo: boolean;
   errores: string[];
 }
@@ -102,15 +106,30 @@ export async function cargarDeclaracionesVigentes(db: SupabaseClient): Promise<D
 }
 
 /**
- * Documentos obligatorios: el modulo `documentos` no existe aun. Si la tabla `documento`
- * existe se hace una verificacion minima; si no, se informa `pendiente_modulo`.
- * TODO(documentos): usar la matriz REQUISITO_DOCUMENTO y el estado DISPONIBLE.
+ * Documentos obligatorios segun la matriz REQUISITO_DOCUMENTO (modulo `documentos`): solo cuenta el
+ * estado DISPONIBLE. Si la tabla `documento` aun no existe (migracion 0014 sin aplicar) se informa
+ * `pendiente_modulo`.
  */
 export async function verificarDocumentos(db: SupabaseClient, postulacionId: string): Promise<ResultadoValidacion['documentos']> {
   const { error } = await db.from('documento').select('id', { count: 'exact', head: true }).eq('postulacion_id', postulacionId);
   if (error) return { pendiente_modulo: true };
-  // La tabla existe pero no hay matriz de requisitos todavia: no se bloquea el envio.
-  return { pendiente_modulo: false, faltantes: [] };
+  // Matriz REQUISITO_DOCUMENTO: obligatorios sin soporte DISPONIBLE (modulo documentos).
+  const faltantes = await documentosFaltantes(postulacionId);
+  return { pendiente_modulo: false, faltantes: faltantes.map((f) => ({ tipo: f.tipo, obligatorio: f.obligatorio, estado: f.estado })) };
+}
+
+/**
+ * Formatos oficiales (GE-F041 / GE-F043): compara el hash_contenido actual con el del formato vigente.
+ * Si la tabla de formatos aun no existe (migracion 0015 sin aplicar) no bloquea.
+ */
+export async function verificarFormatos(postulacionId: string): Promise<ResultadoValidacion['formatos']> {
+  try {
+    const r = await formatosVigentes(postulacionId);
+    return { pendiente_modulo: false, ...r };
+  } catch (e) {
+    if (e instanceof FormatosNoDisponiblesError) return { pendiente_modulo: true };
+    throw e;
+  }
 }
 
 export async function validar(
@@ -135,11 +154,13 @@ export async function validar(
   }
 
   const documentos = await verificarDocumentos(db, p.id);
+  const formatos = await verificarFormatos(p.id);
   const errores: string[] = [];
   if (!perfilCompleto) errores.push('PERFIL_INCOMPLETO');
   if (faltantes.length > 0) errores.push('EXPEDIENTE_INCOMPLETO');
   if (vigentes.length === 0) errores.push('DECLARACIONES_NO_CONFIGURADAS');
   if (!documentos.pendiente_modulo && documentos.faltantes.length > 0) errores.push('DOCUMENTOS_FALTANTES');
+  if (!formatos.pendiente_modulo && formatos.desactualizados.length > 0) errores.push('FORMATOS_DESACTUALIZADOS');
 
   return {
     completo: errores.length === 0,
@@ -153,7 +174,7 @@ export async function validar(
       texto_oficial_confirmado: vigentes.length > 0 && vigentes.every((d) => d.texto_oficial_confirmado),
     },
     documentos,
-    formatos: { pendiente_modulo: true }, // TODO(formatos_oficiales): FormatosVigenciaPort
+    formatos,
     perfil_completo: perfilCompleto,
     errores,
   };

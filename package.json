@@ -21,7 +21,10 @@
     "verify:supabase": "npm run verify:supabase -w apps/api"
   },
   "devDependencies": {
-    "concurrently": "^9.1.0",
+    "concurrently": "^10.0.5",
     "typescript": "^5.6.3"
+  },
+  "overrides": {
+    "shell-quote": "^1.12.0"
   }
 }

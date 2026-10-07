@@ -77,6 +77,7 @@ export const PERMISOS = [
   'dashboard:admin',
   'reportes:solicitar',
   'reportes:descargar',
+  'reportes:exportar_sensible',
   'auditoria:consultar',
   'auditoria:exportar',
   // Seguridad (modulo roles_permissions): consulta de roles, catalogo y matriz
@@ -138,6 +139,7 @@ export const MATRIZ_PERMISOS: Readonly<Record<Rol, readonly Permiso[]>> = {
     'dashboard:admin',
     'reportes:solicitar',
     'reportes:descargar',
+    'reportes:exportar_sensible',
     'auditoria:consultar',
     'auditoria:exportar',
     'rol:consultar',

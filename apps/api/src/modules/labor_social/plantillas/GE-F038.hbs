@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>GE-F038 Certificado de Labor Social</title>
+<style>
+  @page { size: A4; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; }
+  body { font-family: 'Times New Roman', 'Liberation Serif', serif; font-size: 9px; line-height: 1.2; }
+  .hoja { width: 100%; }
+  .hoja + .hoja { break-before: page; page-break-before: always; }
+  .encabezado { border: 0.5px solid #000; padding: 2.5mm 3mm; margin-bottom: 3mm; display: flex; justify-content: space-between; align-items: center; }
+  .encabezado .entidad { font-weight: bold; font-size: 10px; }
+  .encabezado .titulo { font-size: 13px; font-weight: bold; text-align: center; flex: 1; }
+  .encabezado .codigo { text-align: right; font-size: 9px; }
+  h2 { font-size: 11px; margin: 2mm 0; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th, td { border: 0.5px solid #000; padding: 0.8mm 1.2mm; vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere; }
+  th { font-weight: bold; text-align: center; background: #ffffff; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; page-break-inside: avoid; }
+  td.num { text-align: right; white-space: nowrap; }
+  td.centro { text-align: center; }
+  .datos td { border: 0.5px solid #000; }
+  .datos td.etiqueta { width: 24%; font-weight: bold; }
+  .cols-actividad .c-n { width: 5%; }
+  .cols-actividad .c-f { width: 9%; }
+  .cols-actividad .c-h { width: 7%; }
+  .cols-actividad .c-d { width: 35%; }
+  .cols-actividad .c-dep { width: 17%; }
+  .cols-actividad .c-s { width: 27%; }
+  .subtotal { text-align: right; font-weight: bold; margin: 1.5mm 0 0 0; }
+  .totales { margin-top: 3mm; border: 0.5px solid #000; padding: 2mm 3mm; display: flex; justify-content: space-between; font-weight: bold; }
+  .nota { font-size: 8.5px; margin-top: 2mm; }
+  .cierre { break-inside: avoid; page-break-inside: avoid; }
+  .firmas { margin-top: 4mm; display: flex; flex-wrap: wrap; gap: 3mm; }
+  .firma { width: 31%; margin-bottom: 3mm; break-inside: avoid; page-break-inside: avoid; }
+  .firma .linea { border-top: 0.5px solid #000; margin-top: 11mm; padding-top: 1mm; font-size: 8px; }
+  .marca { position: fixed; top: 42%; left: 0; width: 100%; text-align: center; transform: rotate(-30deg); font-size: 46px; font-weight: bold; color: #bdbdbd; z-index: 0; pointer-events: none; letter-spacing: 2px; }
+</style>
+</head>
+<body>
+{{#if borrador}}<div class="marca">BORRADOR – SIN VALIDEZ</div>{{/if}}
+
+{{#each hojas}}
+<section class="hoja">
+  <div class="encabezado">
+    <div class="entidad">Alcaldía Municipal de Tocancipá<br>Fondo para la Educación Superior (FOEST)</div>
+    <div class="titulo">{{@root.titulo}}{{#unless principal}}<br>Anexo {{anexo}}{{/unless}}</div>
+    <div class="codigo">Formato {{@root.codigo_formato}}<br>{{@root.version_plantilla}}</div>
+  </div>
+
+  {{#if principal}}
+  <table class="datos">
+    <tr><td class="etiqueta">Beneficiario</td><td>{{@root.beneficiario.nombre}}</td><td class="etiqueta">Documento</td><td>{{@root.beneficiario.documento}}</td></tr>
+    <tr><td class="etiqueta">Semestre académico</td><td>{{@root.semestre}}</td><td class="etiqueta">Convocatoria</td><td>{{#if @root.convocatoria}}{{@root.convocatoria}}{{else}}No aplica{{/if}}</td></tr>
+    <tr><td class="etiqueta">Horas mínimas exigidas</td><td>{{@root.horas_minimas}}</td><td class="etiqueta">Normativa</td><td>{{@root.acuerdo}}</td></tr>
+  </table>
+  <h2>Relación de actividades de labor social</h2>
+  {{else}}
+  <p class="nota">Beneficiario: {{@root.beneficiario.nombre}} ({{@root.beneficiario.documento}}). Semestre académico {{@root.semestre}}. Continuación de la relación de actividades.</p>
+  {{/if}}
+
+  <table class="cols-actividad">
+    <thead>
+      <tr><th class="c-n">N.°</th><th class="c-f">Fecha</th><th class="c-h">Horas</th><th class="c-d">Actividad realizada</th><th class="c-dep">Dependencia</th><th class="c-s">Supervisor y cargo</th></tr>
+    </thead>
+    <tbody>
+      {{#each filas}}
+      <tr><td class="centro">{{numero}}</td><td class="centro">{{fecha}}</td><td class="num">{{horas}}</td><td>{{descripcion}}</td><td>{{dependencia}}</td><td>{{supervisor}}, {{cargo}}</td></tr>
+      {{else}}
+      <tr><td colspan="6" class="centro">Sin actividades registradas.</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <p class="subtotal">Subtotal de esta hoja ({{cantidad}} actividades): {{subtotal}} horas</p>
+
+  {{#if ultima}}
+  <div class="cierre">
+  <div class="totales"><span>Total general de horas ({{@root.total_actividades}} actividades, incluye anexos)</span><span>{{@root.total_horas}} horas</span></div>
+  {{#if @root.resumen_en_principal}}
+  <h2>Resumen por dependencia</h2>
+  <table>
+    <thead><tr><th>Dependencia</th><th style="width:16%">Actividades</th><th style="width:16%">Horas</th></tr></thead>
+    <tbody>
+      {{#each @root.dependencias}}<tr><td>{{dependencia}}</td><td class="num">{{actividades}}</td><td class="num">{{horas}}</td></tr>{{/each}}
+    </tbody>
+  </table>
+  {{/if}}
+  {{#if @root.resumen_aparte}}<p class="nota">El resumen por dependencia consta en la hoja adicional, con el espacio de firma de cada secretario(a) de despacho.</p>{{/if}}
+  <p class="nota">Certifico que las actividades relacionadas fueron ejecutadas en las dependencias indicadas. Las firmas de los secretarios de despacho son físicas: imprima este documento, solicite las firmas, escanee el soporte firmado y súbalo a la plataforma como documento LAB_SOC.</p>
+  <div class="firmas">
+    {{#each @root.firmas}}
+    <div class="firma"><div class="linea">Secretario(a) de Despacho{{#if dependencia}} – {{dependencia}}{{/if}}<br>Nombre y cargo: ______________________________</div></div>
+    {{/each}}
+    <div class="firma"><div class="linea">Beneficiario(a): {{@root.beneficiario.nombre}}<br>{{@root.beneficiario.documento}}</div></div>
+  </div>
+  </div>
+  {{/if}}
+</section>
+{{/each}}
+
+{{#if resumen_aparte}}
+<section class="hoja">
+  <div class="encabezado">
+    <div class="entidad">Alcaldía Municipal de Tocancipá<br>Fondo para la Educación Superior (FOEST)</div>
+    <div class="titulo">{{titulo}}<br>Resumen por dependencia</div>
+    <div class="codigo">Formato {{codigo_formato}}<br>{{version_plantilla}}</div>
+  </div>
+  <p class="nota">Beneficiario: {{beneficiario.nombre}} ({{beneficiario.documento}}). Semestre académico {{semestre}}.</p>
+  <table>
+    <thead><tr><th>Dependencia</th><th style="width:11%">Actividades</th><th style="width:11%">Horas</th><th style="width:38%">Secretario(a) de Despacho: nombre, cargo y firma</th></tr></thead>
+    <tbody>
+      {{#each dependencias}}<tr style="height:16mm"><td>{{dependencia}}</td><td class="num">{{actividades}}</td><td class="num">{{horas}}</td><td></td></tr>{{/each}}
+    </tbody>
+  </table>
+  <div class="totales"><span>Total general de horas</span><span>{{total_horas}} horas</span></div>
+</section>
+{{/if}}
+</body>
+</html>

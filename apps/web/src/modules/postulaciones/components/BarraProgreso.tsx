@@ -5,16 +5,19 @@ import { cn } from '../../../lib/cn';
  * Barra de progreso del asistente: una casilla por seccion aplicable.
  * Completa = borde y relleno primario; actual = borde doble; pendiente = blanco.
  */
+type Paso = SeccionFormulario | 'documentos';
+const tituloPaso = (s: Paso): string => (s === 'documentos' ? 'Documentos de soporte' : TITULOS_SECCION[s]);
+
 export function BarraProgreso({
   secciones,
   completas,
   actual,
   onIr,
 }: {
-  secciones: SeccionFormulario[];
-  completas: SeccionFormulario[];
-  actual: SeccionFormulario;
-  onIr?: (s: SeccionFormulario) => void;
+  secciones: Paso[];
+  completas: Paso[];
+  actual: Paso;
+  onIr?: (s: Paso) => void;
 }) {
   const total = secciones.length;
   const hechas = secciones.filter((s) => completas.includes(s)).length;
@@ -45,9 +48,9 @@ export function BarraProgreso({
                   completa ? 'border-primary bg-primary-20' : 'border-ink bg-white',
                   esActual && 'border-2 border-primary font-semibold',
                 )}
-                title={TITULOS_SECCION[s]}
+                title={tituloPaso(s)}
               >
-                {i + 1}. {TITULOS_SECCION[s]}
+                {i + 1}. {tituloPaso(s)}
                 {completa && <span className="sr-only"> (completa)</span>}
               </button>
             </li>

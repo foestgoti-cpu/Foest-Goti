@@ -36,6 +36,14 @@ export const ACCIONES_AUDITORIA = [
   'SUSPENDER',
   'REVOCAR',
   'DESEMBOLSAR',
+  'REACTIVAR',
+  'CUMPLIR',
+  'ANULAR',
+  'CARGA_PAGOS',
+  // Labor social
+  'COMPLETAR',
+  'REABRIR',
+  'PRESENTAR',
   // Autenticacion y sesiones
   'LOGIN',
   'LOGIN_FALLIDO',
@@ -94,6 +102,7 @@ export const ENTIDADES_AUDITORIA = [
   'OTORGAMIENTO',
   'DESEMBOLSO',
   'CERTIFICADO_LABOR_SOCIAL',
+  'ACTIVIDAD_LABOR_SOCIAL',
   'REPORTE',
   'NOTIFICACION',
   'CONFIGURACION',

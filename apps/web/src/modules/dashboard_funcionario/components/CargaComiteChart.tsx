@@ -81,11 +81,11 @@ export function CargaComiteChart({ datos, cargando, atenuado }: CargaComiteChart
                   }}
                 />
                 <Bar dataKey="propia" name="Mi carga" fill={RELLENO_PROPIA.fill} barSize={24} radius={[4, 4, 0, 0]} isAnimationActive={false}>
-                  <LabelList dataKey="propia" position="top" fill="#000000" fontSize={12} formatter={(v: number) => formatearValor(v)} />
+                  <LabelList dataKey="propia" position="top" fill="#000000" fontSize={12} formatter={(v: unknown) => formatearValor(Number(v))} />
                 </Bar>
                 {conPromedio && (
                   <Bar dataKey="comite" name="Promedio del comite" fill={RELLENO_COMITE.fill} barSize={24} radius={[4, 4, 0, 0]} isAnimationActive={false}>
-                    <LabelList dataKey="comite" position="top" fill="#000000" fontSize={12} formatter={(v: number) => formatearValor(v)} />
+                    <LabelList dataKey="comite" position="top" fill="#000000" fontSize={12} formatter={(v: unknown) => formatearValor(Number(v))} />
                   </Bar>
                 )}
               </BarChart>

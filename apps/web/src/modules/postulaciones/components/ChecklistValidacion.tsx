@@ -3,7 +3,15 @@ import { Card } from '../../../components/ui';
 import type { Validacion } from '../types';
 
 /** Panel de validacion previa: secciones, campos faltantes, declaraciones, documentos y formatos. */
-export function ChecklistValidacion({ validacion, onIrSeccion }: { validacion: Validacion; onIrSeccion?: (s: Validacion['secciones_aplicables'][number]) => void }) {
+export function ChecklistValidacion({
+  validacion,
+  onIrSeccion,
+  onIrDocumentos,
+}: {
+  validacion: Validacion;
+  onIrSeccion?: (s: Validacion['secciones_aplicables'][number]) => void;
+  onIrDocumentos?: () => void;
+}) {
   const porSeccion = new Map<string, Validacion['campos_faltantes']>();
   for (const c of validacion.campos_faltantes) {
     const lista = porSeccion.get(c.seccion) ?? [];
@@ -55,6 +63,11 @@ export function ChecklistValidacion({ validacion, onIrSeccion }: { validacion: V
             : validacion.documentos.faltantes.length === 0
               ? 'Completos'
               : `${validacion.documentos.faltantes.length} pendientes`}
+          {onIrDocumentos && !validacion.documentos.pendiente_modulo && validacion.documentos.faltantes.length > 0 && (
+            <button type="button" className="ml-3 min-h-[36px] text-primary underline" onClick={onIrDocumentos}>
+              Ir a los documentos
+            </button>
+          )}
         </li>
         <li className="px-3 py-2 text-sm">Formatos oficiales (GE-F041 y GE-F043): la generacion se habilitara en una proxima entrega.</li>
       </ul>

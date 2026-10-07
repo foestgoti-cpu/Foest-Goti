@@ -6,21 +6,54 @@ import type { ConvocatoriaResumen, CorreccionVigente, HistorialRow, PostulacionR
  * Toda respuesta al beneficiario pasa por aqui: no contiene ningun campo de actor.
  */
 
+export interface ObservacionPublicaBeneficio {
+  codigo: string;
+  decision: string;
+  motivo: string | null;
+  monto_aprobado: number | null;
+}
+
 export interface ObservacionPublica {
   firma: 'Equipo FOEST';
   observaciones: string | null;
   campos_observados: string[];
   documentos_observados: string[];
+  /** Solo presentes cuando el dictamen del modulo `evaluacion` los guardo (lista blanca; sin datos de actor). */
+  ciclo?: number;
+  resultado?: string;
+  fecha_limite_subsanacion?: string | null;
+  decidida_en?: string;
+  beneficios?: ObservacionPublicaBeneficio[];
 }
+
+const RESULTADOS_PUBLICOS = new Set(['APROBAR', 'RECHAZAR', 'CORRECCION']);
 
 export function observacionPublica(c: CorreccionVigente | null | undefined): ObservacionPublica | null {
   if (!c) return null;
-  return {
+  const salida: ObservacionPublica = {
     firma: 'Equipo FOEST',
     observaciones: typeof c.observaciones === 'string' ? c.observaciones : null,
     campos_observados: Array.isArray(c.campos_observados) ? c.campos_observados.map(String) : [],
     documentos_observados: Array.isArray(c.documentos_observados) ? c.documentos_observados.map(String) : [],
   };
+  // Campos del dictamen (evaluacion): se copian uno a uno desde una lista blanca.
+  if (typeof c.ciclo === 'number') salida.ciclo = c.ciclo;
+  if (typeof c.resultado === 'string' && RESULTADOS_PUBLICOS.has(c.resultado)) salida.resultado = c.resultado;
+  if (typeof c.fecha_limite_subsanacion === 'string' || c.fecha_limite_subsanacion === null) {
+    salida.fecha_limite_subsanacion = c.fecha_limite_subsanacion as string | null;
+  }
+  if (typeof c.decidida_en === 'string') salida.decidida_en = c.decidida_en;
+  if (Array.isArray(c.beneficios)) {
+    salida.beneficios = (c.beneficios as Array<Record<string, unknown>>)
+      .filter((b) => b && typeof b === 'object' && typeof b.codigo === 'string' && typeof b.decision === 'string')
+      .map((b) => ({
+        codigo: String(b.codigo),
+        decision: String(b.decision),
+        motivo: typeof b.motivo === 'string' ? b.motivo : null,
+        monto_aprobado: typeof b.monto_aprobado === 'number' ? b.monto_aprobado : null,
+      }));
+  }
+  return salida;
 }
 
 export interface PostulacionBeneficiarioDTO {

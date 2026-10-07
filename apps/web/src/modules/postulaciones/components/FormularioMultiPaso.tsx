@@ -15,12 +15,15 @@ import { api } from '../../../lib/api';
 import { IesProgramaSelect, type SeleccionSnies } from '../../catalogos_configuracion/components/IesProgramaSelect';
 import { BarraProgreso } from './BarraProgreso';
 import { ChecklistValidacion } from './ChecklistValidacion';
+import { PasoDocumentos } from '../../documentos/components/PasoDocumentos';
 import { DeclaracionesPaso } from './DeclaracionesPaso';
 import { pesos, TEXTO_MODALIDAD, TEXTO_SITUACION_LABORAL, TEXTO_TIPO_PAGO } from '../formato';
 import type { GuardarPayload, Postulacion, Validacion } from '../types';
 
 type SeccionDatos = Exclude<SeccionFormulario, 'seccion_1' | 'seccion_2'>;
 type Datos = Record<string, Record<string, unknown>>;
+/** Pasos del asistente: las secciones del GE-F041 y el paso de soportes (antes de las declaraciones). */
+type Paso = SeccionFormulario | 'documentos';
 
 export interface FormularioMultiPasoProps {
   postulacion: Postulacion;
@@ -57,8 +60,15 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
   const [datos, setDatos] = useState<Datos>(() => ({ ...(postulacion.datos_formulario as Datos) }));
   const [beneficios, setBeneficios] = useState<CodigoBeneficio[]>(postulacion.beneficios);
   const secciones = useMemo(() => seccionesAplicables(postulacion.tipo_solicitud, beneficios), [postulacion.tipo_solicitud, beneficios]);
+  const pasos = useMemo<Paso[]>(() => {
+    const lista: Paso[] = [...secciones];
+    const i = lista.indexOf('seccion_9');
+    if (i >= 0) lista.splice(i, 0, 'documentos');
+    else lista.push('documentos');
+    return lista;
+  }, [secciones]);
   const [indice, setIndice] = useState(0);
-  const seccionActual = secciones[Math.min(indice, secciones.length - 1)] ?? 'seccion_1';
+  const seccionActual: Paso = pasos[Math.min(indice, pasos.length - 1)] ?? 'seccion_1';
   const [guardadoEn, setGuardadoEn] = useState<string | null>(null);
   const [seleccionSnies, setSeleccionSnies] = useState<SeleccionSnies>({ ies: null, programa: null });
 
@@ -171,8 +181,9 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
     retry: false,
   });
 
-  const irA = (s: SeccionFormulario) => setIndice(Math.max(0, secciones.indexOf(s)));
-  const esUltima = indice >= secciones.length - 1;
+  const irA = (s: Paso) => setIndice(Math.max(0, pasos.indexOf(s)));
+  const esUltima = indice >= pasos.length - 1;
+  const documentosCompletos = Boolean(validacion && !validacion.documentos.pendiente_modulo && validacion.documentos.faltantes.length === 0);
 
   const ofertados = postulacion.convocatoria?.beneficios_ofertados ?? beneficios;
   const pagoActual = datos.seccion_8?.datos_pago as { tipo: string; entidad: string; numero_enmascarado: string } | undefined;
@@ -181,7 +192,12 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
 
   return (
     <div>
-      <BarraProgreso secciones={secciones} completas={validacion?.secciones_completas ?? []} actual={seccionActual} onIr={irA} />
+      <BarraProgreso
+        secciones={pasos}
+        completas={[...(validacion?.secciones_completas ?? []), ...(documentosCompletos ? (['documentos'] as const) : [])]}
+        actual={seccionActual}
+        onIr={irA}
+      />
 
       {enCorreccion && (
         <Alert tipo="advertencia" className="mb-4" titulo="Correccion solicitada por el Equipo FOEST">
@@ -196,7 +212,7 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
       )}
 
       <Card
-        titulo={`${secciones.indexOf(seccionActual) + 1}. ${TITULOS_SECCION[seccionActual]}`}
+        titulo={`${pasos.indexOf(seccionActual) + 1}. ${seccionActual === 'documentos' ? 'Documentos de soporte' : TITULOS_SECCION[seccionActual]}`}
         acciones={
           <span className="text-sm" aria-live="polite">
             {guardando ? <Spinner etiqueta="Guardando" /> : guardadoEn ? `Guardado ${new Date(guardadoEn).toLocaleTimeString('es-CO')}` : null}
@@ -398,10 +414,12 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
           </div>
         )}
 
+        {seccionActual === 'documentos' && <PasoDocumentos postulacionId={postulacion.id} />}
+
         {seccionActual === 'seccion_9' && (
           <div className="space-y-6">
             <DeclaracionesPaso declaraciones={vigentes} aceptadas={aceptadas} onCambiar={cambiarDeclaracion} deshabilitado={soloLectura} />
-            {validacion && <ChecklistValidacion validacion={validacion} onIrSeccion={irA} />}
+            {validacion && <ChecklistValidacion validacion={validacion} onIrSeccion={irA} onIrDocumentos={() => irA('documentos')} />}
           </div>
         )}
       </Card>
@@ -411,7 +429,7 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
           Anterior
         </Button>
         {!esUltima ? (
-          <Button onClick={() => setIndice((i) => Math.min(secciones.length - 1, i + 1))}>Siguiente</Button>
+          <Button onClick={() => setIndice((i) => Math.min(pasos.length - 1, i + 1))}>Siguiente</Button>
         ) : (
           !soloLectura && (
             <Button onClick={onEnviar} disabled={!validacion?.completo || guardando}>

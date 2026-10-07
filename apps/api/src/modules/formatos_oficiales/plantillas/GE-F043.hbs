@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>{{titulo_formato}}</title>
+<style>
+  @page { size: A4; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Times New Roman", "Liberation Serif", Georgia, serif; font-size: 10.5pt; line-height: 1.45; color: #000; background: #fff; }
+  header.cabecera { border-bottom: 1.5pt solid #000; padding-bottom: 6pt; margin-bottom: 10pt; }
+  header.cabecera .entidad { font-size: 9pt; text-transform: uppercase; letter-spacing: 0.04em; margin: 0; }
+  header.cabecera .fondo { font-size: 9pt; margin: 0; }
+  h1 { font-size: 14pt; margin: 6pt 0 2pt 0; text-transform: uppercase; }
+  h2 { font-size: 11pt; margin: 14pt 0 5pt 0; text-transform: uppercase; page-break-after: avoid; }
+  .codigo-formato { font-size: 9pt; margin: 0; }
+  p { margin: 0 0 6pt 0; text-align: justify; }
+  table.deudor { width: 100%; border-collapse: collapse; margin: 6pt 0 8pt 0; }
+  table.deudor th, table.deudor td { border: 0.5pt solid #000; padding: 3pt 5pt; text-align: left; vertical-align: top; font-size: 10pt; }
+  table.deudor th { width: 34%; }
+  .blanco { display: inline-block; border-bottom: 0.75pt solid #000; min-width: 60mm; height: 11pt; vertical-align: bottom; }
+  .blanco.corto { min-width: 38mm; }
+  .blanco.largo { min-width: 120mm; }
+  .campo { margin: 7pt 0; }
+  .campo .etiqueta { font-weight: bold; }
+  ol.clausulas { margin: 0 0 6pt 0; padding-left: 16pt; text-align: justify; }
+  ol.clausulas li { margin-bottom: 4pt; }
+  .salto { page-break-before: always; }
+  .bloque { page-break-inside: avoid; }
+  .firmas { margin-top: 20pt; page-break-inside: avoid; overflow: hidden; }
+  .firma { width: 62%; margin-top: 28pt; }
+  .firma .linea { border-top: 0.75pt solid #000; padding-top: 2pt; font-size: 9.5pt; }
+  .huella { float: right; width: 28mm; height: 32mm; border: 0.75pt solid #000; text-align: center; font-size: 7.5pt; padding-top: 24mm; }
+  .aviso { border: 0.75pt solid #000; padding: 5pt 7pt; margin: 10pt 0; font-size: 9pt; page-break-inside: avoid; }
+</style>
+</head>
+<body>
+  <header class="cabecera">
+    <p class="entidad">Alcaldía Municipal de Tocancipá</p>
+    <p class="fondo">Fondo para la Educación Superior de Tocancipá - FOEST</p>
+    <h1>Pagaré en blanco con carta de instrucciones</h1>
+    <p class="codigo-formato">Formato {{codigo_formato}} - Versión {{version_plantilla}} - {{convocatoria}}</p>
+  </header>
+
+  <section class="bloque">
+    <h2>Pagaré No. <span class="blanco corto"></span></h2>
+    <p><strong>Identificación del deudor</strong></p>
+    <table class="deudor">
+      <tbody>
+        <tr><th>Nombre completo</th><td>{{deudor.nombre_completo}}</td></tr>
+        <tr><th>Tipo de documento</th><td>{{deudor.tipo_documento_texto}}</td></tr>
+        <tr><th>Número de documento</th><td>{{deudor.numero_documento}}</td></tr>
+        <tr><th>Dirección</th><td>{{deudor.direccion}}</td></tr>
+        <tr><th>Teléfono</th><td>{{deudor.telefono}}</td></tr>
+      </tbody>
+    </table>
+
+    <p>Yo, <strong>{{deudor.nombre_completo}}</strong>, identificado(a) con {{deudor.tipo_documento_texto}} número <strong>{{deudor.numero_documento}}</strong>, actuando en nombre propio, me obligo a pagar de manera incondicional, solidaria e indivisible, a la orden del <strong>Municipio de Tocancipá - Fondo para la Educación Superior (FOEST)</strong>, o a quien represente sus derechos, las siguientes sumas:</p>
+
+    <div class="campo"><span class="etiqueta">Suma de dinero (en números):</span> $ <span class="blanco"></span></div>
+    <div class="campo"><span class="etiqueta">Suma de dinero (en letras):</span> <span class="blanco largo"></span></div>
+    <div class="campo"><span class="etiqueta">Intereses:</span> <span class="blanco largo"></span></div>
+    <div class="campo"><span class="etiqueta">Fecha de exigibilidad (día / mes / año):</span> <span class="blanco corto"></span></div>
+
+    <p>Los espacios en blanco de este pagaré serán diligenciados por el Municipio de Tocancipá conforme a la carta de instrucciones que se adjunta y que forma parte integral de este título valor, de acuerdo con el artículo 622 del Código de Comercio.</p>
+  </section>
+
+  {{#if bloque_codeudor}}
+  <section class="bloque">
+    <h2>Codeudor o acudiente (deudor menor de edad)</h2>
+    <p>Por tratarse de un deudor menor de edad, el siguiente obligado se constituye en codeudor solidario de las obligaciones aquí contraídas. Estos datos deben ser diligenciados a mano por el codeudor o acudiente.</p>
+    <div class="campo"><span class="etiqueta">Nombre completo:</span> <span class="blanco largo"></span></div>
+    <div class="campo"><span class="etiqueta">Tipo y número de documento:</span> <span class="blanco"></span></div>
+    <div class="campo"><span class="etiqueta">Parentesco:</span> <span class="blanco corto"></span></div>
+    <div class="campo"><span class="etiqueta">Dirección:</span> <span class="blanco largo"></span></div>
+    <div class="campo"><span class="etiqueta">Teléfono:</span> <span class="blanco corto"></span></div>
+    <div class="firmas">
+      <div class="huella">Huella índice derecho</div>
+      <div class="firma"><div class="linea">Firma del codeudor o acudiente</div></div>
+    </div>
+  </section>
+  {{/if}}
+
+  <div class="firmas">
+    <div class="huella">Huella índice derecho</div>
+    <div class="firma">
+      <div class="linea">Firma del deudor</div>
+      <div>Nombre: {{deudor.nombre_completo}}</div>
+      <div>Documento: {{deudor.tipo_documento}} {{deudor.numero_documento}}</div>
+      <div style="margin-top:8pt">Fecha de firma (día / mes / año): ____ / ____ / ________</div>
+    </div>
+  </div>
+
+  <section class="salto">
+    <header class="cabecera">
+      <p class="entidad">Alcaldía Municipal de Tocancipá</p>
+      <p class="fondo">Fondo para la Educación Superior de Tocancipá - FOEST</p>
+      <h1>Carta de instrucciones para diligenciar el pagaré en blanco</h1>
+    </header>
+
+    <p>Yo, <strong>{{deudor.nombre_completo}}</strong>, identificado(a) con {{deudor.tipo_documento_texto}} número <strong>{{deudor.numero_documento}}</strong>, de conformidad con el artículo 622 del Código de Comercio, autorizo de manera expresa, previa e irrevocable al Municipio de Tocancipá - Fondo para la Educación Superior (FOEST), o a quien represente sus derechos, para que diligencie los espacios en blanco del pagaré que he suscrito a su favor, con sujeción a las siguientes instrucciones:</p>
+
+    <ol class="clausulas">
+      <li>La suma de dinero será igual al valor de los apoyos o beneficios económicos efectivamente desembolsados en mi favor por el FOEST, más los valores que resulten a mi cargo por las obligaciones derivadas del Acuerdo Municipal 023 de 2025 y su reglamentación.</li>
+      <li>Los intereses se liquidarán a la tasa máxima legal permitida vigente, desde la fecha de exigibilidad y hasta el pago total de la obligación.</li>
+      <li>La fecha de exigibilidad será la del día en que el FOEST determine el incumplimiento de las obligaciones del beneficiario, entre ellas la pérdida de la calidad de beneficiario por causas imputables a mi conducta, el incumplimiento de las obligaciones de labor social o de rendimiento académico, o el incumplimiento de las demás condiciones del beneficio previstas en la reglamentación vigente.</li>
+      <li>El pagaré podrá ser diligenciado y exigido sin necesidad de requerimiento previo ni constitución en mora, a los cuales renuncio expresamente.</li>
+      <li>Declaro que recibí copia de esta carta de instrucciones y que he leído y entendido su contenido.</li>
+    </ol>
+
+    <div class="aviso">
+      El código de verificación y el código QR de este documento permiten comprobar que fue emitido por la plataforma FOEST y detectar alteraciones. No constituyen firma digital certificada ni reemplazan la firma manuscrita. Este documento debe imprimirse, firmarse de puño y letra, escanearse y cargarse en la plataforma.
+    </div>
+
+    <div class="firmas">
+      <div class="huella">Huella índice derecho</div>
+      <div class="firma">
+        <div class="linea">Firma del deudor</div>
+        <div>Nombre: {{deudor.nombre_completo}}</div>
+        <div>Documento: {{deudor.tipo_documento}} {{deudor.numero_documento}}</div>
+        <div style="margin-top:8pt">Fecha de firma (día / mes / año): ____ / ____ / ________</div>
+      </div>
+    </div>
+
+    {{#if bloque_codeudor}}
+    <div class="firmas">
+      <div class="huella">Huella índice derecho</div>
+      <div class="firma">
+        <div class="linea">Firma del codeudor o acudiente</div>
+        <div>Nombre y documento: <span class="blanco"></span></div>
+      </div>
+    </div>
+    {{/if}}
+  </section>
+
+</body>
+</html>

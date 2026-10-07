@@ -55,11 +55,18 @@ export const CONFIGURACION_DEFAULTS: readonly DefinicionClave[] = [
   def('RETENCION_AUDITORIA_ANIOS', 'INT', 'JURIDICO', '10', ['1', '30'], 'Retencion de auditoria_evento', true),
   def('RETENCION_NOTIFICACIONES_MESES', 'INT', 'PRIVACIDAD', '24', ['3', '120'], 'Retencion de notificaciones y entregas de correo'),
   def('LABOR_SOCIAL_HORAS_MINIMAS', 'INT', 'LABOR_SOCIAL', '0', ['0', '1000'], 'Horas minimas exigidas por periodo (sin definir)', true),
+  def('LABOR_SOCIAL_HORAS_MAX_DIA', 'INT', 'LABOR_SOCIAL', '8', ['1', '24'], 'Horas maximas de labor social por dia, sumando todas las actividades de la fecha (a confirmar con el Acuerdo 023)', true),
   def('AMPLIACION_MOTIVO_MIN_CARACTERES', 'INT', 'PLAZOS', '15', ['10', '200'], 'Longitud minima del motivo de ampliacion/suspension'),
   def('PERFIL_EDAD_MAYORIA', 'INT', 'JURIDICO', '18', ['18', '18'], 'Edad de mayoria para derivar es_menor'),
   def('REGISTRO_VERIFICACION_EMAIL_HORAS', 'INT', 'SEGURIDAD', '48', ['1', '168'], 'Vigencia del enlace de verificacion de correo'),
   def('NOTIF_REINTENTOS_MAX', 'INT', 'NOTIFICACIONES', '8', ['1', '20'], 'Reintentos del worker de correo'),
   def('BLOQUEAR_ENVIO_SIN_TEXTO_OFICIAL', 'BOOL', 'JURIDICO', 'false', [null, null], 'Si es true, /enviar responde 422 DECLARACIONES_SIN_TEXTO_OFICIAL mientras existan declaraciones vigentes sin texto oficial confirmado (GE-F041)', true),
+  def('REPORTE_UMBRAL_SINCRONO', 'INT', 'PLAZOS', '200', ['1', '5000'], 'Maximo de expedientes para generar un consolidado dentro de la peticion; por encima se encola'),
+  def('REPORTE_RETENCION_HORAS', 'INT', 'PLAZOS', '24', ['1', '168'], 'Horas que se conserva un reporte generado antes de purgarse'),
+  def('ALERTA_PRESUPUESTO_PORCENTAJE', 'INT', 'ALERTAS', '90', ['50', '100'], 'Porcentaje de ocupacion de cupos/presupuesto de un beneficio desde el que seguimiento_beneficios alerta al administrador'),
+  def('ELEGIBILIDAD_RENOVACION_ESTADOS', 'STRING', 'ACUERDO', 'ACTIVO,CUMPLIDO', [null, null], 'Estados de otorgamiento en la convocatoria inmediatamente anterior que habilitan RENOVACION (separados por coma). A confirmar con el Acuerdo 023', true),
+  def('ELEGIBILIDAD_REINTEGRO_PERIODOS_SIN_APOYO_MIN', 'INT', 'ACUERDO', '1', ['0', '10'], 'Periodos (convocatorias) minimos sin apoyo entre el ultimo otorgamiento y la convocatoria actual para habilitar REINTEGRO. A confirmar con el Acuerdo 023', true),
+  def('ELEGIBILIDAD_REINTEGRO_EXCLUYE_REVOCADOS', 'BOOL', 'ACUERDO', 'true', [null, null], 'Si es true, un otorgamiento REVOCADO no habilita REINTEGRO ni RENOVACION. A confirmar con el Acuerdo 023', true),
 ];
 
 const porClave = new Map<string, DefinicionClave>(CONFIGURACION_DEFAULTS.map((d) => [d.clave, d]));

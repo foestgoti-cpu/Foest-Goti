@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Resumen del trámite {{codigo_expediente}}</title>
+<style>
+  @page { size: A4; }
+  body { font-family: 'Times New Roman', 'Liberation Serif', serif; font-size: 11px; color: #000; margin: 0; }
+  h1 { font-size: 16px; margin: 0 0 2px 0; color: #000; }
+  h2 { font-size: 12px; margin: 16px 0 6px 0; padding-bottom: 2px; border-bottom: 1.5px solid #238dc1; color: #000; }
+  .sub { font-size: 10px; margin: 0 0 10px 0; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  th, td { border: 0.5px solid #000; padding: 4px 6px; text-align: left; vertical-align: top; }
+  th { background: #238dc1; color: #000; font-weight: bold; }
+  td.k { width: 32%; font-weight: bold; }
+  .aviso { margin-top: 18px; border: 0.5px solid #000; padding: 6px 8px; font-size: 9.5px; }
+  .obs { border: 0.5px solid #000; padding: 6px 8px; margin-bottom: 6px; }
+  .firma { font-size: 10px; margin-top: 4px; }
+  .vacio { font-style: italic; }
+</style>
+</head>
+<body>
+  <h1>Resumen ejecutivo del trámite</h1>
+  <p class="sub">Fondo para la Educación Superior de Tocancipá - FOEST. Generado el {{generado_en_texto}}.</p>
+
+  <h2>Identificación del trámite</h2>
+  <table>
+    <tr><td class="k">Código del expediente</td><td>{{codigo_expediente}}</td></tr>
+    <tr><td class="k">Convocatoria</td><td>{{convocatoria_nombre}} ({{convocatoria_periodo}})</td></tr>
+    <tr><td class="k">Solicitante</td><td>{{solicitante}}</td></tr>
+    <tr><td class="k">Tipo de trámite</td><td>{{tipo_solicitud}}</td></tr>
+    <tr><td class="k">Estado actual</td><td>{{estado_texto}}</td></tr>
+    <tr><td class="k">Ciclo</td><td>{{ciclo}}</td></tr>
+    <tr><td class="k">Fecha de envío</td><td>{{fecha_envio}}</td></tr>
+    {{#if programa}}<tr><td class="k">Programa</td><td>{{programa}}</td></tr>{{/if}}
+  </table>
+
+  <h2>Beneficios solicitados</h2>
+  {{#if beneficios.length}}
+  <table>
+    <thead><tr><th>Beneficio</th><th>Decisión</th>{{#if mostrar_montos}}<th>Monto aprobado (COP)</th>{{/if}}</tr></thead>
+    <tbody>
+    {{#each beneficios}}
+      <tr><td>{{nombre}}</td><td>{{decision}}</td>{{#if ../mostrar_montos}}<td>{{monto}}</td>{{/if}}</tr>
+    {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <p class="vacio">No se registran beneficios solicitados.</p>
+  {{/if}}
+
+  <h2>Línea de estados</h2>
+  {{#if historial.length}}
+  <table>
+    <thead><tr><th>Fecha</th><th>Estado</th><th>Registrado por</th></tr></thead>
+    <tbody>
+    {{#each historial}}
+      <tr><td>{{fecha}}</td><td>{{estado}}</td><td>{{quien}}</td></tr>
+    {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <p class="vacio">Sin movimientos registrados.</p>
+  {{/if}}
+
+  {{#if observacion}}
+  <h2>Observaciones</h2>
+  <div class="obs">
+    {{#if observacion.texto}}<div>{{observacion.texto}}</div>{{/if}}
+    {{#if observacion.campos.length}}<div>Campos observados: {{observacion.campos_texto}}</div>{{/if}}
+    {{#if observacion.documentos.length}}<div>Documentos observados: {{observacion.documentos_texto}}</div>{{/if}}
+    <div class="firma">{{observacion.firma}}</div>
+  </div>
+  {{/if}}
+
+  <div class="aviso">
+    Este resumen es informativo. No sustituye los formatos oficiales del Fondo ni constituye acto administrativo.
+  </div>
+</body>
+</html>

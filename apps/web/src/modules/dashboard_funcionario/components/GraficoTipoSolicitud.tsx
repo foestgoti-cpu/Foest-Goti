@@ -49,7 +49,7 @@ export function GraficoTipoSolicitud({ datos, cargando, atenuado }: GraficoTipoS
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={items} layout="vertical" margin={{ top: 4, right: 48, bottom: 4, left: 8 }} barCategoryGap={12}>
               <CartesianGrid horizontal={false} stroke={REJILLA} strokeDasharray="0" />
-              <XAxis type="number" allowDecimals={false} tick={FUENTE_EJE} axisLine={false} tickLine={false} tickFormatter={(v: number) => formatoEntero.format(v)} />
+              <XAxis type="number" allowDecimals={false} tick={FUENTE_EJE} axisLine={false} tickLine={false} tickFormatter={(v: number) => formatoEntero.format(Number(v))} />
               <YAxis type="category" dataKey="etiqueta" width={150} tick={FUENTE_EJE} axisLine={false} tickLine={false} />
               <Tooltip
                 cursor={{ fill: 'rgba(35, 141, 193, 0.10)' }}
@@ -61,7 +61,7 @@ export function GraficoTipoSolicitud({ datos, cargando, atenuado }: GraficoTipoS
                 }}
               />
               <Bar dataKey="total" name="Postulaciones" fill={AZUL} barSize={20} radius={[0, 4, 4, 0]} isAnimationActive={false}>
-                <LabelList dataKey="total" position="right" fill="#000000" fontSize={12} formatter={(v: number) => formatoEntero.format(v)} />
+                <LabelList dataKey="total" position="right" fill="#000000" fontSize={12} formatter={(v: unknown) => formatoEntero.format(Number(v))} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

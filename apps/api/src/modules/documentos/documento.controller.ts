@@ -1,54 +1,90 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
+import type { ConfirmarDocumentoDto, RequisitosQueryDto, UploadUrlDto } from '@foest/shared';
+import { contextoDesdeRequest, usuarioActual } from '../../shared';
+import type { UrlLecturaQuery } from './documento.dto';
+import { documentoService } from './documento.service';
 import { requisitosService } from './requisitos.service';
-import { TipoDocumento, EstadoCarga } from '@foest/shared';
-// Se asume que el servicio principal (DocumentoService) existe
-// const documentoService = new DocumentoService();
 
+/** Controlador: traduce HTTP <-> servicio. Sin reglas de negocio. */
 export class DocumentoController {
-  
-  async getRequisitosConvocatoria(req: Request, res: Response, next: NextFunction) {
+  /** POST /postulaciones/:id/documentos/upload-url */
+  uploadUrl = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
-      const { beneficios, tipo_tramite } = req.query;
-      
-      if (beneficios && tipo_tramite) {
-        const beneficiosArr = (beneficios as string).split(',');
-        const result = await requisitosService.calcularExigibles(beneficiosArr, tipo_tramite as string);
-        return res.json(result);
-      }
-      
-      const requisitos = await requisitosService.getRequisitosByConvocatoria(id);
-      return res.json(requisitos);
-    } catch (error) {
-      next(error);
+      const r = await documentoService.solicitarSubida(usuarioActual(req), contextoDesdeRequest(req), req.params.id as string, req.body as UploadUrlDto);
+      res.status(201).json(r);
+    } catch (e) {
+      next(e);
     }
-  }
+  };
 
-  // Placeholder para los demás endpoints
-  async uploadUrl(req: Request, res: Response, next: NextFunction) {
-    res.status(501).json({ error: 'Not implemented' });
-  }
+  /** POST /documentos/:id/confirmar */
+  confirmarDocumento = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const r = await documentoService.confirmar(usuarioActual(req), contextoDesdeRequest(req), req.params.id as string, req.body as ConfirmarDocumentoDto);
+      res.status(r.estado_carga === 'ESCANEANDO' ? 202 : 200).json(r);
+    } catch (e) {
+      next(e);
+    }
+  };
 
-  async confirmarDocumento(req: Request, res: Response, next: NextFunction) {
-    res.status(501).json({ error: 'Not implemented' });
-  }
+  /** GET /postulaciones/:id/documentos */
+  getDocumentosPostulacion = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const u = usuarioActual(req);
+      res.json(await documentoService.listarPorPostulacion({ id: u.id, rol: u.rol }, req.params.id as string));
+    } catch (e) {
+      next(e);
+    }
+  };
 
-  async getDocumentosPostulacion(req: Request, res: Response, next: NextFunction) {
-    res.status(501).json({ error: 'Not implemented' });
-  }
+  /** GET /documentos/:id */
+  getDocumentoMetadata = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const u = usuarioActual(req);
+      res.json(await documentoService.obtenerMetadatos({ id: u.id, rol: u.rol }, req.params.id as string));
+    } catch (e) {
+      next(e);
+    }
+  };
 
-  async getDocumentoMetadata(req: Request, res: Response, next: NextFunction) {
-    res.status(501).json({ error: 'Not implemented' });
-  }
+  /** GET /documentos/:id/url */
+  getDocumentoUrl = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const u = usuarioActual(req);
+      const query = req.query as unknown as UrlLecturaQuery;
+      res.json(await documentoService.generarUrlLectura(req.params.id as string, { id: u.id, rol: u.rol }, { ctx: contextoDesdeRequest(req), version: query.version }));
+    } catch (e) {
+      next(e);
+    }
+  };
 
-  async getDocumentoUrl(req: Request, res: Response, next: NextFunction) {
-    res.status(501).json({ error: 'Not implemented' });
-  }
+  /** DELETE /documentos/:id */
+  deleteDocumento = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      await documentoService.eliminar(usuarioActual(req), contextoDesdeRequest(req), req.params.id as string);
+      res.status(204).end();
+    } catch (e) {
+      next(e);
+    }
+  };
 
-  async deleteDocumento(req: Request, res: Response, next: NextFunction) {
-    res.status(501).json({ error: 'Not implemented' });
-  }
+  /** GET /tipos-documento */
+  getTiposDocumento = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      res.json({ data: await requisitosService.listarTipos() });
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  /** GET /convocatorias/:id/requisitos-documentos */
+  getRequisitosConvocatoria = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      res.json(await requisitosService.requisitosDeConvocatoria(req.params.id as string, req.query as unknown as RequisitosQueryDto));
+    } catch (e) {
+      next(e);
+    }
+  };
 }
 
 export const documentoController = new DocumentoController();
-

@@ -14,6 +14,7 @@ import {
 } from '../../shared';
 import { configuracionService } from '../catalogos_configuracion';
 import { encolarNotificacion } from '../notificaciones';
+import { sincronizarComite } from '../asignaciones';
 import {
   camposCalculados,
   cierreExclusivoDesdeFechaLocal,
@@ -795,7 +796,6 @@ export const convocatoriasService = {
       .in('estado', ['PENDIENTE', 'EN_EVALUACION']);
     if (errP) fallo('No fue posible consultar los expedientes en curso', errP);
     const expedientes = (enCurso ?? []) as Array<{ id: string; estado: EstadoPostulacion }>;
-    const enEvaluacion = expedientes.filter((p) => p.estado === 'EN_EVALUACION').map((p) => p.id);
 
     if (deseados.size === 0 && actual.estado === 'HABILITADA' && expedientes.length > 0) {
       throw AppError.conflicto('COMITE_VACIO', 'No se puede dejar vacio el comite de una convocatoria habilitada con expedientes en curso', {
@@ -803,13 +803,13 @@ export const convocatoriasService = {
       });
     }
 
-    // TODO(asignaciones): cuando exista el modulo `asignaciones`, reemplazar esta
-    // deteccion por `asignacion.service.sincronizarComite(convocatoriaId, retirados, dto.asignaciones)`,
-    // que devuelve las asignaciones ACTIVA de cada retirado (POSTULACION_ASIGNACION) y las
-    // libera con motivo CAMBIO_COMITE (LIBERAR) o las marca "fuera de comite" (MANTENER).
-    // Mientras tanto, se consideran afectadas las postulaciones EN_EVALUACION de la convocatoria.
-    const expedientes_afectados: ExpedienteAfectado[] =
-      retirados.length > 0 && enEvaluacion.length > 0 ? retirados.map((f) => ({ funcionario_id: f, postulacion_ids: enEvaluacion })) : [];
+    // Asignaciones ACTIVA de cada retirado en esta convocatoria (modulo asignaciones; `MANTENER` solo informa).
+    // Con `asignaciones: LIBERAR` se liberan (CAMBIO_COMITE) tras retirar al funcionario; con `MANTENER` quedan "fuera de comite".
+    const expedientes_afectados: ExpedienteAfectado[] = [];
+    for (const f of retirados) {
+      const { afectadas } = await sincronizarComite(id, f, 'MANTENER');
+      if (afectadas.length > 0) expedientes_afectados.push({ funcionario_id: f, postulacion_ids: afectadas });
+    }
     if (expedientes_afectados.length > 0 && !dto.asignaciones) {
       throw AppError.conflicto(
         'ASIGNACIONES_PENDIENTES',
@@ -827,6 +827,9 @@ export const convocatoriasService = {
         .is('retirado_en', null)
         .in('funcionario_id', retirados);
       if (error) fallo('No fue posible retirar funcionarios del comite', error);
+      if (dto.asignaciones === 'LIBERAR') {
+        for (const afectado of expedientes_afectados) await sincronizarComite(id, afectado.funcionario_id, 'LIBERAR');
+      }
     }
     if (agregados.length > 0) {
       const { error } = await supabaseAdmin

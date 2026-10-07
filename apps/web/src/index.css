@@ -1,8 +1,48 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Estilo base institucional: fondo blanco, texto negro, tipografia sobria. */
+/*
+ * Tailwind 4: el tema se declara en CSS con @theme.
+ * Paleta ESTRICTA (DECISIONES section 19, diseno visual):
+ *   blanco #ffffff, primario #238dc1 (tintes 10 % y 20 % por opacidad), texto negro #000000.
+ * `--color-*: initial` borra TODA la paleta por defecto de Tailwind, de modo que
+ * ninguna clase de color fuera de esta lista compile. Sin emojis ni iconos decorativos.
+ */
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+  --color-primary: #238dc1;
+  --color-primary-10: rgba(35, 141, 193, 0.1);
+  --color-primary-20: rgba(35, 141, 193, 0.2);
+  --color-ink: #000000;
+
+  --font-sans: system-ui, "Segoe UI", Arial, sans-serif;
+  --font-mono: Consolas, "Courier New", monospace;
+
+  /* Radios: 2px en todo (excepto none y full). */
+  --radius: 2px;
+  --radius-xs: 2px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
+  --radius-4xl: 2px;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+
+  --spacing-gutter: 16px;
+  --container-content: 1200px;
+}
+
+/*
+ * Notas de migracion v3 -> v4: `border` sin color usa currentColor (igual que en
+ * v3 con la paleta reemplazada); `outline-none` (v3) equivale a `outline-hidden` (v4).
+ */
+
 @layer base {
   html {
     @apply bg-white text-ink antialiased;
@@ -27,7 +67,7 @@
     @apply underline;
   }
   *:focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-1 ring-offset-white;
+    @apply outline-hidden ring-2 ring-primary ring-offset-1 ring-offset-white;
   }
   ::selection {
     @apply bg-primary-20 text-ink;

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>{{titulo_formato}}</title>
+<style>
+  @page { size: A4; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Times New Roman", "Liberation Serif", Georgia, serif; font-size: 10pt; line-height: 1.35; color: #000; background: #fff; }
+  header.cabecera { border-bottom: 1.5pt solid #000; padding-bottom: 6pt; margin-bottom: 10pt; }
+  header.cabecera .entidad { font-size: 9pt; text-transform: uppercase; letter-spacing: 0.04em; margin: 0; }
+  header.cabecera .fondo { font-size: 9pt; margin: 0; }
+  h1 { font-size: 14pt; margin: 6pt 0 2pt 0; text-transform: uppercase; }
+  .codigo-formato { font-size: 9pt; margin: 0; }
+  h2 { font-size: 10.5pt; margin: 12pt 0 4pt 0; padding-bottom: 2pt; border-bottom: 0.75pt solid #000; text-transform: uppercase; page-break-after: avoid; }
+  table.datos { width: 100%; border-collapse: collapse; page-break-inside: auto; }
+  table.datos tr { page-break-inside: avoid; }
+  table.datos th, table.datos td { border: 0.5pt solid #000; padding: 3pt 5pt; vertical-align: top; text-align: left; font-size: 9.5pt; }
+  table.datos th { width: 38%; font-weight: bold; background: #fff; }
+  table.datos td { min-height: 12pt; }
+  .declaracion { margin: 6pt 0; page-break-inside: avoid; text-align: justify; }
+  .declaracion .titulo { font-weight: bold; }
+  .aviso { border: 0.75pt solid #000; padding: 5pt 7pt; margin: 10pt 0; font-size: 9pt; page-break-inside: avoid; }
+  .firmas { margin-top: 26pt; page-break-inside: avoid; }
+  .firma { width: 62%; margin-top: 30pt; }
+  .firma .linea { border-top: 0.75pt solid #000; padding-top: 2pt; font-size: 9pt; }
+  .huella { float: right; width: 28mm; height: 32mm; border: 0.75pt solid #000; margin-top: -10pt; text-align: center; font-size: 7.5pt; padding-top: 24mm; }
+</style>
+</head>
+<body>
+  <header class="cabecera">
+    <p class="entidad">Alcaldía Municipal de Tocancipá</p>
+    <p class="fondo">Fondo para la Educación Superior de Tocancipá - FOEST</p>
+    <h1>Formulario de solicitud</h1>
+    <p class="codigo-formato">Formato {{codigo_formato}} - Versión {{version_plantilla}}</p>
+  </header>
+
+  {{#each secciones}}
+  <section>
+    <h2>Sección {{numero}}. {{titulo}}</h2>
+    <table class="datos">
+      <tbody>
+        {{#each filas}}
+        <tr><th>{{etiqueta}}</th><td>{{valor}}</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+  {{/each}}
+
+  <section>
+    <h2>Sección 9. Declaraciones juramentadas</h2>
+    {{#each declaraciones}}
+    <div class="declaracion">
+      <span class="titulo">{{titulo}}.</span> {{texto}}
+    </div>
+    {{/each}}
+  </section>
+
+  <div class="aviso">
+    El código de verificación y el código QR de este documento permiten comprobar que fue emitido por la plataforma FOEST y detectar alteraciones. No constituyen firma digital certificada ni reemplazan la firma manuscrita. Este formulario debe imprimirse, firmarse de puño y letra, escanearse y cargarse en la plataforma.
+  </div>
+
+  <div class="firmas">
+    <p>En constancia de lo anterior, el solicitante firma el presente formulario bajo la gravedad de juramento.</p>
+    <div class="huella">Huella índice derecho</div>
+    <div class="firma">
+      <div class="linea">Firma del solicitante</div>
+      <div>Nombre: {{solicitante}}</div>
+      <div>Documento: {{documento}}</div>
+      <div style="margin-top:8pt">Fecha de firma (día / mes / año): ____ / ____ / ________</div>
+    </div>
+  </div>
+
+</body>
+</html>

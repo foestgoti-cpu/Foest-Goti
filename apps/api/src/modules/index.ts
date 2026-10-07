@@ -11,8 +11,13 @@ import { beneficiarioDashboardRoutes } from './beneficiario_dashboard/beneficiar
 import { notificacionesRoutes } from './notificaciones/notificaciones.routes';
 import { convocatoriasRoutes, convocatoriasPublicoRoutes, beneficiosRoutes } from './convocatorias/convocatorias.routes';
 import { postulacionesRoutes } from './postulaciones/postulaciones.routes';
-import { documentoRouter } from './documentos/documento.routes';
-import { formatoRouter } from './formatos_oficiales/formato.routes';
+import { documentosRoutes, documentosPostulacionRoutes, tiposDocumentoRoutes, documentosConvocatoriaRoutes } from './documentos';
+import { formatosRoutes, formatosPostulacionRoutes, formatosPublicoRoutes } from './formatos_oficiales';
+import { asignacionesRoutes } from './asignaciones';
+import { evaluacionRoutes } from './evaluacion';
+import { exportReportsRoutes } from './export_reports';
+import { seguimientoRoutes } from './seguimiento_beneficios';
+import { laborSocialRoutes, laborSocialBeneficiarioRoutes } from './labor_social';
 
 /**
  * Registro de routers por modulo.
@@ -52,8 +57,24 @@ export const modulos: ModuloRegistrado[] = [
   { prefijo: '/publico/convocatorias', router: convocatoriasPublicoRoutes },
   { prefijo: '/beneficios', router: beneficiosRoutes },
   { prefijo: '/postulaciones', router: postulacionesRoutes },
-  { prefijo: '/', router: documentoRouter },
-  { prefijo: '/', router: formatoRouter },
+  // documentos: soportes (rutas /postulaciones/:id/documentos..., /documentos, /tipos-documento, /convocatorias/:id/requisitos-documentos)
+  { prefijo: '/postulaciones', router: documentosPostulacionRoutes },
+  { prefijo: '/documentos', router: documentosRoutes },
+  { prefijo: '/tipos-documento', router: tiposDocumentoRoutes },
+  { prefijo: '/convocatorias', router: documentosConvocatoriaRoutes },
+  // formatos_oficiales: GE-F041 / GE-F043 (generar y listar por postulacion, metadatos y descarga, verificacion publica)
+  { prefijo: '/postulaciones', router: formatosPostulacionRoutes },
+  { prefijo: '/formatos', router: formatosRoutes },
+  { prefijo: '/publico/verificar', router: formatosPublicoRoutes },
+  { prefijo: '/asignaciones', router: asignacionesRoutes },
+  { prefijo: '/evaluacion', router: evaluacionRoutes },
+  // export_reports: resumen.pdf, consolidados XLSX/CSV, jobs, mis reportes y descarga
+  { prefijo: '/reportes', router: exportReportsRoutes },
+  // seguimiento_beneficios: otorgamientos, desembolsos, cupos y vista del beneficiario
+  { prefijo: '/seguimiento', router: seguimientoRoutes },
+  // labor_social: certificados y actividades; GET /beneficiarios/:beneficiarioId/labor-social (2 segmentos, sin choque con /:id de accounts)
+  { prefijo: '/labor-social', router: laborSocialRoutes },
+  { prefijo: '/beneficiarios', router: laborSocialBeneficiarioRoutes },
 ];
 
 export function registrarModulos(app: Express, apiPrefix: string): void {

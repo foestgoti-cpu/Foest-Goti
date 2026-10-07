@@ -161,7 +161,43 @@ export function evaluarPerfil(
 // Funcionarios
 // =============================================================================
 
+/**
+ * Expedientes que el funcionario tiene ASIGNADOS (modulo asignaciones, tabla postulacion_asignacion):
+ * son los que resuelve la reasignacion masiva. `null` si la tabla aun no existe (migracion 0016 sin aplicar).
+ */
+async function contarAsignacionesActivasFuncionario(usuarioId: string): Promise<PendientesFuncionario | null> {
+  try {
+    const { data, error, count } = await supabaseAdmin
+      .from('postulacion_asignacion')
+      .select('id, postulacion_id, postulacion:postulacion_id (convocatoria_id, estado, convocatoria:convocatoria_id (nombre))', { count: 'exact' })
+      .eq('funcionario_id', usuarioId)
+      .eq('estado', 'ACTIVA')
+      .order('asignada_en', { ascending: true })
+      .limit(50);
+    if (error) return null;
+    const filas = (data ?? []) as unknown as Array<{
+      postulacion_id: string;
+      postulacion: { convocatoria_id: string; estado: string; convocatoria: { nombre: string } | null } | null;
+    }>;
+    const convocatorias = new Set(filas.map((f) => f.postulacion?.convocatoria_id).filter((c): c is string => Boolean(c)));
+    return {
+      asignaciones_activas: convocatorias.size,
+      pendientes: count ?? filas.length,
+      expedientes: filas.map((f) => ({
+        postulacion_id: f.postulacion_id,
+        convocatoria_id: f.postulacion?.convocatoria_id ?? '',
+        convocatoria_nombre: f.postulacion?.convocatoria?.nombre ?? null,
+        estado: f.postulacion?.estado ?? 'EN_EVALUACION',
+      })),
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function contarPendientesFuncionario(usuarioId: string): Promise<PendientesFuncionario> {
+  const porExpediente = await contarAsignacionesActivasFuncionario(usuarioId);
+  if (porExpediente) return porExpediente;
   const { data: asignaciones, error: errAsig } = await supabaseAdmin
     .from('asignacion_funcionario')
     .select('convocatoria_id')
