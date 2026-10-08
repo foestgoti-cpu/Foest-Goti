@@ -159,3 +159,13 @@ apps/web/src/modules/<modulo>/
 - Codigos de respuesta: 401 / 403 (rol o CUENTA_INACTIVA) / 404 (ajeno) / 409 (estado-version) / 422 (datos). Error siempre `{ code, message, details? }`.
 - `docs/` no se modifica. Si un modulo detecta una contradiccion con `DECISIONES.md`, gana `DECISIONES.md` (seccion 19 sobre el resto) y se deja nota en el PR.
 - No commits sin indicacion expresa. Nunca claves en el repositorio.
+
+### 6.6 Dependencias y `npm audit`
+
+El proyecto debe mantenerse en **0 vulnerabilidades** (`npm audit`). Dos piezas de configuracion lo sostienen y no deben revertirse sin sustituirlas:
+
+- `overrides` en el `package.json` de la raiz: `shell-quote ^1.12.0` (corrige una vulnerabilidad critica de `concurrently`) y `js-yaml ^4.1.0`. La segunda corta una cadena de 20 alertas moderadas (`babel-plugin-istanbul` -> `@istanbuljs/load-nyc-config` -> `js-yaml` 3 -> `argparse` 1 -> `sprintf-js`, sin version corregida); `js-yaml` 4 ya no depende de `sprintf-js`.
+- `@istanbuljs/load-nyc-config` como devDependency de `apps/api`: sin ella npm no instala esa libreria y la cobertura de Jest (`jest --coverage`) fallaria al cargar la configuracion.
+- Tras cambiar overrides, si npm no re-resuelve el arbol, se quitan de `package-lock.json` las entradas afectadas y se ejecuta `npm install`. Verificar siempre que `npm audit` quede en 0 **y** que `npm test` y `jest --coverage` sigan funcionando (un audit en cero por ausencia de un paquete necesario no es un arreglo).
+
+Avisos de deprecacion de `npm install` (`whatwg-encoding`, `glob` 10) no son vulnerabilidades: vienen de `jsdom` y de utilidades de prueba.
