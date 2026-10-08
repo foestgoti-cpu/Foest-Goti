@@ -5,13 +5,21 @@ import { z } from 'zod';
  * `as const` + Zod, mismo patron que `enums.ts` (sin `enum` de TypeScript).
  */
 
-export const TIPOS_REPORTE = ['RESUMEN_PDF', 'CONSOLIDADO_XLSX', 'CONSOLIDADO_CSV'] as const;
+export const TIPOS_REPORTE = [
+  'RESUMEN_PDF',
+  'CONSOLIDADO_HTML',
+  'CONSOLIDADO_CSV',
+  // legado: reportes generados antes del cambio; ya no se pueden solicitar
+  'CONSOLIDADO_XLSX',
+] as const;
 export const TipoReporteSchema = z.enum(TIPOS_REPORTE);
 export type TipoReporte = z.infer<typeof TipoReporteSchema>;
 export const TipoReporte = {
   RESUMEN_PDF: 'RESUMEN_PDF',
-  CONSOLIDADO_XLSX: 'CONSOLIDADO_XLSX',
+  CONSOLIDADO_HTML: 'CONSOLIDADO_HTML',
   CONSOLIDADO_CSV: 'CONSOLIDADO_CSV',
+  // legado: reportes generados antes del cambio; ya no se pueden solicitar
+  CONSOLIDADO_XLSX: 'CONSOLIDADO_XLSX',
 } as const satisfies Record<TipoReporte, TipoReporte>;
 
 export const ESTADOS_REPORTE = ['COLA', 'PROCESANDO', 'LISTO', 'FALLIDO', 'EXPIRADO'] as const;
@@ -28,13 +36,13 @@ export const EstadoReporte = {
 /** Estados en los que el reporte aun esta en curso (impiden una solicitud identica). */
 export const ESTADOS_REPORTE_EN_CURSO: readonly EstadoReporte[] = ['COLA', 'PROCESANDO'];
 
-export const FORMATOS_CONSOLIDADO = ['XLSX', 'CSV'] as const;
+export const FORMATOS_CONSOLIDADO = ['HTML', 'CSV'] as const;
 export const FormatoConsolidadoSchema = z.enum(FORMATOS_CONSOLIDADO);
 export type FormatoConsolidado = z.infer<typeof FormatoConsolidadoSchema>;
-export const FormatoConsolidado = { XLSX: 'XLSX', CSV: 'CSV' } as const satisfies Record<FormatoConsolidado, FormatoConsolidado>;
+export const FormatoConsolidado = { HTML: 'HTML', CSV: 'CSV' } as const satisfies Record<FormatoConsolidado, FormatoConsolidado>;
 
 export const TIPO_REPORTE_POR_FORMATO: Readonly<Record<FormatoConsolidado, TipoReporte>> = {
-  XLSX: 'CONSOLIDADO_XLSX',
+  HTML: 'CONSOLIDADO_HTML',
   CSV: 'CONSOLIDADO_CSV',
 };
 

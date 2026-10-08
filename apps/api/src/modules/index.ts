@@ -68,7 +68,7 @@ export const modulos: ModuloRegistrado[] = [
   { prefijo: '/publico/verificar', router: formatosPublicoRoutes },
   { prefijo: '/asignaciones', router: asignacionesRoutes },
   { prefijo: '/evaluacion', router: evaluacionRoutes },
-  // export_reports: resumen.pdf, consolidados XLSX/CSV, jobs, mis reportes y descarga
+  // export_reports: resumen.pdf, consolidados HTML/CSV, jobs, mis reportes y descarga
   { prefijo: '/reportes', router: exportReportsRoutes },
   // seguimiento_beneficios: otorgamientos, desembolsos, cupos y vista del beneficiario
   { prefijo: '/seguimiento', router: seguimientoRoutes },

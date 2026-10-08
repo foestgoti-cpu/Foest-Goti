@@ -37,7 +37,7 @@ export function SolicitarConsolidadoForm({ onSolicitado }: { onSolicitado?: () =
   const { can } = usePermissions();
   const convocatorias = useConvocatorias({ page: 1, page_size: 100 });
   const solicitar = useSolicitarConsolidado();
-  const [f, setF] = useState({ convocatoria_id: '', formato: 'XLSX' as FormatoConsolidado, estado: '', tipo_solicitud: '', beneficio: '', desde: '', hasta: '' });
+  const [f, setF] = useState({ convocatoria_id: '', formato: 'HTML' as FormatoConsolidado, estado: '', tipo_solicitud: '', beneficio: '', desde: '', hasta: '' });
   const [confirmar, setConfirmar] = useState(false);
   const [mensaje, setMensaje] = useState<{ tipo: 'exito' | 'error'; texto: string } | null>(null);
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
@@ -88,7 +88,7 @@ export function SolicitarConsolidadoForm({ onSolicitado }: { onSolicitado?: () =
               opciones={(convocatorias.data?.data ?? []).map((c) => ({ valor: c.id, etiqueta: `${periodo(c.anio, c.semestre)} - ${c.nombre}` }))}
             />
           </FormField>
-          <FormField etiqueta="Formato" nombre="formato" obligatorio>
+          <FormField etiqueta="Formato" nombre="formato" obligatorio ayuda="El HTML se abre en el navegador y se puede imprimir o guardar como PDF; el CSV es para análisis en hojas de cálculo.">
             <Select value={f.formato} onChange={(e) => set('formato', e.target.value)} opciones={FORMATOS_CONSOLIDADO.map((x) => ({ valor: x, etiqueta: x }))} />
           </FormField>
           <FormField etiqueta="Estado de la postulacion" nombre="estado">

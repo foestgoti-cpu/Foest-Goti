@@ -18,7 +18,7 @@ import { encolarNotificacion } from '../notificaciones';
 import { columnasPara } from './consolidado.columnas';
 import { cargarTodasLasFilas, listarIdsExpedientes, type ConvocatoriaMinima } from './consolidado.query';
 import { generarCsv } from './csv.service';
-import { generarXlsx, type CriterioFila } from './excel.service';
+import { generarHtml, HtmlDemasiadoGrandeError, type CriterioFila } from './html.service';
 import {
   BUCKET_REPORTES,
   ERRORES_REPORTE,
@@ -33,6 +33,7 @@ type ContextoAuditoria = Pick<EventoAuditoria, 'ip' | 'user_agent' | 'request_id
 
 const COLUMNAS_REPORTE = '*, convocatoria:convocatoria_id(nombre)';
 const MAX_INTENTOS = 3;
+const ROL_TEXTO: Record<string, string> = { ADMINISTRADOR: 'Administrador', FUNCIONARIO: 'Funcionario' };
 const TEXTO_TIPO_SOLICITUD: Record<string, string> = { PRIMERA_VEZ: 'Primera vez', RENOVACION: 'Renovación', REINTEGRO: 'Reintegro' };
 
 /** Error interno con codigo generico persistible (sin datos personales). */
@@ -74,6 +75,23 @@ export function aDto(r: FilaConConvocatoria): ReporteDto {
     expira_en: r.expira_en,
     incluye_sensibles: r.incluye_sensibles,
   };
+}
+
+/** `consolidado-<convocatoria>-<fecha>.html` saneado: solo [a-z0-9-], sin tildes ni caracteres de ruta. */
+export function nombreArchivoHtml(convocatoria: string, fecha: Date): string {
+  const slug =
+    convocatoria
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60) || 'convocatoria';
+  return `consolidado-${slug}-${fecha.toISOString().slice(0, 10)}.html`;
+}
+
+function extensionLegada(tipo: string): string {
+  return tipo === 'CONSOLIDADO_XLSX' ? 'xlsx' : tipo === 'CONSOLIDADO_HTML' ? 'html' : tipo === 'RESUMEN_PDF' ? 'pdf' : 'csv';
 }
 
 function fallo(mensaje: string, error: { message?: string } | null): never {
@@ -189,6 +207,9 @@ export class ExportReportsService {
       const codigo = e instanceof ErrorReporte ? e.codigo : ERRORES_REPORTE.ERROR_GENERACION;
       logger.error({ err: e, reporte_id: reporte.id }, 'Fallo la generacion sincrona del reporte');
       await this.marcarFallido(reporte.id, codigo);
+      if (codigo === ERRORES_REPORTE.TAMANO_EXCEDIDO) {
+        throw AppError.datosInvalidos('REPORTE_DEMASIADO_GRANDE', 'El consolidado es demasiado grande para el formato HTML. Solicítelo en formato CSV o aplique filtros.');
+      }
       throw AppError.interno('No fue posible generar el reporte. Intente nuevamente.');
     }
     return { http: 200, respuesta: { reporte: aDto(reporte), sincrono: true } };
@@ -213,8 +234,9 @@ export class ExportReportsService {
     convocatoria: ConvocatoriaMinima,
     ids: string[],
     incluirSensibles: boolean,
+    rolSolicitante: Rol,
   ): Promise<ArchivoGenerado> {
-    const formato = reporte.tipo === 'CONSOLIDADO_XLSX' ? 'XLSX' : 'CSV';
+    const formato = reporte.tipo === 'CONSOLIDADO_CSV' ? 'CSV' : 'HTML';
     const filtros = (reporte.parametros?.filtros as FiltrosConsolidado | undefined) ?? {};
     const columnas = columnasPara(incluirSensibles);
     const { filas, resumen } = await cargarTodasLasFilas(convocatoria, ids, incluirSensibles);
@@ -229,11 +251,14 @@ export class ExportReportsService {
       { criterio: 'Beneficio', valor: filtros.beneficio ?? 'Todos' },
       { criterio: 'Fecha de envío desde', valor: filtros.desde ?? 'Sin límite' },
       { criterio: 'Fecha de envío hasta', valor: filtros.hasta ?? 'Sin límite' },
-      { criterio: 'Incluye datos sensibles (documento, estrato, SISBEN)', valor: incluirSensibles ? 'Sí' : 'No' },
-      { criterio: 'Generado el', valor: new Intl.DateTimeFormat('es-CO', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Bogota' }).format(new Date()) },
+      { criterio: 'Incluye datos sensibles', valor: incluirSensibles ? 'Sí' : 'No' },
     ];
-    const buffer = await generarXlsx(columnas, filas, resumen, criterios);
-    return { buffer, contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', extension: 'xlsx' };
+    const buffer = generarHtml(columnas, filas, resumen, criterios, {
+      convocatoria: `${convocatoria.nombre} (${convocatoria.anio}-${convocatoria.semestre})`,
+      generadoPorRol: ROL_TEXTO[rolSolicitante] ?? rolSolicitante,
+      generadoEn: new Date(),
+    });
+    return { buffer, contentType: 'text/html; charset=utf-8', extension: 'html' };
   }
 
   /**
@@ -258,9 +283,10 @@ export class ExportReportsService {
 
     let archivo: ArchivoGenerado;
     try {
-      archivo = await this.construirArchivo(reporte, convocatoria, ids, incluirSensibles);
+      archivo = await this.construirArchivo(reporte, convocatoria, ids, incluirSensibles, solicitante.rol);
     } catch (e) {
       logger.error({ err: e, reporte_id: reporte.id }, 'No fue posible construir el archivo del reporte');
+      if (e instanceof HtmlDemasiadoGrandeError) throw new ErrorReporte(ERRORES_REPORTE.TAMANO_EXCEDIDO, e.message);
       throw new ErrorReporte(ERRORES_REPORTE.ERROR_GENERACION, 'Fallo la construcción del archivo');
     }
 
@@ -273,7 +299,10 @@ export class ExportReportsService {
 
     const horas = await configuracionService.getEntero('REPORTE_RETENCION_HORAS', RETENCION_HORAS_DEFECTO);
     const ahora = new Date();
-    const nombre = `consolidado_FOEST-${convocatoria.anio}-${convocatoria.semestre}_${ahora.toISOString().slice(0, 10).replace(/-/g, '')}.${archivo.extension}`;
+    const nombre =
+      archivo.extension === 'html'
+        ? nombreArchivoHtml(convocatoria.nombre, ahora)
+        : `consolidado_FOEST-${convocatoria.anio}-${convocatoria.semestre}_${ahora.toISOString().slice(0, 10).replace(/-/g, '')}.${archivo.extension}`;
     const { data, error } = await supabaseAdmin
       .from('reporte_generado')
       .update({
@@ -347,7 +376,7 @@ export class ExportReportsService {
     } catch (e) {
       const codigo = e instanceof ErrorReporte ? e.codigo : ERRORES_REPORTE.ERROR_GENERACION;
       logger.error({ err: e, reporte_id: reporte.id, codigo }, 'Fallo el procesamiento del reporte');
-      if (codigo !== ERRORES_REPORTE.SIN_ALCANCE && reporte.intentos < MAX_INTENTOS) {
+      if (codigo !== ERRORES_REPORTE.SIN_ALCANCE && codigo !== ERRORES_REPORTE.TAMANO_EXCEDIDO && reporte.intentos < MAX_INTENTOS) {
         await supabaseAdmin.from('reporte_generado').update({ estado: 'COLA', error: codigo }).eq('id', reporte.id).eq('estado', 'PROCESANDO');
         return 'REINTENTO';
       }
@@ -463,7 +492,9 @@ export class ExportReportsService {
     if (r.estado === 'EXPIRADO' || vencido) throw new AppError(410, 'REPORTE_EXPIRADO', 'El reporte ya expiró. Solicite uno nuevo.');
     if (r.estado !== 'LISTO' || !r.storage_key) throw AppError.conflicto('REPORTE_NO_LISTO', 'El reporte aún no está listo para descargar.');
 
-    const nombre = r.nombre_archivo ?? `reporte.${r.tipo === 'CONSOLIDADO_XLSX' ? 'xlsx' : 'csv'}`;
+    // Reportes historicos (CONSOLIDADO_XLSX) conservan su nombre y extension .xlsx; no se regeneran.
+    const nombre = r.nombre_archivo ?? `reporte.${extensionLegada(r.tipo)}`;
+    // `download` fuerza Content-Disposition: attachment: el HTML nunca se renderiza en el dominio de Supabase.
     const firmada = await supabaseAdmin.storage.from(BUCKET_REPORTES).createSignedUrl(r.storage_key, SEGUNDOS_URL_DESCARGA, { download: nombre });
     if (firmada.error || !firmada.data?.signedUrl) {
       if (firmada.error && /not found|does not exist/i.test(firmada.error.message)) throw new AppError(410, 'REPORTE_EXPIRADO', 'El reporte ya expiró. Solicite uno nuevo.');

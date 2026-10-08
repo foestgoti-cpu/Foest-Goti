@@ -3,7 +3,7 @@
 **Fase:** P3 – Reportes
 
 ## Objetivo
-Ser el **único mecanismo de exportación** de la plataforma: genera el resumen ejecutivo en PDF de una postulación (`resumen.pdf`) y los consolidados por convocatoria en XLSX/CSV, mediante **jobs asíncronos** con estado, descarga por URL prefirmada de corta vida, auditoría `EXPORTACION`, notificación de "reporte listo" y purga del archivo generado. Los dashboards no exportan por su cuenta.
+Ser el **único mecanismo de exportación** de la plataforma: genera el resumen ejecutivo en PDF de una postulación (`resumen.pdf`) y los consolidados por convocatoria en HTML/CSV, mediante **jobs asíncronos** con estado, descarga por URL prefirmada de corta vida, auditoría `EXPORTACION`, notificación de "reporte listo" y purga del archivo generado. Los dashboards no exportan por su cuenta.
 
 Quedan fuera de este módulo: los formatos GE-F041 y GE-F043 (`formatos_oficiales.md`) y el certificado GE-F038 (`labor_social.md`).
 
@@ -16,8 +16,8 @@ Quedan fuera de este módulo: los formatos GE-F041 y GE-F043 (`formatos_oficiale
 - `apps/api/src/modules/export_reports/consolidado.columnas.ts` — Lista blanca y **tipado de columnas** del consolidado (`TEXTO`, `ENTERO`, `DECIMAL`, `MONEDA`, `FECHA`, `TELEFONO`).
 - `apps/api/src/modules/export_reports/consolidado.query.ts` — Consulta paginada por cursor de postulaciones de la convocatoria (solo lectura).
 - `apps/api/src/modules/export_reports/csv_export.service.ts` — Escritor CSV con sanitización de fórmulas.
-- `apps/api/src/modules/export_reports/excel_export.service.ts` — Escritor XLSX en modo streaming con `exceljs` (celdas tipadas).
-- `apps/api/src/modules/export_reports/sanitizacion.ts` — Funciones `sanitizarTextoCsv`, `normalizarTelefono` y verificación de que ninguna celda XLSX es fórmula.
+- `apps/api/src/modules/export_reports/html.service.ts` — Escritor HTML autocontenido (sin JavaScript ni recursos externos, CSP por meta, escape HTML de todo valor dinámico, CSS de impresión A4 horizontal). Sin dependencia externa.
+- `apps/api/src/modules/export_reports/sanitizacion.ts` — Funciones `sanitizarTextoCsv`, `normalizarTelefono` y escape HTML en `html.service.ts`.
 - `apps/api/src/modules/export_reports/reportes.worker.ts` — Worker BullMQ (cola `reportes`): transiciones `COLA → PROCESANDO → LISTO | FALLIDO`, reintentos con backoff, subida a S3, notificación.
 - `apps/api/src/modules/export_reports/reportes.purga.job.ts` — Job periódico que borra archivos expirados y vigila jobs atascados.
 - `apps/api/src/modules/export_reports/reportes.controller.ts` — Handlers Express.
@@ -27,7 +27,7 @@ Quedan fuera de este módulo: los formatos GE-F041 y GE-F043 (`formatos_oficiale
 - `packages/shared/src/export_reports/` — Enums (`EstadoReporte`, `FormatoReporte`) y esquemas Zod de filtros.
 
 ### Frontend
-- `apps/web/src/modules/export_reports/components/ExportarConsolidadoButton.tsx` — Botón (formato XLSX/CSV + filtros) para funcionario y administrador.
+- `apps/web/src/modules/export_reports/components/ExportarConsolidadoButton.tsx` — Botón (formato HTML/CSV + filtros) para funcionario y administrador.
 - `apps/web/src/modules/export_reports/components/DescargarResumenButton.tsx` — Descarga del `resumen.pdf` en el detalle de una postulación.
 - `apps/web/src/modules/export_reports/components/ReporteJobStatus.tsx` — Seguimiento del job (polling suave de `GET /reportes/jobs/:id`) y botón de descarga cuando está `LISTO`.
 - `apps/web/src/modules/export_reports/pages/MisReportesPage.tsx` — Historial de reportes solicitados por el usuario, con estado y expiración.
@@ -38,7 +38,7 @@ Quedan fuera de este módulo: los formatos GE-F041 y GE-F043 (`formatos_oficiale
 | Método | Ruta | Descripción | Auth | Roles |
 |---|---|---|:---:|:---:|
 | `GET` | `/api/v1/reportes/postulaciones/:id/resumen.pdf` | Resumen ejecutivo del trámite (se genera en la petición, no se almacena) | Sí | `BENEFICIARIO` (propia), `FUNCIONARIO` (asignación propia activa o histórica), `ADMINISTRADOR` |
-| `POST` | `/api/v1/reportes/convocatorias/:id/consolidado` | Solicita un consolidado (`{ formato: "XLSX" \| "CSV", filtros? }`). Crea el job; ver umbral | Sí | `FUNCIONARIO` (convocatorias asignadas), `ADMINISTRADOR` |
+| `POST` | `/api/v1/reportes/convocatorias/:id/consolidado` | Solicita un consolidado (`{ formato: "HTML" \| "CSV", filtros? }`). Crea el job; ver umbral | Sí | `FUNCIONARIO` (convocatorias asignadas), `ADMINISTRADOR` |
 | `GET` | `/api/v1/reportes/jobs/:id` | Estado del job: `{ id, estado, filas, creado_en, finalizado_en, expira_en, error? }` | Sí | Solicitante del job |
 | `GET` | `/api/v1/reportes/:id/descarga` | Entrega `{ url, expira_en }` con **URL prefirmada de 120 s**; audita cada entrega | Sí | Solicitante del job |
 | `GET` | `/api/v1/reportes/me` | Lista paginada de los reportes del usuario (paginación estándar) | Sí | `FUNCIONARIO`, `ADMINISTRADOR` |
@@ -61,7 +61,7 @@ erDiagram
         uuid id PK
         uuid solicitante_id FK
         uuid convocatoria_id FK
-        string tipo "CONSOLIDADO_XLSX | CONSOLIDADO_CSV"
+        string tipo "CONSOLIDADO_HTML | CONSOLIDADO_CSV (CONSOLIDADO_XLSX solo histórico)"
         jsonb filtros "filtros aplicados, normalizados"
         string estado "COLA | PROCESANDO | LISTO | FALLIDO"
         int filas_total "nulo hasta calcular"
@@ -120,7 +120,8 @@ flowchart TD
   - Cada columna se declara en `consolidado.columnas.ts` con un tipo. Las columnas **numéricas, de moneda y de fecha se escriben como número/fecha tipados** (no como texto) y por tanto **no se prefijan**: un valor negativo legítimo no se altera.
   - **CSV, columnas de TEXTO:** si el valor, tras quitar espacios iniciales, empieza con `=`, `+`, `-`, `@`, tabulador (`\t`) o retorno de carro (`\r`), se antepone `'`. Se aplica RFC 4180 (comillas dobles escapadas), UTF-8 con BOM y fin de línea CRLF.
   - **Teléfonos:** columna `TELEFONO`, escrita como texto en formato **solo dígitos con prefijo de país y sin `+` inicial** (p. ej. `573001234567`); `normalizarTelefono` elimina `+`, espacios, guiones y paréntesis. Así no se confunden con fórmulas ni se pierde el cero o el prefijo. Si el dato no se puede normalizar a dígitos, se trata como TEXTO y se sanitiza.
-  - **XLSX:** todas las celdas de texto se escriben con `exceljs` como **cadena tipada** (`cell.value = string`, tipo `String`, formato `@`); jamás se construye un objeto `{ formula }`, `{ sharedFormula }` ni hipervínculos a partir de datos de usuario. Una prueba abre el XLSX generado y verifica que no existe ningún elemento `<f>` en las hojas.
+  - **HTML:** todo valor dinámico (títulos de columna, criterios, celdas) se escapa con `escaparHtml` (los caracteres `&`, `<`, `>`, comillas dobles y simples, y el acento grave); el documento no contiene `<script>`, atributos de evento ni enlaces, e incluye `Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; img-src data:` por meta, `robots noindex` y la leyenda de la Ley 1581 de 2012. Los números se escriben como texto formateado (es-CO), nunca como fórmulas. Las columnas sensibles solo existen con el permiso `reportes:exportar_sensible`. Tope defensivo de 25 MB (si se supera: error claro que indica usar CSV). La URL firmada se emite con `download` para forzar descarga como adjunto y que nunca se renderice en el dominio de Storage.
+  - **XLSX (histórico):** ya no se genera; las filas `CONSOLIDADO_XLSX` anteriores a la migración 0022 se siguen descargando con su extensión `.xlsx`.
 - **Lista blanca de columnas:** el consolidado exporta solo las columnas definidas en `consolidado.columnas.ts` (identificación, programa, tipo de solicitud, estado, ciclo, beneficios y decisión, montos aprobados, estrato, SISBEN, fechas de envío y dictamen). Añadir columnas exige cambio de código revisado.
 - **Único mecanismo:** `dashboard_funcionario.md` y `admin_dashboard.md` no exportan; sus botones "Exportar" llaman a `POST /reportes/convocatorias/:id/consolidado`.
 
@@ -135,7 +136,6 @@ flowchart TD
 
 ## Dependencias Externas
 - `puppeteer` y `handlebars`: resumen PDF.
-- `exceljs`: libros XLSX en streaming.
 - `bullmq` + `ioredis`: cola y worker.
 - `@aws-sdk/client-s3` y `@aws-sdk/s3-request-presigner`: almacenamiento y URL prefirmada.
 - `csv-stringify` (o escritor propio RFC 4180): salida CSV.
@@ -153,6 +153,6 @@ flowchart TD
 - [ ] Un `FUNCIONARIO` no puede exportar una convocatoria sin asignación (`404`); un `ADMINISTRADOR` sí; un `BENEFICIARIO` recibe `403`; un funcionario sin `reportes:exportar_sensible` recibe `403`.
 - [ ] El consolidado no contiene números completos de cuenta o billetera, solo `ultimos4`.
 - [ ] En CSV, un nombre de texto `=HYPERLINK(...)` sale como `'=HYPERLINK(...)`; un valor monetario negativo numérico sale sin prefijo; un teléfono sale como `573001234567`.
-- [ ] En XLSX, abrir el archivo no ejecuta fórmulas y el XML de las hojas no contiene elementos `<f>`.
+- [ ] El HTML no contiene scripts y escapa los valores (un nombre como `<script>alert(1)</script>` se ve como texto).
 - [ ] Una segunda solicitud idéntica con un job activo responde `409 REPORTE_EN_CURSO`.
 - [ ] No existe ninguna ruta de exportación en los módulos de dashboard.

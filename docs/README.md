@@ -21,7 +21,7 @@ Documentos de apoyo:
 | Autenticación | JWT RS256 (access 15 min) + refresh rotativo en cookie `httpOnly; Secure; SameSite=Strict` | bcrypt 12 rondas; ver `auth.md` |
 | Archivos | S3 compatible (MinIO en desarrollo), bucket privado con cifrado en reposo | POST prefirmado de carga, URL prefirmada de lectura de 5 min, antivirus ClamAV |
 | Colas | Redis + BullMQ | Correos (outbox), PDFs, reportes, jobs programados, refresco de vistas |
-| Documentos | Puppeteer + Handlebars, pdf-lib, ExcelJS, qrcode | Formatos GE-F041, GE-F043, GE-F038 |
+| Documentos | Puppeteer + Handlebars, pdf-lib, qrcode | Formatos GE-F041, GE-F043, GE-F038 |
 | Frontend | React 18 + TypeScript + Vite, TanStack Query, Tailwind, Recharts | `apps/web`; mobile-first, WCAG AA |
 | Validación | Zod | Esquemas compartidos en `packages/shared` |
 | Pruebas | Jest + Supertest, Vitest + RTL, Playwright (E2E), k6 (carga) | Matriz de acceso rol×endpoint automática |
@@ -73,7 +73,7 @@ Resumen; el detalle normativo está en [DECISIONES.md](./DECISIONES.md).
 | **P2** | [beneficiario_dashboard.md](./modules/beneficiario_dashboard.md) | Portal del Beneficiario | Línea de tiempo, acciones pendientes, descargas |
 | **P2** | [dashboard_funcionario.md](./modules/dashboard_funcionario.md) | Dashboard Funcionario | Métricas con vistas materializadas de grano correcto y k-anonimato |
 | **P2** | [admin_dashboard.md](./modules/admin_dashboard.md) | Dashboard Administrador | Alertas operativas, carga del comité, visores de auditoría y configuración |
-| **P3** | [export_reports.md](./modules/export_reports.md) | Reportes y Exportaciones | Resumen, consolidados XLSX/CSV, jobs asíncronos |
+| **P3** | [export_reports.md](./modules/export_reports.md) | Reportes y Exportaciones | Resumen, consolidados HTML/CSV, jobs asíncronos |
 
 ### Hitos sugeridos
 

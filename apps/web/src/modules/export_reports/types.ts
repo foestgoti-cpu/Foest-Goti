@@ -11,8 +11,9 @@ export const TEXTO_ESTADO_REPORTE: Record<EstadoReporte, string> = {
 
 export const TEXTO_TIPO_REPORTE: Record<TipoReporte, string> = {
   RESUMEN_PDF: 'Resumen PDF',
-  CONSOLIDADO_XLSX: 'Consolidado XLSX',
+  CONSOLIDADO_HTML: 'Consolidado HTML',
   CONSOLIDADO_CSV: 'Consolidado CSV',
+  CONSOLIDADO_XLSX: 'Consolidado XLSX (histórico)',
 };
 
 export const INTERVALO_SONDEO_MS = 4000;

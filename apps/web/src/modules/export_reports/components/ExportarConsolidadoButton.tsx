@@ -9,7 +9,7 @@ import { ADVERTENCIA_DATOS_PERSONALES } from './SolicitarConsolidadoForm';
 /** Boton reutilizable para solicitar el consolidado de una convocatoria desde otras pantallas. */
 export function ExportarConsolidadoButton({
   convocatoriaId,
-  formato = 'XLSX',
+  formato = 'HTML',
   filtros,
   etiqueta,
 }: {

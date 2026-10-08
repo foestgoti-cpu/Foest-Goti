@@ -36,6 +36,7 @@ export const ERRORES_REPORTE = {
   ERROR_GENERACION: 'ERROR_GENERACION',
   ERROR_ALMACENAMIENTO: 'ERROR_ALMACENAMIENTO',
   TIMEOUT: 'TIMEOUT',
+  TAMANO_EXCEDIDO: 'TAMANO_EXCEDIDO',
 } as const;
 
 // ----------------------------- Columnas del consolidado -----------------------------
@@ -67,5 +68,5 @@ export interface ResumenConsolidado {
 export interface ArchivoGenerado {
   buffer: Buffer;
   contentType: string;
-  extension: 'xlsx' | 'csv' | 'pdf';
+  extension: 'html' | 'csv' | 'pdf';
 }

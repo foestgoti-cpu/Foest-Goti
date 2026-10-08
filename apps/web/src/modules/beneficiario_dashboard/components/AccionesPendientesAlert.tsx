@@ -19,7 +19,7 @@ export function AccionesPendientesAlert({ acciones }: { acciones: AccionPendient
               'inline-flex min-h-[44px] w-full items-center justify-center border px-4 text-base no-underline hover:no-underline sm:w-auto ' +
               (urgente ? 'border-primary bg-primary text-white hover:bg-primary/90' : 'border-ink bg-white text-ink hover:bg-primary-10');
             return (
-              <li key={`${a.tipo}-${a.postulacion_id ?? i}`} className={`py-3 ${urgente ? 'border-l-4 border-l-primary pl-3' : ''}`}>
+              <li key={`${a.tipo}-${a.postulacion_id ?? 'x'}-${i}`} className={`py-3 ${urgente ? 'border-l-4 border-l-primary pl-3' : ''}`}>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="flex flex-wrap items-center gap-2">
