@@ -202,8 +202,21 @@ export interface DescargaDto {
   url_descarga: string;
 }
 
+/** Certificado GE-F038 con al menos una emision definitiva (labor_social). La URL firmada se pide aparte. */
+export interface CertificadoLaborSocialDescargaDto {
+  id: string;
+  semestre: string;
+  estado: 'EN_PROCESO' | 'COMPLETADO' | 'PRESENTADO';
+  estado_texto: string;
+  emitido_en: string;
+  horas: number;
+  /** Ruta de la API (labor_social) que devuelve `{ url, expira_en }` con URL firmada de corta vigencia. */
+  url_descarga: string;
+}
+
 export interface DescargasDto {
   descargas: DescargaDto[];
+  certificados_labor_social: CertificadoLaborSocialDescargaDto[];
   pendiente_modulo: { formatos: boolean; labor_social: boolean };
 }
 

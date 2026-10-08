@@ -11,6 +11,7 @@ import {
   ListarFuncionariosQueryDto,
   ListarHabeasDataQueryDto,
   PerfilBeneficiarioDto,
+  RestablecerClaveDto,
   ResolverHabeasDataDto,
   SolicitudHabeasDataDto,
 } from './accounts.dto';
@@ -39,6 +40,7 @@ funcionariosRoutes.get('/:id', authenticate(), requirePermission('funcionario:co
 funcionariosRoutes.patch('/:id', authenticate(), requirePermission('funcionario:editar'), validate({ params: IdParamSchema, body: ActualizarFuncionarioDto }), funcionariosController.actualizar);
 funcionariosRoutes.patch('/:id/estado', authenticate(), requirePermission('funcionario:estado'), validate({ params: IdParamSchema, body: CambiarEstadoCuentaDto }), funcionariosController.cambiarEstado);
 funcionariosRoutes.post('/:id/invitacion/reenviar', authenticate(), requirePermission('funcionario:crear'), validate({ params: IdParamSchema }), funcionariosController.reenviarInvitacion);
+funcionariosRoutes.post('/:id/restablecer-clave', authenticate(), requirePermission('funcionario:restablecer_clave'), validate({ params: IdParamSchema, body: RestablecerClaveDto }), funcionariosController.restablecerClave);
 
 // --- /administradores ---
 export const administradoresRoutes: Router = Router();

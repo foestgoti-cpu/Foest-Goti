@@ -40,7 +40,8 @@ export function CargaEvaluadoresChart({ evaluadores, cargando, periodo }: { eval
   const anchoPlot = ANCHO - MARGEN_IZQ - MARGEN_DER;
   const escala = (v: number) => (v / maximo) * anchoPlot;
   const alto = filas.length * ALTO_FILA + 8;
-  const ticks = [0, Math.ceil(maximo / 2), maximo];
+  // Sin duplicados: con maximo = 1 la mitad redondeada coincide con el maximo (claves repetidas en React).
+  const ticks = [...new Set([0, Math.ceil(maximo / 2), maximo])];
 
   return (
     <Card

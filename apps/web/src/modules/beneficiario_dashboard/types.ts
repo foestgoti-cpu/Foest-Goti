@@ -130,8 +130,21 @@ export interface Descarga {
   url_descarga: string;
 }
 
+/** Certificado GE-F038 con emision definitiva (labor_social). La URL firmada se pide con `url_descarga`. */
+export interface CertificadoLaborSocialDescarga {
+  id: string;
+  semestre: string;
+  estado: 'EN_PROCESO' | 'COMPLETADO' | 'PRESENTADO';
+  estado_texto: string;
+  emitido_en: string;
+  horas: number;
+  /** Ruta de la API (`GET /labor-social/:id/certificado.pdf`) que devuelve `{ url, expira_en }` (300 s). */
+  url_descarga: string;
+}
+
 export interface Descargas {
   descargas: Descarga[];
+  certificados_labor_social: CertificadoLaborSocialDescarga[];
   pendiente_modulo: { formatos: boolean; labor_social: boolean };
 }
 

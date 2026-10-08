@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ActualizarFuncionarioDto, CambiarEstadoCuentaDto, CrearFuncionarioDto } from '@foest/shared';
+import type { ActualizarFuncionarioDto, CambiarEstadoCuentaDto, CrearFuncionarioDto, RestablecerClaveDto } from '@foest/shared';
 import { accountsApi, type FiltrosFuncionarios } from '../api';
 
 const CLAVE = ['accounts', 'funcionarios'] as const;
@@ -45,5 +45,13 @@ export function useReenviarInvitacion() {
   return useMutation({
     mutationFn: (id: string) => accountsApi.reenviarInvitacion(id),
     onSuccess: () => void qc.invalidateQueries({ queryKey: CLAVE }),
+  });
+}
+
+/** La clave temporal solo vive en el estado de la mutacion (no se cachea ni se persiste). */
+export function useRestablecerClave() {
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: RestablecerClaveDto }) => accountsApi.restablecerClave(id, dto),
+    gcTime: 0,
   });
 }

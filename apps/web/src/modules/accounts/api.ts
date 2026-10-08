@@ -3,6 +3,7 @@ import type {
   CambiarEstadoCuentaDto,
   CorregirDocumentoDto,
   CrearFuncionarioDto,
+  RestablecerClaveDto,
   PerfilBeneficiarioDto,
   ResolverHabeasDataDto,
   SolicitudHabeasDataDto,
@@ -43,6 +44,8 @@ export const accountsApi = {
   actualizarFuncionario: (id: string, dto: ActualizarFuncionarioDto) => api.patch<FuncionarioCuenta>(`/funcionarios/${id}`, dto),
   estadoFuncionario: (id: string, dto: CambiarEstadoCuentaDto) => api.patch<FuncionarioCuenta>(`/funcionarios/${id}/estado`, dto),
   reenviarInvitacion: (id: string) => api.post<{ reenviada: true }>(`/funcionarios/${id}/invitacion/reenviar`),
+  restablecerClave: (id: string, dto: RestablecerClaveDto) =>
+    api.post<{ clave_temporal: string; forzar_cambio_clave: true }>(`/funcionarios/${id}/restablecer-clave`, dto),
 
   // Administradores
   listarAdministradores: (page = 1) => api.get<Paginado<AdministradorCuenta>>('/administradores', { query: { page, page_size: 20 } }),

@@ -33,15 +33,17 @@ async function funcionarioTieneAlcance(funcionarioId: string, exp: ExpedienteMin
   if (!asignacion.error && (asignacion.count ?? 0) > 0) return true;
   if (asignacion.error && !tablaInexistente(asignacion.error)) throw new Error(`No fue posible verificar la asignacion: ${asignacion.error.message}`);
 
-  // Comite de la convocatoria (miembro vigente).
-  const comite = await supabaseAdmin
-    .from('asignacion_funcionario')
+  // Correccion de verificacion (D-02): pertenecer al comite NO basta para leer el expediente (resumen con
+  // estrato/SISBEN/documento, formatos): el pool solo expone el resumen minimo y el expediente es de su
+  // evaluador. Se admite ademas al funcionario que ya emitio o abrio una revision sobre la postulacion
+  // (la asignacion se libera al dictaminar y debe poder consultar lo que evaluo).
+  const revision = await supabaseAdmin
+    .from('revision')
     .select('id', { head: true, count: 'exact' })
-    .eq('convocatoria_id', exp.convocatoria_id)
-    .eq('funcionario_id', funcionarioId)
-    .is('retirado_en', null);
-  if (comite.error) throw new Error(`No fue posible verificar el comite: ${comite.error.message}`);
-  return (comite.count ?? 0) > 0;
+    .eq('postulacion_id', exp.id)
+    .eq('funcionario_id', funcionarioId);
+  if (revision.error && !tablaInexistente(revision.error)) throw new Error(`No fue posible verificar la revision: ${revision.error.message}`);
+  return !revision.error && (revision.count ?? 0) > 0;
 }
 
 /** true si el usuario es el dueno, administrador o funcionario con alcance. Si no, el llamador responde 404. */

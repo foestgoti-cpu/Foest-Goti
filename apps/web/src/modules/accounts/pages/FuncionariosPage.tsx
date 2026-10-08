@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Alert, Badge, Button, Input, PageHeader, Select, Table } from '../../../components/ui';
 import { useDependencias, useEstadoFuncionario, useFuncionarios } from '../hooks/useFuncionarios';
 import { EstadoCuentaModal } from '../components/EstadoCuentaModal';
+import { RestablecerClaveModal } from '../components/RestablecerClaveModal';
+import { useAuth } from '../../../lib/auth/AuthProvider';
 import type { FuncionarioCuenta } from '../types';
 
 export function FuncionariosPage() {
@@ -13,6 +15,9 @@ export function FuncionariosPage() {
   const [estado, setEstado] = useState<'ACTIVO' | 'INACTIVO' | ''>('');
   const [dependencia, setDependencia] = useState('');
   const [objetivo, setObjetivo] = useState<FuncionarioCuenta | null>(null);
+  const [objetivoClave, setObjetivoClave] = useState<FuncionarioCuenta | null>(null);
+  const { permisos } = useAuth();
+  const puedeRestablecer = permisos?.includes('funcionario:restablecer_clave') ?? true;
   const [mensaje, setMensaje] = useState<string | null>(null);
 
   const { data, isLoading, error } = useFuncionarios({ page, q: busqueda, estado, dependencia });
@@ -92,9 +97,16 @@ export function FuncionariosPage() {
             clave: 'acciones',
             titulo: 'Acciones',
             render: (f) => (
-              <Button variante="texto" className="min-h-[36px] px-2 py-1 text-sm" onClick={() => setObjetivo(f)}>
-                {f.activo ? 'Deshabilitar' : 'Reactivar'}
-              </Button>
+              <span className="flex flex-wrap gap-1">
+                <Button variante="texto" className="min-h-[36px] px-2 py-1 text-sm" onClick={() => setObjetivo(f)}>
+                  {f.activo ? 'Deshabilitar' : 'Reactivar'}
+                </Button>
+                {f.activo && puedeRestablecer && (
+                  <Button variante="texto" className="min-h-[36px] px-2 py-1 text-sm" onClick={() => setObjetivoClave(f)}>
+                    Restablecer contrasena
+                  </Button>
+                )}
+              </span>
             ),
           },
         ]}
@@ -126,6 +138,12 @@ export function FuncionariosPage() {
             // El error se muestra dentro del modal (incluido el 409 con expedientes pendientes).
           }
         }}
+      />
+      <RestablecerClaveModal
+        abierto={Boolean(objetivoClave)}
+        funcionarioId={objetivoClave?.id ?? null}
+        etiquetaCuenta={objetivoClave ? `${objetivoClave.nombres} ${objetivoClave.apellidos}` : ''}
+        onCerrar={() => setObjetivoClave(null)}
       />
     </>
   );

@@ -3,7 +3,7 @@ import { Alert, Badge, Button, Card, Spinner } from '../../../components/ui';
 import { beneficiarioDashboardApi } from '../api';
 import type { Descargas } from '../types';
 
-/** Formatos oficiales generados (GE-F041, GE-F043) con su vigencia y enlace de descarga. */
+/** Formatos oficiales generados (GE-F041, GE-F043) y certificados de labor social (GE-F038) con su vigencia y enlace de descarga. */
 export function DescargasOficialesCard({ datos, cargando, error }: { datos?: Descargas; cargando?: boolean; error?: Error | null }) {
   const [descargando, setDescargando] = useState<string | null>(null);
   const [errorDescarga, setErrorDescarga] = useState<string | null>(null);
@@ -60,8 +60,28 @@ export function DescargasOficialesCard({ datos, cargando, error }: { datos?: Des
           ))}
         </ul>
       )}
-      {datos?.pendiente_modulo.labor_social && (
-        <p className="mt-3 text-sm text-ink/80">El certificado de labor social (GE-F038) estara disponible cuando se habilite ese modulo.</p>
+      {datos && (datos.certificados_labor_social ?? []).length > 0 && (
+        <ul className="divide-y divide-ink/30" aria-label="Certificados de labor social disponibles">
+          {datos.certificados_labor_social.map((c) => {
+            const nombre = `Certificado de labor social (GE-F038) - ${c.semestre}`;
+            return (
+              <li key={c.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="flex flex-wrap items-center gap-2 text-base font-semibold">
+                    {nombre}
+                    <Badge tono={c.estado === 'PRESENTADO' ? 'relleno' : 'neutro'}>{c.estado_texto}</Badge>
+                  </p>
+                  <p className="text-sm text-ink/80">
+                    {c.horas} horas - emitido el {new Date(c.emitido_en).toLocaleString('es-CO', { timeZone: 'America/Bogota' })}
+                  </p>
+                </div>
+                <Button variante="secundario" cargando={descargando === c.id} onClick={() => void descargar(c.id, c.url_descarga)} aria-label={`Descargar ${nombre}`}>
+                  Descargar PDF
+                </Button>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </Card>
   );

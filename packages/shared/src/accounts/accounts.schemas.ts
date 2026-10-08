@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TIPOS_DOCUMENTO_IDENTIDAD } from '../enums';
-import { EmailSchema, MotivoSchema, FechaLocalSchema } from '../schemas';
+import { ConfirmarSchema, EmailSchema, MotivoSchema, FechaLocalSchema } from '../schemas';
 import { PaginacionQuerySchema } from '../api';
 import {
   DecisionHabeasSchema,
@@ -78,6 +78,10 @@ export const CambiarEstadoCuentaSchema = z
   })
   .strict();
 export type CambiarEstadoCuentaDto = z.infer<typeof CambiarEstadoCuentaSchema>;
+
+/** Restablecimiento manual de la clave de un funcionario (doble intencion: motivo + confirmacion). */
+export const RestablecerClaveSchema = z.object({ motivo: MotivoSchema, confirmar: ConfirmarSchema }).strict();
+export type RestablecerClaveDto = z.infer<typeof RestablecerClaveSchema>;
 
 export const ListarFuncionariosQuerySchema = PaginacionQuerySchema.extend({
   q: z.string().trim().max(100).optional(),

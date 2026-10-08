@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   CAMPOS_OBLIGATORIOS_PERFIL,
@@ -28,6 +29,7 @@ import type {
   ListarHabeasDataQuery,
   PerfilBeneficiarioEntrada,
   ResolverHabeasData,
+  RestablecerClave,
   SolicitudHabeasDataEntrada,
 } from './accounts.dto';
 import type {
@@ -100,6 +102,25 @@ async function avisarCuentaDeshabilitada(usuarioId: string): Promise<void> {
   } catch (e) {
     logger.warn({ err: e, usuarioId }, 'No fue posible encolar el aviso de cuenta deshabilitada');
   }
+}
+
+const CLAVE_MAYUS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+const CLAVE_MINUS = 'abcdefghijkmnopqrstuvwxyz';
+const CLAVE_NUM = '23456789';
+const CLAVE_ESP = '!@#$%*+-=?';
+const LONGITUD_CLAVE_TEMPORAL = 20;
+
+/** Clave temporal criptograficamente segura (>= 16 caracteres; cumple PasswordSchema: mayuscula, numero y especial). */
+export function generarClaveTemporal(): string {
+  const todos = CLAVE_MAYUS + CLAVE_MINUS + CLAVE_NUM + CLAVE_ESP;
+  const pick = (set: string) => set[randomInt(set.length)] as string;
+  const chars = [pick(CLAVE_MAYUS), pick(CLAVE_MINUS), pick(CLAVE_NUM), pick(CLAVE_ESP)];
+  while (chars.length < LONGITUD_CLAVE_TEMPORAL) chars.push(pick(todos));
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randomInt(i + 1);
+    [chars[i], chars[j]] = [chars[j] as string, chars[i] as string];
+  }
+  return chars.join('');
 }
 
 async function fijarBloqueoAuth(usuarioId: string, bloquear: boolean): Promise<void> {
@@ -383,6 +404,54 @@ export const funcionariosService = {
     await supabaseAdmin.from('funcionario').update({ invitacion_reenviada_en: new Date().toISOString() }).eq('id', id);
     await auditar({ ...ctx, accion: 'INVITACION_REENVIADA', entidad: 'FUNCIONARIO', entidad_id: id });
     return { reenviada: true };
+  },
+
+  /**
+   * Restablecimiento manual (docs/modules/accounts.md): clave temporal mostrada UNA sola vez al
+   * administrador. Nunca se registra en logs ni auditoria ni se envia por correo. Fijar la clave con
+   * admin.updateUserById invalida todas las sesiones del usuario en Supabase Auth (ver auth.service
+   * cambiarClave) y, con forzar_cambio_clave, el login redirige a /cambiar-clave.
+   */
+  async restablecerClave(
+    ctx: ContextoAuditoria,
+    id: string,
+    dto: RestablecerClave,
+  ): Promise<{ clave_temporal: string; forzar_cambio_clave: true }> {
+    const cuenta = await obtenerFuncionarioCuenta(id);
+    if (!cuenta.activo) throw AppError.conflicto('CUENTA_DESHABILITADA', 'No es posible restablecer la clave de una cuenta deshabilitada');
+    const clave = generarClaveTemporal();
+    const { error: errFlag } = await supabaseAdmin.from('usuario').update({ forzar_cambio_clave: true }).eq('id', cuenta.usuario_id);
+    if (errFlag) fallo('No fue posible activar el cambio obligatorio de clave', errFlag);
+    const { error: errPass } = await supabaseAdmin.auth.admin.updateUserById(cuenta.usuario_id, { password: clave });
+    if (errPass) {
+      // Revierte el indicador para no dejar una cuenta marcada sin clave nueva.
+      await supabaseAdmin.from('usuario').update({ forzar_cambio_clave: false }).eq('id', cuenta.usuario_id);
+      fallo('No fue posible fijar la clave temporal en Supabase Auth', errPass);
+    }
+    try {
+      await encolarNotificacion({
+        usuario_id: cuenta.usuario_id,
+        tipo: 'CAMBIO_CLAVE_CONFIRMACION',
+        titulo: 'Su contrasena fue restablecida',
+        mensaje: 'El Equipo FOEST restablecio la contrasena de su cuenta y cerro sus sesiones. Recibira la clave temporal por un canal seguro y debera cambiarla al iniciar sesion.',
+        entidad: 'USUARIO',
+        entidad_id: cuenta.usuario_id,
+        clave_dedup: `RESTABLECER_CLAVE:${cuenta.usuario_id}:${Date.now()}`,
+        correo: true,
+      });
+    } catch (e) {
+      logger.warn({ err: e, usuarioId: cuenta.usuario_id }, 'No fue posible encolar el aviso de restablecimiento de clave');
+    }
+    await auditar({
+      ...ctx,
+      accion: 'RESTABLECER_CLAVE',
+      entidad: 'FUNCIONARIO',
+      entidad_id: id,
+      datos_antes: { forzar_cambio_clave: null },
+      datos_despues: { forzar_cambio_clave: true },
+      metadatos: { motivo: dto.motivo, sesiones_revocadas: true },
+    });
+    return { clave_temporal: clave, forzar_cambio_clave: true };
   },
 };
 

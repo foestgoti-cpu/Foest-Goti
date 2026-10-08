@@ -10,6 +10,7 @@ import type {
   ListarFuncionariosQuery,
   ListarHabeasDataQuery,
   PerfilBeneficiarioEntrada,
+  RestablecerClave,
   ResolverHabeasData,
   SolicitudHabeasDataEntrada,
 } from './accounts.dto';
@@ -45,6 +46,11 @@ export const funcionariosController = {
   }),
   reenviarInvitacion: h(async (req, res) => {
     res.json(await funcionariosService.reenviarInvitacion(contextoDesdeRequest(req), id(req)));
+  }),
+  restablecerClave: h(async (req, res) => {
+    // La clave temporal viaja una sola vez en esta respuesta: no debe quedar en cache de intermediarios.
+    res.setHeader('Cache-Control', 'no-store');
+    res.json(await funcionariosService.restablecerClave(contextoDesdeRequest(req), id(req), req.body as RestablecerClave));
   }),
 };
 

@@ -15,6 +15,7 @@ import {
 import type {
   AccionPendienteDto,
   ConvocatoriaPublicaDto,
+  CertificadoLaborSocialDescargaDto,
   DescargaDto,
   DescargasDto,
   DocumentoChecklistDto,
@@ -815,10 +816,62 @@ export const beneficiarioDashboardService = {
         });
     }
 
+    // Certificados GE-F038 (modulo labor_social): ultima emision DEFINITIVA de cada certificado, leida con RLS del titular.
+    const certificadosLaborSocial: CertificadoLaborSocialDescargaDto[] = [];
+    let pendienteLaborSocial = false;
+    if (beneficiario) {
+      interface CertificadoCrudo {
+        id: string;
+        semestre_academico: string;
+        estado: CertificadoLaborSocialDescargaDto['estado'];
+        total_horas_acumuladas: number | string | null;
+      }
+      interface EmisionCruda {
+        certificado_id: string;
+        emitido_en: string;
+      }
+      const rc = await consultaOpcional<CertificadoCrudo>(
+        'los certificados de labor social',
+        ctx.db
+          .from('certificado_labor_social')
+          .select('id, semestre_academico, estado, total_horas_acumuladas')
+          .eq('beneficiario_id', beneficiario.id)
+          .order('semestre_academico', { ascending: false }),
+      );
+      pendienteLaborSocial = rc.pendiente;
+      if (!rc.pendiente && rc.data.length > 0) {
+        const re = await consultaOpcional<EmisionCruda>(
+          'las emisiones de labor social',
+          ctx.db
+            .from('labor_social_emision')
+            .select('certificado_id, emitido_en')
+            .in('certificado_id', rc.data.map((c) => c.id))
+            .order('emitido_en', { ascending: false }),
+        );
+        pendienteLaborSocial = re.pendiente;
+        const ultima = new Map<string, string>();
+        for (const e of re.data) if (!ultima.has(e.certificado_id)) ultima.set(e.certificado_id, e.emitido_en);
+        const textos = { EN_PROCESO: 'En proceso', COMPLETADO: 'Completado', PRESENTADO: 'Presentado' } as const;
+        for (const c of rc.data) {
+          const emitido = ultima.get(c.id);
+          if (!emitido) continue;
+          certificadosLaborSocial.push({
+            id: c.id,
+            semestre: c.semestre_academico,
+            estado: c.estado,
+            estado_texto: textos[c.estado] ?? c.estado,
+            emitido_en: emitido,
+            horas: Number(c.total_horas_acumuladas ?? 0),
+            url_descarga: `/labor-social/${c.id}/certificado.pdf`,
+          });
+        }
+      }
+    }
+
     const dto: DescargasDto = {
       descargas,
-      // El certificado GE-F038 lo expone labor_social.md; se integra cuando exista ese modulo.
-      pendiente_modulo: { formatos: pendienteFormatos, labor_social: true },
+      certificados_labor_social: certificadosLaborSocial,
+      pendiente_modulo: { formatos: pendienteFormatos, labor_social: pendienteLaborSocial },
     };
     return limpiarCamposActor(dto);
   },
