@@ -7,7 +7,7 @@ build/
 *.tsbuildinfo
 
 # Entornos y secretos
-.env
+*.env
 .env.local
 .env.*.local
 apps/**/.env
