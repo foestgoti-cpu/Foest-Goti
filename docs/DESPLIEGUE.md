@@ -41,7 +41,7 @@ Notas:
 ## 2. Web en Vercel
 
 1. Vercel → **Add New → Project** → importe el mismo repositorio.
-2. **Root Directory:** déjelo vacío (raíz del repositorio). El `vercel.json` ya define instalación, compilación (`packages/shared` y luego `apps/web`), carpeta de salida `apps/web/dist` y la regla para que las rutas del navegador (`/login`, `/admin/...`) no den 404.
+2. **Root Directory:** `apps/web`. El `apps/web/vercel.json` ya define instalación y compilación desde la raíz del repositorio (`packages/shared` y luego `apps/web`), la carpeta de salida y la regla para que las rutas del navegador (`/login`, `/admin/...`) no den 404.
 3. En **Environment Variables** agregue (entornos Production y Preview):
 
 | Variable | Valor |
@@ -76,7 +76,7 @@ Luego en la URL de Vercel: inicie sesión con ese administrador, abra `/admin`, 
 | Síntoma | Causa y solución |
 |---|---|
 | Al iniciar sesión la pantalla no responde y la consola dice «CORS» | `WEB_ORIGIN` en Render no coincide exactamente con la URL de Vercel. Las URL de vista previa de Vercel (`...-git-rama-...vercel.app`) tampoco están permitidas: pruebe siempre con la de producción |
-| `/login` recargado da 404 | Falta `vercel.json` en la raíz o el Root Directory no es la raíz |
+| `/login` recargado da 404 | Falta `apps/web/vercel.json` o el Root Directory no es `apps/web` |
 | La web carga pero todo da error de red | `VITE_API_URL` mal escrita o sin redesplegar tras cambiarla |
 | Error 503 `MIGRACION_PENDIENTE` | Falta aplicar alguna migración en Supabase |
 | Los PDF fallan (GE-F041/F043/F038, resumen) | Poca memoria en Render (suba el plan) o revise los logs; la imagen usa `/usr/bin/chromium` |
