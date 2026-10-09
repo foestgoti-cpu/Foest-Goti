@@ -1,0 +1,39 @@
+# Blueprint de Render para la API. Los valores secretos (sync: false) se piden al crear el servicio.
+services:
+  - type: web
+    name: foest-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter            # no usar free: se duerme y los jobs programados (node-cron) dejan de correr
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: WEB_ORIGIN       # URL exacta de Vercel, sin barra final (CORS y enlaces de correo)
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: DATOS_PAGO_KEY
+        sync: false
+      - key: DATOS_PAGO_KEY_VERSION
+        value: v1
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: MAIL_WEBHOOK_SECRET
+        sync: false

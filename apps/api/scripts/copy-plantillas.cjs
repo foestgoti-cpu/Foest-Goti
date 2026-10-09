@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const MODULOS_CON_PLANTILLAS = ['formatos_oficiales', 'labor_social'];
+const MODULOS_CON_PLANTILLAS = ['formatos_oficiales', 'labor_social', 'export_reports'];
 
 for (const modulo of MODULOS_CON_PLANTILLAS) {
   const origen = path.join(__dirname, '..', 'src', 'modules', modulo, 'plantillas');
