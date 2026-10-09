@@ -7,7 +7,15 @@ import { env } from '../config/env';
  * Logger estructurado (pino). En desarrollo intenta usar pino-pretty si esta
  * instalado; en pruebas y produccion escribe JSON.
  */
-const esDesarrollo = env.NODE_ENV === 'development';
+const tienePretty = (): boolean => {
+  try {
+    require.resolve('pino-pretty');
+    return true;
+  } catch {
+    return false;
+  }
+};
+const esDesarrollo = env.NODE_ENV === 'development' && tienePretty();
 
 export const logger = pino({
   level: env.NODE_ENV === 'test' ? 'silent' : env.LOG_LEVEL,
