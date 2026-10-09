@@ -24,7 +24,7 @@ export function LineaTiempoExpediente({ datos, cargando, error }: { datos?: Line
               <li key={h.id} className="relative pb-5 last:pb-0" aria-current={h.actual ? 'step' : undefined}>
                 <span
                   aria-hidden="true"
-                  className={`absolute -left-[27px] top-1 block h-4 w-4 border-2 border-primary ${h.actual ? 'bg-primary' : 'bg-white'}`}
+                  className={`absolute -left-[27px] top-1 block h-4 w-4 rounded-full border-2 border-primary ${h.actual ? 'bg-primary' : 'bg-white'}`}
                 />
                 <p className="text-sm text-ink/80">
                   <time dateTime={h.fecha}>{h.fecha_texto}</time>
@@ -36,7 +36,7 @@ export function LineaTiempoExpediente({ datos, cargando, error }: { datos?: Line
                 </p>
                 <p className="text-sm">{h.descripcion}</p>
                 {h.observacion && (
-                  <blockquote className="mt-2 border border-ink bg-primary-10 px-3 py-2 text-sm">
+                  <blockquote className="mt-2 border border-ink rounded-lg bg-primary-10 px-3 py-2 text-sm">
                     {h.observacion.texto && <p>{h.observacion.texto}</p>}
                     {h.observacion.documentos_observados.length > 0 && (
                       <p className="mt-1">

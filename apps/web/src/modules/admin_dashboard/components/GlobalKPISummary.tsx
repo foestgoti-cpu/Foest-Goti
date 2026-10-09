@@ -5,7 +5,7 @@ import { fechaHora, moneda, numero } from './formato';
 /** Tarjetas de totales transversales (stat tiles: etiqueta en oracion, valor semibold). */
 function Tile({ etiqueta, valor, detalle }: { etiqueta: string; valor: string; detalle?: string }) {
   return (
-    <div className="border border-ink bg-white px-4 py-3">
+    <div className="border border-ink rounded-xl bg-white px-4 py-3">
       <p className="text-sm text-ink/80">{etiqueta}</p>
       <p className="mt-1 text-3xl font-semibold leading-tight">{valor}</p>
       {detalle && <p className="mt-1 text-xs text-ink/70">{detalle}</p>}
@@ -49,7 +49,7 @@ export function GlobalKPISummary({ resumen, cargando }: { resumen?: Resumen; car
             <Tile etiqueta="Monto desembolsado (pagado)" valor={moneda(resumen.montos.monto_desembolsado ?? 0)} />
           </>
         ) : (
-          <div className="border border-dashed border-ink px-4 py-3 text-sm sm:col-span-2">
+          <div className="border border-dashed rounded-xl border-ink px-4 py-3 text-sm sm:col-span-2">
             <p className="font-semibold">Montos otorgados y desembolsados</p>
             <p className="mt-1 text-ink/80">Pendiente del modulo de seguimiento de beneficios (tabla de otorgamientos aun no disponible).</p>
           </div>

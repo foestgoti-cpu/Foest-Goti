@@ -69,7 +69,7 @@ export function ComparativaPeriodosCard({ periodos }: { periodos: string[] }) {
       {isLoading && <Spinner />}
       {periodos.length === 0 && <p className="text-sm text-ink/80">No hay convocatorias para comparar.</p>}
       {data && (
-        <div className="overflow-x-auto border border-ink">
+        <div className="overflow-x-auto border border-ink rounded-xl">
           <table className="w-full border-collapse text-sm">
             <caption className="sr-only">Comparativa de postulaciones y montos entre dos periodos</caption>
             <thead className="bg-primary-10">

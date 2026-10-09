@@ -74,7 +74,7 @@ export function RestablecerClaveModal({ abierto, funcionarioId, etiquetaCuenta, 
         <p className="mb-2">
           Clave temporal de <strong>{etiquetaCuenta}</strong>. Las sesiones activas fueron cerradas y el funcionario debera cambiarla al iniciar sesion.
         </p>
-        <div className="flex flex-wrap items-center gap-2 border border-ink bg-primary-10 p-3">
+        <div className="flex flex-wrap items-center gap-2 border border-ink rounded-lg bg-primary-10 p-3">
           <code className="break-all font-mono text-lg" data-testid="clave-temporal">
             {clave}
           </code>

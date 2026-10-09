@@ -26,7 +26,7 @@ export function ChecklistValidacion({
           ? 'Su expediente esta completo y puede enviarse.'
           : 'Su expediente tiene pendientes. Complete los elementos marcados antes de enviar.'}
       </p>
-      <ul className="divide-y divide-ink/30 border border-ink">
+      <ul className="divide-y divide-ink/30 border border-ink rounded-xl overflow-hidden">
         {validacion.secciones_aplicables.map((s) => {
           const completa = validacion.secciones_completas.includes(s);
           const faltantes = porSeccion.get(s) ?? [];

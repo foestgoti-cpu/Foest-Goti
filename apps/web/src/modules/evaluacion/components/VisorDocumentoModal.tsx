@@ -53,9 +53,9 @@ export function VisorDocumentoModal({
         <div>
           <p className="mb-2 text-sm">El enlace es temporal (5 minutos). Si expira, cierre y vuelva a abrir el documento.</p>
           {esImagen ? (
-            <img src={url} alt={titulo} className="max-h-[60vh] w-full border border-ink object-contain" />
+            <img src={url} alt={titulo} className="max-h-[60vh] w-full border border-ink rounded-lg overflow-hidden object-contain" />
           ) : (
-            <iframe src={url} title={titulo} className="h-[60vh] w-full border border-ink" />
+            <iframe src={url} title={titulo} className="h-[60vh] w-full border border-ink rounded-lg overflow-hidden" />
           )}
         </div>
       )}

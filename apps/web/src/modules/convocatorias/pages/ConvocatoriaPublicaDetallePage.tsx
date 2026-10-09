@@ -13,7 +13,7 @@ export function ConvocatoriaPublicaDetallePage() {
 
   return (
     <div>
-      <PageHeader titulo="Detalle de la convocatoria" migas={[{ etiqueta: 'Inicio', ruta: '/' }, { etiqueta: 'Convocatoria' }]} />
+      <PageHeader titulo="Detalle de la convocatoria" migas={[{ etiqueta: 'Convocatorias', ruta: '/convocatorias' }, { etiqueta: 'Convocatoria' }]} />
       {isLoading && <Spinner etiqueta="Consultando convocatoria" />}
       {error && (
         <Card>
@@ -23,7 +23,7 @@ export function ConvocatoriaPublicaDetallePage() {
               : 'No fue posible consultar la convocatoria. Intente de nuevo mas tarde.'}
           </Alert>
           <p className="mt-3 text-sm">
-            <Link to="/">Volver al inicio</Link>
+            <Link to="/convocatorias">Volver a las convocatorias</Link>
           </p>
         </Card>
       )}

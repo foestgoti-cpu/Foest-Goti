@@ -76,18 +76,18 @@ export function textoCelda(col: ColumnaConsolidado, valor: ValorCelda | undefine
 const CSS = `
 *{box-sizing:border-box}
 body{margin:0;background:#fff;color:#000;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:14px;line-height:1.4}
-header.cabecera{background:#238dc1;color:#fff;padding:20px 24px}
+header.cabecera{background:#0066ff;color:#fff;padding:20px 24px}
 header.cabecera h1{margin:0 0 4px;font-size:22px}
 header.cabecera p{margin:2px 0;font-size:14px}
 main{padding:16px 24px}
 section{margin:0 0 24px}
-h2{font-size:16px;margin:0 0 8px;color:#000;border-bottom:2px solid #238dc1;padding-bottom:4px}
+h2{font-size:16px;margin:0 0 8px;color:#000;border-bottom:2px solid #0066ff;padding-bottom:4px}
 table{border-collapse:collapse;width:100%}
 th,td{border:1px solid #000;padding:4px 8px;text-align:left;vertical-align:top;font-weight:normal}
-thead th{background:#238dc1;color:#fff;font-weight:bold}
-tbody tr:nth-child(even){background:rgba(35,141,193,.1)}
+thead th{background:#0066ff;color:#fff;font-weight:bold}
+tbody tr:nth-child(even){background:rgba(0, 102, 255,.1)}
 .num{text-align:right;white-space:nowrap}
-.kv th{width:42%;font-weight:bold;background:rgba(35,141,193,.1);color:#000}
+.kv th{width:42%;font-weight:bold;background:rgba(0, 102, 255,.1);color:#000}
 .tabla-datos{overflow-x:auto}
 .tabla-datos table{font-size:12px}
 footer{border-top:1px solid #000;padding:12px 24px;font-size:12px}

@@ -29,7 +29,7 @@ export function DeclaracionesPaso({
       )}
       <ol className="space-y-3">
         {declaraciones.map((d, i) => (
-          <li key={d.codigo} className="border border-ink p-3">
+          <li key={d.codigo} className="border border-ink rounded-lg p-3">
             <h3 className="text-base font-semibold">
               {i + 1}. {d.titulo}
             </h3>

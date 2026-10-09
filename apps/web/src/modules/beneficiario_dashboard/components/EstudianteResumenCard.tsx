@@ -13,7 +13,7 @@ export function EstudianteResumenCard({ resumen }: { resumen: Resumen }) {
   return (
     <Card titulo={saludoTexto} data-testid="resumen-card">
       {!saludo.perfil_completo && (
-        <p className="mb-4 border border-ink px-3 py-2 text-sm">
+        <p className="mb-4 border border-ink rounded-lg px-3 py-2 text-sm">
           Su perfil esta incompleto. Para postularse debe completar sus datos en{' '}
           <Link to="/beneficiario/perfil" className="font-semibold">
             Mi perfil
@@ -22,7 +22,7 @@ export function EstudianteResumenCard({ resumen }: { resumen: Resumen }) {
         </p>
       )}
 
-      <section aria-labelledby="convocatoria-titulo" className="border border-ink">
+      <section aria-labelledby="convocatoria-titulo" className="border border-ink rounded-xl overflow-hidden">
         <div className="border-b border-ink bg-primary-10 px-3 py-2">
           <h3 id="convocatoria-titulo" className="text-base font-semibold">
             {abierta ? 'Convocatoria vigente' : 'Convocatorias'}
@@ -69,7 +69,7 @@ export function EstudianteResumenCard({ resumen }: { resumen: Resumen }) {
             {!saludo.perfil_completo && <p className="mt-2 text-sm">Complete su perfil para habilitar el boton.</p>}
           </>
         ) : actual ? (
-          <section aria-labelledby="postulacion-actual-titulo" className="border border-primary bg-primary-10 px-3 py-3">
+          <section aria-labelledby="postulacion-actual-titulo" className="border border-primary rounded-xl bg-primary-10 px-3 py-3">
             <h3 id="postulacion-actual-titulo" className="text-sm font-semibold uppercase tracking-wide">
               Su postulacion {actual.convocatoria ? `en ${actual.convocatoria.nombre}` : 'actual'}
             </h3>
@@ -86,7 +86,7 @@ export function EstudianteResumenCard({ resumen }: { resumen: Resumen }) {
                   {actual.estado === 'BORRADOR' ? 'Continuar borrador' : actual.estado === 'EN_CORRECCION' ? 'Corregir documentos' : 'Ver postulacion'}
                 </Button>
               </Link>
-              <a href="#expediente" className="inline-flex min-h-[44px] items-center justify-center border border-ink px-4 text-base no-underline hover:bg-primary-10 hover:no-underline">
+              <a href="#expediente" className="inline-flex min-h-[44px] items-center justify-center border border-ink rounded-lg px-4 text-base no-underline hover:bg-primary-10 hover:no-underline">
                 Ver linea de tiempo
               </a>
             </div>

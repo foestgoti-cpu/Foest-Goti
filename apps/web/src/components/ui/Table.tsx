@@ -31,7 +31,7 @@ export function Table<T>({ columnas, filas, obtenerId, cargando, vacio, paginaci
   const totalPaginas = paginacion ? Math.max(1, Math.ceil(paginacion.total / paginacion.page_size)) : 1;
 
   return (
-    <div className="border border-ink bg-white">
+    <div className="overflow-hidden rounded-xl border border-ink bg-white">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left text-sm">
           {caption && <caption className="sr-only">{caption}</caption>}

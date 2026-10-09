@@ -134,7 +134,7 @@ apps/web/src/modules/<modulo>/
 - Navegacion lateral: agregar entradas en `apps/web/src/navigation.ts` (por rol).
 - Llamadas a la API: `api.get/post/put/patch/delete` de `src/lib/api.ts` (adjunta Bearer de la sesion de Supabase y refresca una vez ante 401; errores como `ApiRequestError { status, code, message, details }`).
 - Sesion: `useAuth()` de `src/lib/auth/AuthProvider.tsx` (`session`, `user`, `rol`, `loading`, `iniciarSesion`, `cerrarSesion`). `rol` viene de `app_metadata.rol` y es solo ergonomia; la autorizacion real es de la API.
-- UI: usar exclusivamente `src/components/ui` (Button, Input, Select, Textarea, Checkbox, Card, Table, Badge, Alert, Modal con doble intencion, PageHeader, EmptyState, Spinner, FormField). Paleta fija por Tailwind: `white`, `primary`, `primary-10`, `primary-20`, `ink` (ninguna otra clase de color compila). Sin emojis ni iconos decorativos; error/exito solo con texto y bordes (Alert).
+- UI: usar exclusivamente `src/components/ui` (Button, Input, Select, Textarea, Checkbox, Card, Table, Badge, Alert, Modal con doble intencion, PageHeader, EmptyState, Spinner, FormField). Paleta fija por Tailwind: `white`, `primary`, `primary-10`, `primary-20` (azul #0066ff y tintes), `ink` (texto negro) y `danger`, `danger-10` (rojo #d32f2f, solo para errores y validaciones); ninguna otra clase de color compila. Radios: `rounded-lg` (campos, botones), `rounded-xl` (tarjetas, modales, tablas), `rounded-md` (insignias). `Input type="password"` incluye ojo para mostrar/ocultar. Sin emojis ni iconos decorativos.
 - Pruebas: Vitest + RTL en `__tests__/` junto al componente o pagina.
 
 ### 6.4 Servicios transversales de los modulos P0 (usarlos, no recrearlos)

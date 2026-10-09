@@ -30,10 +30,10 @@ export function NuevaPostulacionPage() {
     },
     onError: (e) => {
       if (e instanceof ApiRequestError) {
-        if (e.code === 'PERFIL_INCOMPLETO') return setMensaje({ tipo: 'advertencia', texto: 'Debe completar su perfil antes de postularse.', accion: '/beneficiario/perfil' });
-        if (e.code === 'POSTULACION_DUPLICADA') return setMensaje({ tipo: 'advertencia', texto: 'Ya tiene una postulacion para esta convocatoria. Consultela en Mis postulaciones.', accion: '/beneficiario/postulaciones' });
-        if (e.code === 'CONVOCATORIA_NO_ABIERTA') return setMensaje({ tipo: 'advertencia', texto: 'La convocatoria ya no esta abierta.' });
-        if (e.code === 'TRAMITE_NO_ELEGIBLE') return setMensaje({ tipo: 'advertencia', texto: e.message });
+        if (e.code === 'PERFIL_INCOMPLETO') return setMensaje({ tipo: 'error', texto: 'Debe completar su perfil antes de postularse.', accion: '/beneficiario/perfil' });
+        if (e.code === 'POSTULACION_DUPLICADA') return setMensaje({ tipo: 'error', texto: 'Ya tiene una postulacion para esta convocatoria. Consultela en Mis postulaciones.', accion: '/beneficiario/postulaciones' });
+        if (e.code === 'CONVOCATORIA_NO_ABIERTA') return setMensaje({ tipo: 'error', texto: 'La convocatoria ya no esta abierta.' });
+        if (e.code === 'TRAMITE_NO_ELEGIBLE') return setMensaje({ tipo: 'error', texto: e.message });
         return setMensaje({ tipo: 'error', texto: e.message });
       }
       setMensaje({ tipo: 'error', texto: 'No fue posible crear la postulacion.' });

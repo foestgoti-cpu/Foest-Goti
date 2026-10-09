@@ -11,7 +11,7 @@ export interface FilaTooltip {
 export function TooltipGrafico({ titulo, filas }: { titulo?: string; filas: FilaTooltip[] }) {
   if (filas.length === 0) return null;
   return (
-    <div className="border border-ink bg-white px-3 py-2 text-sm text-ink shadow-none" role="status">
+    <div className="rounded-lg border border-ink bg-white px-3 py-2 text-sm text-ink shadow-none" role="status">
       {titulo && <p className="mb-1 font-semibold">{titulo}</p>}
       <ul className="space-y-0.5">
         {filas.map((f) => (

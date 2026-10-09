@@ -75,7 +75,7 @@ export function VerificarDocumentoPage() {
             <p className="mb-2 text-sm">
               Para comprobar que su copia no fue alterada, seleccione el PDF original descargado de la plataforma. La huella se calcula en su navegador y el archivo no se envía.
             </p>
-            <input type="file" accept="application/pdf" onChange={onArchivo} aria-label="Seleccionar PDF para calcular su huella" />
+            <input type="file" accept="application/pdf" className="campo file:mr-3 file:min-h-[40px] file:cursor-pointer file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onChange={onArchivo} aria-label="Seleccionar PDF para calcular su huella" />
             {errorArchivo && (
               <Alert tipo="error" className="mt-3">
                 {errorArchivo}
@@ -95,7 +95,7 @@ export function VerificarDocumentoPage() {
         </Card>
       )}
       {data && !data.valido && (
-        <Alert tipo="advertencia" titulo="Código no encontrado">
+        <Alert tipo="error" titulo="Código no encontrado">
           No existe un documento emitido con ese código. Revise que lo haya digitado correctamente.
         </Alert>
       )}

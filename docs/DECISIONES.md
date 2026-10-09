@@ -204,4 +204,4 @@ Decisión del FOEST al pasar a implementación. Proyecto: `https://kixjejmewgynz
 - **Archivos:** Supabase Storage (bucket privado `documentos`) con URLs firmadas, en lugar de S3/MinIO. Reglas de validación de §11 se mantienen.
 - **Colas:** para el prototipo, trabajos programados con `node-cron` dentro de la API; BullMQ/Redis queda para producción.
 - **Secretos:** `SUPABASE_URL`, `SUPABASE_ANON_KEY` (web y api), `SUPABASE_SERVICE_ROLE_KEY` (solo api), nunca en el repositorio.
-- **Diseño visual:** formal e institucional. Paleta: blanco `#ffffff`, azul `#238dc1` (y sus tintes por opacidad para fondos y estados), texto negro `#000000`. Sin emojis ni iconografía decorativa.
+- **Diseño visual:** formal e institucional. Paleta: blanco `#ffffff`, azul `#0066ff` (y sus tintes por opacidad para fondos y estados), texto negro `#000000`; rojo `#d32f2f` solo para errores y validaciones. Esquinas redondeadas (radios 4-16 px) en cuadros, campos y botones; campos de contraseña con ojo para mostrar/ocultar. Sin emojis ni iconografía decorativa.

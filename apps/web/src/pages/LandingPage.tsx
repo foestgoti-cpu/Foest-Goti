@@ -10,7 +10,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 export function LandingPage() {
   return (
     <div className="space-y-8">
-      <section className="border border-ink bg-primary-10 px-6 py-8">
+      <section className="border border-ink rounded-2xl bg-primary-10 px-6 py-8">
         <h1 className="text-3xl">Fondo para la Educacion Superior de Tocancipa</h1>
         <p className="mt-3 max-w-3xl text-base">
           Plataforma oficial para la postulacion, evaluacion y seguimiento de los apoyos educativos del FOEST, en el marco del

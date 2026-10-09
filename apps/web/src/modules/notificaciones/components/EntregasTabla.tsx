@@ -24,7 +24,7 @@ export function EntregasTabla() {
     {
       clave: 'estado',
       titulo: 'Estado',
-      render: (e) => <Badge tono={e.estado === 'REBOTADO' || e.estado === 'QUEJA' ? 'relleno' : e.estado === 'FALLIDO' ? 'destacado' : 'neutro'}>{TEXTO_ESTADO[e.estado]}</Badge>,
+      render: (e) => <Badge tono="neutro" className={e.estado === 'REBOTADO' || e.estado === 'QUEJA' || e.estado === 'FALLIDO' ? 'border-danger! bg-danger-10! text-danger!' : undefined}>{TEXTO_ESTADO[e.estado]}</Badge>,
     },
     { clave: 'rebote', titulo: 'Rebote', render: (e) => (e.codigo_rebote ? `${e.codigo_rebote === 'HARD' ? 'Duro' : 'Blando'}${e.detalle_rebote ? `: ${e.detalle_rebote}` : ''}` : '-') },
     { clave: 'proveedor', titulo: 'ID proveedor', className: 'break-all text-xs', render: (e) => e.id_mensaje_proveedor ?? '-' },

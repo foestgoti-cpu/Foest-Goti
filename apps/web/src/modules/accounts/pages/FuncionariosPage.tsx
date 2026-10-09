@@ -47,7 +47,7 @@ export function FuncionariosPage() {
           {(error as Error).message}
         </Alert>
       )}
-      <form onSubmit={buscar} className="mb-4 grid gap-3 border border-ink bg-primary-10 p-4 md:grid-cols-4" aria-label="Filtros de funcionarios">
+      <form onSubmit={buscar} className="mb-4 grid gap-3 border border-ink rounded-xl bg-primary-10 p-4 md:grid-cols-4" aria-label="Filtros de funcionarios">
         <Input placeholder="Buscar por nombre, correo o cargo" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar" />
         <Select
           aria-label="Estado"

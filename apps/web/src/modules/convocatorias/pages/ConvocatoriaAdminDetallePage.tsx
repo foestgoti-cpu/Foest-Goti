@@ -129,12 +129,12 @@ export function ConvocatoriaAdminDetallePage() {
           <Card titulo="Resumen de postulaciones">
             <dl className="grid gap-2 text-sm sm:grid-cols-4">
               {(['BORRADOR', 'PENDIENTE', 'EN_EVALUACION', 'EN_CORRECCION', 'APROBADA', 'RECHAZADA', 'DESISTIDA'] as const).map((e) => (
-                <div key={e} className="border border-ink/30 px-3 py-2">
+                <div key={e} className="border border-ink/30 rounded-lg px-3 py-2">
                   <dt className="text-xs uppercase tracking-wide text-ink/70">{e.replace('_', ' ')}</dt>
                   <dd className="text-lg font-semibold">{c.postulaciones_por_estado[e] ?? 0}</dd>
                 </div>
               ))}
-              <div className="border border-ink px-3 py-2">
+              <div className="border border-ink rounded-lg px-3 py-2">
                 <dt className="text-xs uppercase tracking-wide text-ink/70">Total</dt>
                 <dd className="text-lg font-semibold">{totalPostulaciones}</dd>
               </div>
@@ -176,7 +176,7 @@ export function ConvocatoriaAdminDetallePage() {
               }
             >
               {c.descripcion ? <p className="mb-4">{c.descripcion}</p> : <p className="mb-4 text-sm text-ink/70">Sin descripcion.</p>}
-              <div className="overflow-x-auto border border-ink">
+              <div className="overflow-x-auto border border-ink rounded-xl">
                 <table className="w-full border-collapse text-sm">
                   <thead className="bg-primary-10">
                     <tr>

@@ -186,7 +186,7 @@ export function DictamenFinalModal({
                   const d = dec(c);
                   const decision = decisionEfectiva(c);
                   return (
-                    <div key={c} className="mb-2 border border-ink p-3">
+                    <div key={c} className="mb-2 border border-ink rounded-lg p-3">
                       <p className="font-semibold">{nombreBeneficio(c)}</p>
                       <Select
                         aria-label={`Decision para ${nombreBeneficio(c)}`}
@@ -211,7 +211,7 @@ export function DictamenFinalModal({
                             Motivo del rechazo
                           </label>
                           <Textarea id={`motivo-${c}`} rows={2} value={d.motivo} onChange={(ev) => cambiar(c, { motivo: ev.target.value })} />
-                          <p className="text-sm">
+                          <p className={d.motivo.trim().length < OBSERVACION_MIN ? 'text-sm text-danger' : 'text-sm'}>
                             {d.motivo.trim().length}/{OBSERVACION_MIN} caracteres minimos
                           </p>
                         </div>

@@ -18,7 +18,7 @@ export function HistorialAsignacion({ postulacionId }: { postulacionId: string }
     <ol className="border-l-2 border-primary pl-4">
       {data.map((h) => (
         <li key={h.id} className="relative mb-5 last:mb-0">
-          <span aria-hidden="true" className="absolute -left-[21px] top-1 h-3 w-3 border border-primary bg-white" />
+          <span aria-hidden="true" className="absolute -left-[21px] top-1 h-3 w-3 border border-primary rounded-full bg-white" />
           <p className="text-sm text-ink/70">{fechaLarga(h.ocurrido_en)}</p>
           <p className="font-semibold">
             {TEXTO_EVENTO_HISTORIAL[h.evento] ?? h.evento}

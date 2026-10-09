@@ -71,7 +71,7 @@ export function ConvocatoriaFuncionarioDetallePage() {
       <div className="space-y-4">
         <Card titulo="Beneficios ofertados">
           {c.descripcion && <p className="mb-3">{c.descripcion}</p>}
-          <ul className="divide-y divide-ink/30 border border-ink/30 text-sm">
+          <ul className="divide-y divide-ink/30 border border-ink/30 rounded-lg overflow-hidden text-sm">
             {c.beneficios.map((b) => (
               <li key={b.codigo} className="flex flex-wrap justify-between gap-2 px-3 py-2">
                 <span>
@@ -87,7 +87,7 @@ export function ConvocatoriaFuncionarioDetallePage() {
         <Card titulo="Postulaciones por estado">
           <dl className="grid gap-2 text-sm sm:grid-cols-4">
             {Object.entries(c.postulaciones_por_estado).map(([e, n]) => (
-              <div key={e} className="border border-ink/30 px-3 py-2">
+              <div key={e} className="border border-ink/30 rounded-lg px-3 py-2">
                 <dt className="text-xs uppercase tracking-wide text-ink/70">{e.replace('_', ' ')}</dt>
                 <dd className="text-lg font-semibold">{n}</dd>
               </div>

@@ -110,7 +110,7 @@ export function ConvocatoriaForm({ inicial, soloInformativo = false, enviando, e
         </Alert>
       )}
 
-      <fieldset className="mb-6 border border-ink p-4">
+      <fieldset className="mb-6 border border-ink rounded-xl p-4">
         <legend className="px-2 text-base font-semibold">Periodo y fechas</legend>
         <div className="grid gap-x-4 sm:grid-cols-2">
           <FormField etiqueta="Anio" nombre="anio" error={errores} obligatorio>
@@ -136,7 +136,7 @@ export function ConvocatoriaForm({ inicial, soloInformativo = false, enviando, e
         </div>
       </fieldset>
 
-      <fieldset className="mb-6 border border-ink p-4">
+      <fieldset className="mb-6 border border-ink rounded-xl p-4">
         <legend className="px-2 text-base font-semibold">Identificacion</legend>
         <FormField etiqueta="Nombre de la convocatoria" nombre="nombre" error={errores} obligatorio>
           <Input value={nombre} onChange={(e) => setNombre(e.target.value)} maxLength={200} />
@@ -146,7 +146,7 @@ export function ConvocatoriaForm({ inicial, soloInformativo = false, enviando, e
         </FormField>
       </fieldset>
 
-      <fieldset className="mb-6 border border-ink p-4">
+      <fieldset className="mb-6 border border-ink rounded-xl p-4">
         <legend className="px-2 text-base font-semibold">Beneficios ofertados</legend>
         {cargandoCatalogo && <Spinner etiqueta="Cargando catalogo de beneficios" />}
         {errorCatalogo && <Alert tipo="error">No fue posible cargar el catalogo de beneficios.</Alert>}
@@ -242,7 +242,7 @@ export function ConvocatoriaForm({ inicial, soloInformativo = false, enviando, e
           </div>
         )}
         {errores?.issues.some((i) => i.path[0] === 'beneficios') && (
-          <p role="alert" className="mt-2 border-l-2 border-ink pl-2 text-sm font-medium">
+          <p role="alert" className="mt-2 border-l-2 border-danger pl-2 text-sm font-medium text-danger">
             Revise los valores de los beneficios: deben ser numeros iguales o mayores que cero.
           </p>
         )}

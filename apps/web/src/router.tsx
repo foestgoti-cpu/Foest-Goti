@@ -13,8 +13,8 @@ export const routes: RouteObject[] = [
   {
     element: <PublicLayout />,
     children: [
-      // `/` (landing con convocatorias abiertas) y /convocatorias/:id: modulo convocatorias (rutasPublicas)
-      // /login, /registro, /recuperar, /restablecer, /verificar-correo, /invitacion y /cambiar-clave: modulo auth (rutasPublicas)
+      // /convocatorias y /convocatorias/:id: modulo convocatorias (rutasPublicas)
+      // / y /login (inicio de sesion), /registro, /recuperar, /restablecer, /verificar-correo, /invitacion y /cambiar-clave: modulo auth (rutasPublicas)
       { path: '/403', element: <ForbiddenPage /> },
       ...rutasDe('rutasPublicas'),
       { path: '*', element: <NotFoundPage /> },

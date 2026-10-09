@@ -4,25 +4,23 @@ import { ConvocatoriaCard } from '../components/ConvocatoriaCard';
 import { usePublicas } from '../hooks/useConvocatorias';
 import { formatearFechaLocal } from '../utils';
 
-/** Landing publica (`/`): presentacion institucional + convocatorias abiertas (sin sesion). */
+/** Listado publico (`/convocatorias`): convocatorias abiertas (sin sesion). El inicio de sesion vive en `/`. */
 export function ConvocatoriasPublicasPage() {
   const { data, isLoading, error } = usePublicas();
   const abiertas = data?.data ?? [];
 
   return (
     <div className="space-y-8">
-      <section className="border border-ink bg-primary-10 px-6 py-8">
-        <h1 className="text-3xl">Fondo para la Educacion Superior de Tocancipa</h1>
+      <section className="rounded-2xl border border-primary-20 bg-primary-10 px-6 py-8">
+        <h1 className="text-3xl">Convocatorias del Fondo para la Educación Superior</h1>
         <p className="mt-3 max-w-3xl text-base">
-          Plataforma oficial para la postulacion, evaluacion y seguimiento de los apoyos educativos del FOEST, en el marco del Acuerdo Municipal 023 de 2025.
+          Consulte las convocatorias abiertas del FOEST, en el marco del Acuerdo Municipal 023 de 2025, y cree su cuenta para postularse.
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           <Link to="/registro" className="no-underline hover:no-underline">
             <Button>Crear cuenta</Button>
           </Link>
-          <Link to="/login" className="no-underline hover:no-underline">
-            <Button variante="secundario">Iniciar sesion</Button>
-          </Link>
+          <Link to="/login">Volver al inicio de sesión</Link>
         </div>
       </section>
 

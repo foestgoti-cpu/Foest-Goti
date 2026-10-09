@@ -149,7 +149,7 @@ export function DeclaracionesEditor() {
       >
         {mensajeCons && <Alert tipo={mensajeCons.tipo} className="mb-3">{mensajeCons.texto}</Alert>}
         {vigenteCons.data && (
-          <div className="mb-4 border border-ink p-3 text-sm">
+          <div className="mb-4 border border-ink rounded-lg p-3 text-sm">
             <p className="mb-1 font-semibold">
               Version vigente: {vigenteCons.data.version}
               {vigenteCons.data.vigente_desde ? ` (desde ${fecha(vigenteCons.data.vigente_desde)})` : ''}
@@ -196,7 +196,7 @@ export function DeclaracionesEditor() {
           <span className="mb-1 block font-semibold">Motivo (opcional)</span>
           <Textarea rows={2} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
         </label>
-        {texto.trim().length < 20 && <p className="mt-2 text-xs text-ink/70">El texto debe tener al menos 20 caracteres.</p>}
+        {texto.trim().length < 20 && <p className="mt-2 text-xs text-danger">El texto debe tener al menos 20 caracteres.</p>}
       </Modal>
 
       <Modal
@@ -216,7 +216,7 @@ export function DeclaracionesEditor() {
           <span className="mb-1 block font-semibold">Motivo (opcional)</span>
           <Textarea rows={2} value={motivoCons} onChange={(e) => setMotivoCons(e.target.value)} />
         </label>
-        {textoCons.trim().length < 50 && <p className="mt-2 text-xs text-ink/70">El texto debe tener al menos 50 caracteres.</p>}
+        {textoCons.trim().length < 50 && <p className="mt-2 text-xs text-danger">El texto debe tener al menos 50 caracteres.</p>}
       </Modal>
     </>
   );

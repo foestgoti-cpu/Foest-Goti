@@ -52,7 +52,7 @@ export function EvaluacionExpedientePage({ soloLecturaForzada = false }: { soloL
 
   const manejarConflicto = async (mensaje: string) => {
     setDictamenAbierto(false);
-    setAviso({ tipo: 'advertencia', texto: mensaje });
+    setAviso({ tipo: 'error', texto: mensaje });
     await refetch();
   };
 
@@ -60,7 +60,7 @@ export function EvaluacionExpedientePage({ soloLecturaForzada = false }: { soloL
     if (!e) return;
     setAviso(null);
     if (itemsParaGuardar.length === 0) {
-      setAviso({ tipo: 'advertencia', texto: 'Califique al menos un tipo de documento antes de guardar.' });
+      setAviso({ tipo: 'error', texto: 'Califique al menos un tipo de documento antes de guardar.' });
       return;
     }
     try {
@@ -142,7 +142,7 @@ export function EvaluacionExpedientePage({ soloLecturaForzada = false }: { soloL
       </div>
 
       {puedeDictaminar && (
-        <div className="sticky bottom-0 mt-4 flex flex-wrap items-center justify-between gap-2 border border-ink bg-white px-4 py-3">
+        <div className="sticky bottom-0 mt-4 flex flex-wrap items-center justify-between gap-2 border border-ink rounded-xl bg-white px-4 py-3">
           <p className="text-sm">{sucio ? 'Guarde el chequeo antes de emitir el dictamen.' : 'Revise el chequeo y emita el dictamen final.'}</p>
           <Button onClick={() => setDictamenAbierto(true)} disabled={sucio}>
             Emitir dictamen

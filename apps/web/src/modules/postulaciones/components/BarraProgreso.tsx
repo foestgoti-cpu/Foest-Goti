@@ -30,7 +30,7 @@ export function BarraProgreso({
         </span>
         <span aria-hidden="true">{porcentaje}%</span>
       </div>
-      <div className="h-2 w-full border border-ink bg-white" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={porcentaje}>
+      <div className="h-2 w-full border border-ink rounded-full overflow-hidden bg-white" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={porcentaje}>
         <div className="h-full bg-primary" style={{ width: `${porcentaje}%` }} />
       </div>
       <ol className="mt-3 flex flex-wrap gap-1">
@@ -44,7 +44,7 @@ export function BarraProgreso({
                 onClick={onIr ? () => onIr(s) : undefined}
                 aria-current={esActual ? 'step' : undefined}
                 className={cn(
-                  'min-h-[44px] border px-2 py-1 text-xs sm:text-sm',
+                  'min-h-[44px] rounded-lg border px-2 py-1 text-xs sm:text-sm',
                   completa ? 'border-primary bg-primary-20' : 'border-ink bg-white',
                   esActual && 'border-2 border-primary font-semibold',
                 )}

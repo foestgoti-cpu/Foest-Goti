@@ -38,7 +38,7 @@ function DiffViewer({ evento }: { evento: AuditoriaEvento }) {
   const filas = calcularDiferencias(evento.datos_antes, evento.datos_despues);
   if (filas.length === 0) return <p className="text-sm text-ink/80">El evento no registra datos antes/despues.</p>;
   return (
-    <div className="overflow-x-auto border border-ink">
+    <div className="overflow-x-auto border border-ink rounded-xl">
       <table className="w-full border-collapse text-sm">
         <caption className="sr-only">Diferencias entre datos antes y despues</caption>
         <thead className="bg-primary-10">
@@ -144,7 +144,7 @@ function DetalleEvento({ id, onCerrar, onLineaTiempo }: { id: string; onCerrar: 
           {data.metadatos && Object.keys(data.metadatos).length > 0 && (
             <>
               <h3 className="mb-2 mt-4 text-base">Metadatos</h3>
-              <pre className="overflow-x-auto border border-ink bg-primary-10 p-3 font-mono text-xs">{JSON.stringify(data.metadatos, null, 2)}</pre>
+              <pre className="overflow-x-auto border border-ink rounded-lg bg-primary-10 p-3 font-mono text-xs">{JSON.stringify(data.metadatos, null, 2)}</pre>
             </>
           )}
           <p className="mt-3 text-xs text-ink/70">La consulta de este detalle quedo registrada en la bitacora como LECTURA_SENSIBLE.</p>
@@ -170,7 +170,7 @@ function LineaTiempoEntidad({ entidad, entidadId, onCerrar, onVerEvento }: { ent
       {error && <Alert tipo="error">{(error as Error).message}</Alert>}
       {data && data.data.length === 0 && <p className="text-sm">La entidad no tiene eventos registrados.</p>}
       {data && data.data.length > 0 && (
-        <ol className="divide-y divide-ink/30 border border-ink text-sm">
+        <ol className="divide-y divide-ink/30 border border-ink rounded-xl overflow-hidden text-sm">
           {data.data.map((e) => (
             <li key={e.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
               <span>

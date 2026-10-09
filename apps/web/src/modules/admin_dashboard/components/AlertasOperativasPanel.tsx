@@ -45,7 +45,7 @@ export function AlertasOperativasPanel({ datos, cargando, error }: { datos?: Res
             <span className="text-sm text-ink/70">{s.grupos.reduce((n, g) => n + g.alertas.length, 0)} alerta(s)</span>
           </h3>
           {s.grupos.map((g) => (
-            <div key={g.grupo} className="mb-3 border border-ink">
+            <div key={g.grupo} className="mb-3 border border-ink rounded-xl overflow-hidden">
               <p className="border-b border-ink bg-primary-10 px-3 py-1 text-xs font-semibold uppercase tracking-wider">{g.grupo}</p>
               <ul>
                 {g.alertas.map((a, i) => {

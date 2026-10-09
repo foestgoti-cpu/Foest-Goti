@@ -74,7 +74,7 @@ export function FileUploader({ postulacionId, tipo, nombreTipo, maxMb, formatoGe
   };
 
   return (
-    <div className="border border-ink p-4">
+    <div className="border border-ink rounded-xl p-4">
       <h3 className="mb-2 text-base font-semibold">
         {esReemplazo ? 'Reemplazar' : 'Cargar'}: {nombreTipo}
       </h3>
@@ -86,7 +86,7 @@ export function FileUploader({ postulacionId, tipo, nombreTipo, maxMb, formatoGe
         }}
         onDragLeave={() => setArrastrando(false)}
         onDrop={alSoltar}
-        className={cn('border-2 border-dashed px-4 py-6 text-center', arrastrando ? 'border-primary bg-primary-10' : 'border-ink bg-white')}
+        className={cn('border-2 border-dashed rounded-lg px-4 py-6 text-center', arrastrando ? 'border-primary bg-primary-10' : 'border-ink bg-white')}
       >
         <p className="text-sm">Arrastre el archivo aqui o seleccionelo desde su equipo.</p>
         <p className="mt-1 text-sm text-ink/70">Formatos admitidos: PDF, JPEG o PNG. Tamano maximo: {maxMb} MB.</p>
@@ -131,7 +131,7 @@ export function FileUploader({ postulacionId, tipo, nombreTipo, maxMb, formatoGe
           <p className="mb-1 text-sm">
             {TEXTO_FASE[carga.fase]} {carga.fase === 'subiendo' ? `${carga.progreso}%` : ''}
           </p>
-          <div className="h-2 w-full border border-ink bg-white" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={carga.progreso}>
+          <div className="h-2 w-full border border-ink rounded-full overflow-hidden bg-white" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={carga.progreso}>
             <div className="h-full bg-primary" style={{ width: `${carga.fase === 'subiendo' ? carga.progreso : 100}%` }} />
           </div>
         </div>

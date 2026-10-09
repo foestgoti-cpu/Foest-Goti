@@ -29,11 +29,11 @@ export function ConvocatoriaCard({ convocatoria, detallada = false }: { convocat
     >
       {c.descripcion && <p className="mb-4 text-base">{c.descripcion}</p>}
       <dl className="mb-4 grid gap-2 text-sm sm:grid-cols-2">
-        <div className="border border-ink/30 px-3 py-2">
+        <div className="border border-ink/30 rounded-lg px-3 py-2">
           <dt className="font-semibold">Apertura</dt>
           <dd>{formatearFechaLocal(c.fecha_apertura.slice(0, 10) === c.fecha_apertura ? c.fecha_apertura : aperturaLocal(c.fecha_apertura))}</dd>
         </div>
-        <div className="border border-ink/30 px-3 py-2">
+        <div className="border border-ink/30 rounded-lg px-3 py-2">
           <dt className="font-semibold">Cierre</dt>
           <dd>{formatearFechaLocal(c.fecha_cierre)} (23:59:59)</dd>
         </div>
@@ -42,7 +42,7 @@ export function ConvocatoriaCard({ convocatoria, detallada = false }: { convocat
       {c.beneficios.length === 0 ? (
         <p className="text-sm">Sin beneficios publicados.</p>
       ) : (
-        <ul className="divide-y divide-ink/30 border border-ink/30">
+        <ul className="divide-y divide-ink/30 border border-ink/30 rounded-lg overflow-hidden">
           {c.beneficios.map((b) => (
             <li key={b.codigo} className="flex flex-wrap items-start justify-between gap-2 px-3 py-2 text-sm">
               <div>

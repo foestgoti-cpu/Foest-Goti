@@ -52,7 +52,7 @@ export function DocumentChecklist({ datos, onCargar, onReemplazar, onVer, onElim
   }
 
   return (
-    <ul className="divide-y divide-ink/30 border border-ink" aria-label="Soportes exigibles">
+    <ul className="divide-y divide-ink/30 border border-ink rounded-xl overflow-hidden" aria-label="Soportes exigibles">
       {filas.map(({ tipo, obligatorio, exigidoPor }) => {
         const doc = datos.documentos.find((d) => d.tipo_codigo === tipo.codigo);
         const situacion: SituacionDocumento = doc ? doc.estado_carga : 'SIN_CARGAR';
@@ -76,12 +76,12 @@ export function DocumentChecklist({ datos, onCargar, onReemplazar, onVer, onElim
                   </p>
                 )}
                 {situacion === 'RECHAZADO_ARCHIVO' && (
-                  <p className="mt-1 border-l-2 border-ink pl-2 text-sm font-medium">
+                  <p className="mt-1 border-l-2 border-danger pl-2 text-sm font-medium text-danger">
                     {vigente?.motivo_rechazo_archivo ?? 'El archivo fue rechazado.'} Cargue un archivo nuevo.
                   </p>
                 )}
                 {enCurso && enCurso.estado_carga === 'RECHAZADO_ARCHIVO' && (
-                  <p className="mt-1 border-l-2 border-ink pl-2 text-sm font-medium">
+                  <p className="mt-1 border-l-2 border-danger pl-2 text-sm font-medium text-danger">
                     El reemplazo (version {enCurso.version}) fue rechazado: {enCurso.motivo_rechazo_archivo ?? 'archivo no valido'}. Se conserva la version anterior.
                   </p>
                 )}

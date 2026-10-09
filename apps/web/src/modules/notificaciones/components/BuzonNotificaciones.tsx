@@ -75,7 +75,7 @@ export function BuzonNotificaciones() {
       {lista.data && lista.data.data.length === 0 && <EmptyState titulo="Sin notificaciones" descripcion="No hay mensajes para mostrar con el filtro actual." />}
 
       {lista.data && lista.data.data.length > 0 && (
-        <ul className="divide-y divide-ink border border-ink bg-white" aria-label="Notificaciones">
+        <ul className="divide-y divide-ink border border-ink rounded-xl overflow-hidden bg-white" aria-label="Notificaciones">
           {lista.data.data.map((n) => (
             <li key={n.id} className={`px-4 py-3 ${n.leida ? '' : 'border-l-4 border-l-primary'}`}>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">

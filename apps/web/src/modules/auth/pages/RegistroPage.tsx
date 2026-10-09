@@ -112,7 +112,7 @@ export function RegistroPage() {
           </Alert>
         )}
         <form onSubmit={(e) => void enviar(e)} noValidate>
-          <fieldset className="mb-4 border border-ink p-4">
+          <fieldset className="mb-4 border border-ink rounded-xl p-4">
             <legend className="px-2 text-sm font-semibold">Datos de identificacion</legend>
             <div className="grid gap-x-4 md:grid-cols-2">
               <FormField etiqueta="Nombres" nombre="nombres" error={errores} obligatorio>
@@ -139,11 +139,11 @@ export function RegistroPage() {
           </fieldset>
 
           {esMenor && (
-            <fieldset className="mb-4 border border-ink p-4">
+            <fieldset className="mb-4 border border-ink rounded-xl p-4">
               <legend className="px-2 text-sm font-semibold">Datos del acudiente (titular menor de edad)</legend>
               <p className="mb-3 text-sm">Por ser menor de edad, el consentimiento de tratamiento de datos lo otorga su acudiente o representante legal.</p>
               {errores?.issues.some((i) => i.path.join('.') === 'acudiente') && (
-                <p role="alert" className="mb-3 border-l-2 border-ink pl-2 text-sm font-medium">
+                <p role="alert" className="mb-3 border-l-2 border-danger pl-2 text-sm font-medium text-danger">
                   Debe registrar los datos del acudiente.
                 </p>
               )}
@@ -169,7 +169,7 @@ export function RegistroPage() {
             </fieldset>
           )}
 
-          <fieldset className="mb-4 border border-ink p-4">
+          <fieldset className="mb-4 border border-ink rounded-xl p-4">
             <legend className="px-2 text-sm font-semibold">Datos de acceso</legend>
             <FormField etiqueta="Correo electronico" nombre="email" error={errores} obligatorio ayuda="A este correo llegara el enlace de confirmacion y las notificaciones.">
               <Input type="email" autoComplete="email" value={campos.email} onChange={(e) => actualizar('email')(e.target.value)} />
@@ -184,7 +184,7 @@ export function RegistroPage() {
             </div>
           </fieldset>
 
-          <fieldset className="mb-4 border border-ink p-4">
+          <fieldset className="mb-4 border border-ink rounded-xl p-4">
             <legend className="px-2 text-sm font-semibold">Consentimiento de tratamiento de datos personales (Ley 1581 de 2012)</legend>
             {consentimiento.isLoading && <Spinner etiqueta="Cargando texto de consentimiento" />}
             {consentimiento.isError && (
@@ -193,7 +193,7 @@ export function RegistroPage() {
               </Alert>
             )}
             {consentimiento.data && (
-              <div className="mb-3 max-h-48 overflow-y-auto border border-ink bg-primary-10 p-3 text-sm" tabIndex={0} aria-label="Texto del consentimiento">
+              <div className="mb-3 max-h-48 overflow-y-auto border border-ink rounded-lg bg-primary-10 p-3 text-sm" tabIndex={0} aria-label="Texto del consentimiento">
                 <p className="whitespace-pre-line">{consentimiento.data.texto}</p>
                 <p className="mt-2 text-xs">Version {consentimiento.data.version}</p>
               </div>
@@ -205,7 +205,7 @@ export function RegistroPage() {
               disabled={!consentimiento.data}
             />
             {errores?.issues.some((i) => i.path[0] === 'aceptar_consentimiento') && (
-              <p role="alert" className="mt-1 border-l-2 border-ink pl-2 text-sm font-medium">
+              <p role="alert" className="mt-1 border-l-2 border-danger pl-2 text-sm font-medium text-danger">
                 Debe aceptar el tratamiento de datos personales para continuar.
               </p>
             )}

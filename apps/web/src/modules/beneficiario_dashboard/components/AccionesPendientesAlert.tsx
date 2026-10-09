@@ -16,7 +16,7 @@ export function AccionesPendientesAlert({ acciones }: { acciones: AccionPendient
             const urgente = a.prioridad === 'ALTA';
             const esAncla = a.accion_url.includes('#');
             const clasesBoton =
-              'inline-flex min-h-[44px] w-full items-center justify-center border px-4 text-base no-underline hover:no-underline sm:w-auto ' +
+              'inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border px-4 text-base no-underline hover:no-underline sm:w-auto ' +
               (urgente ? 'border-primary bg-primary text-white hover:bg-primary/90' : 'border-ink bg-white text-ink hover:bg-primary-10');
             return (
               <li key={`${a.tipo}-${a.postulacion_id ?? 'x'}-${i}`} className={`py-3 ${urgente ? 'border-l-4 border-l-primary pl-3' : ''}`}>

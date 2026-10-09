@@ -13,7 +13,7 @@ export function HistorialRevisionesPanel({ postulacionId }: { postulacionId: str
       {data && data.length === 0 && <p className="text-sm">No hay revisiones de ciclos anteriores.</p>}
       <ul className="space-y-3">
         {(data ?? []).map((r) => (
-          <li key={r.ciclo} className="border border-ink p-3 text-sm">
+          <li key={r.ciclo} className="border border-ink rounded-lg p-3 text-sm">
             <p className="font-semibold">
               Revision del ciclo {r.ciclo} <Badge tono="destacado">{r.resultado}</Badge>
             </p>

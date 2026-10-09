@@ -82,7 +82,7 @@ export function ExportarAuditoriaModal({ abierto, filtros, onCerrar }: { abierto
         maxLength={2000}
         disabled={resultado?.tipo === 'exito'}
       />
-      {motivo.length > 0 && !motivoValido && <p className="mt-1 text-xs">El motivo debe tener al menos {MOTIVO_MIN} caracteres.</p>}
+      {motivo.length > 0 && !motivoValido && <p className="mt-1 text-xs text-danger" role="alert">El motivo debe tener al menos {MOTIVO_MIN} caracteres.</p>}
       {!motivoValido && motivo.length === 0 && <p className="mt-1 text-xs text-ink/70">El boton Exportar se habilita al indicar el motivo y confirmar.</p>}
       {resultado && (
         <Alert tipo={resultado.tipo} className="mt-3">

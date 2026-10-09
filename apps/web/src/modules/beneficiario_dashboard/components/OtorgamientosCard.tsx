@@ -16,7 +16,7 @@ export function OtorgamientosCard({ datos, cargando, error }: { datos?: Otorgami
       {datos && datos.otorgamientos.length > 0 && (
         <ul className="space-y-3" aria-label="Otorgamientos">
           {datos.otorgamientos.map((o) => (
-            <li key={o.id} className="border border-ink">
+            <li key={o.id} className="border border-ink rounded-xl overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink bg-primary-10 px-3 py-2">
                 <p className="font-semibold">{o.beneficio_nombre}</p>
                 <Badge tono={o.estado === 'ACTIVO' || o.estado === 'CUMPLIDO' ? 'relleno' : 'destacado'} aria-label={`Estado del otorgamiento: ${o.estado_texto}`}>
@@ -41,7 +41,8 @@ export function OtorgamientosCard({ datos, cargando, error }: { datos?: Otorgami
                   </p>
                 )}
                 {o.desembolsos.length > 0 ? (
-                  <table className="mt-3 w-full border-collapse border border-ink text-sm">
+                  <div className="mt-3 overflow-x-auto rounded-xl border border-ink">
+                  <table className="-m-px w-[calc(100%+2px)] max-w-none border-collapse text-sm">
                     <caption className="sr-only">Desembolsos del otorgamiento {o.beneficio_nombre}</caption>
                     <thead className="bg-primary-10">
                       <tr>
@@ -70,6 +71,7 @@ export function OtorgamientosCard({ datos, cargando, error }: { datos?: Otorgami
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 ) : (
                   <p className="mt-2 text-ink/80">Sin desembolsos registrados todavia.</p>
                 )}

@@ -53,7 +53,7 @@ export function FuncionarioKPIGrid({ totales, filtros, cargando, atenuado }: Fun
       <div className="grid gap-3 md:grid-cols-4">
         <Link
           to={enlaceBandeja(filtros)}
-          className="block border border-ink bg-primary-10 px-4 py-4 text-ink no-underline hover:bg-primary-20 hover:no-underline md:row-span-2"
+          className="block border border-ink rounded-xl bg-primary-10 px-4 py-4 text-ink no-underline hover:bg-primary-20 hover:no-underline md:row-span-2"
           aria-label={`${principal.etiqueta}: ${valor(principal.clave)}. Abrir bandeja de evaluacion`}
         >
           <p className="text-sm font-semibold">{principal.etiqueta}</p>
@@ -67,7 +67,7 @@ export function FuncionarioKPIGrid({ totales, filtros, cargando, atenuado }: Fun
           <Link
             key={t.clave}
             to={enlaceBandeja(filtros, t.estado)}
-            className="block border border-ink bg-white px-4 py-3 text-ink no-underline hover:bg-primary-10 hover:no-underline"
+            className="block border border-ink rounded-xl bg-white px-4 py-3 text-ink no-underline hover:bg-primary-10 hover:no-underline"
             aria-label={`${t.etiqueta}: ${valor(t.clave)}. Abrir bandeja de evaluacion filtrada`}
           >
             <p className="text-sm font-semibold">{t.etiqueta}</p>

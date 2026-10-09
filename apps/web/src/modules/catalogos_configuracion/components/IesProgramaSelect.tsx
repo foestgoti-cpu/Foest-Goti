@@ -51,7 +51,7 @@ export function IesProgramaSelect({
           Institucion de educacion superior (SNIES)
         </label>
         {ies ? (
-          <div className="flex flex-wrap items-center justify-between gap-2 border border-ink px-3 py-2 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 border border-ink rounded-lg px-3 py-2 text-sm">
             <span>
               <span className="font-mono text-xs">{ies.codigo_snies}</span> · {ies.nombre}
               {ies.municipio ? ` (${ies.municipio})` : ''}
@@ -66,7 +66,7 @@ export function IesProgramaSelect({
           <>
             <Input id={idIes} placeholder="Nombre o codigo SNIES (minimo 2 caracteres)" value={qIes} onChange={(e) => setQIes(e.target.value)} disabled={deshabilitado} autoComplete="off" />
             {busquedaIes.trim().length >= 2 && (
-              <ul className="mt-1 max-h-56 overflow-y-auto border border-ink bg-white text-sm" role="listbox" aria-label="Instituciones encontradas">
+              <ul className="mt-1 max-h-56 overflow-y-auto border border-ink rounded-lg bg-white text-sm" role="listbox" aria-label="Instituciones encontradas">
                 {resultadoIes.isLoading && <li className="px-3 py-2">Buscando...</li>}
                 {resultadoIes.data?.data.length === 0 && <li className="px-3 py-2">Sin resultados. Verifique el nombre o el codigo SNIES.</li>}
                 {resultadoIes.data?.data.map((i) => (
@@ -87,7 +87,7 @@ export function IesProgramaSelect({
           Programa academico
         </label>
         {programa ? (
-          <div className="flex flex-wrap items-center justify-between gap-2 border border-ink px-3 py-2 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 border border-ink rounded-lg px-3 py-2 text-sm">
             <span>
               <span className="font-mono text-xs">{programa.codigo_snies}</span> · {programa.nombre}
               {programa.nivel ? ` · ${programa.nivel}` : ''}
@@ -103,7 +103,7 @@ export function IesProgramaSelect({
           <>
             <Input id={idPrograma} placeholder={ies ? 'Nombre o codigo del programa' : 'Seleccione primero la institucion'} value={qPrograma} onChange={(e) => setQPrograma(e.target.value)} disabled={deshabilitado || ies === null} autoComplete="off" />
             {ies && (
-              <ul className="mt-1 max-h-56 overflow-y-auto border border-ink bg-white text-sm" role="listbox" aria-label="Programas encontrados">
+              <ul className="mt-1 max-h-56 overflow-y-auto border border-ink rounded-lg bg-white text-sm" role="listbox" aria-label="Programas encontrados">
                 {resultadoProgramas.isLoading && <li className="px-3 py-2">Buscando...</li>}
                 {resultadoProgramas.data?.data.length === 0 && <li className="px-3 py-2">Sin programas activos con ese criterio.</li>}
                 {resultadoProgramas.data?.data.map((p) => (

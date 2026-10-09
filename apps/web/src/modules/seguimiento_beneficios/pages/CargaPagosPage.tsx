@@ -75,7 +75,7 @@ export function CargaPagosPage() {
           ) : reporte.aplicada ? (
             <Alert tipo="exito" className="mb-4">La carga se aplico: {reporte.filas_ok} pago(s) registrados.</Alert>
           ) : reporte.filas_error > 0 ? (
-            <Alert tipo="advertencia" className="mb-4">
+            <Alert tipo="error" className="mb-4">
               El archivo tiene {reporte.filas_error} fila(s) con errores de {reporte.filas_total}. Corrija el archivo y vuelva a validarlo; no se aplico ningun pago. Si una fila indica que el otorgamiento excede cupo o presupuesto, programe su primer desembolso de forma individual desde el detalle del otorgamiento.
             </Alert>
           ) : (
@@ -85,17 +85,17 @@ export function CargaPagosPage() {
             caption="Resultado por fila"
             columnas={[
               { clave: 'fila', titulo: 'Fila', render: (f) => f.fila },
-              { clave: 'ok', titulo: 'Resultado', render: (f) => (f.ok ? 'Correcta' : 'Con errores') },
+              { clave: 'ok', titulo: 'Resultado', render: (f) => (f.ok ? 'Correcta' : <span className="text-danger">Con errores</span>) },
               { clave: 'monto', titulo: 'Monto', alineacion: 'derecha', render: (f) => formatearMoneda(f.monto) },
               { clave: 'fecha', titulo: 'Fecha de pago', render: (f) => f.fecha_pago ?? '-' },
               { clave: 'ref', titulo: 'Referencia', render: (f) => f.referencia ?? '-' },
-              { clave: 'err', titulo: 'Observaciones', render: (f) => (f.errores.length ? <ul>{f.errores.map((e) => <li key={e}>{e}</li>)}</ul> : '-') },
+              { clave: 'err', titulo: 'Observaciones', render: (f) => (f.errores.length ? <ul className="text-danger">{f.errores.map((e) => <li key={e}>{e}</li>)}</ul> : '-') },
             ]}
             filas={reporte.filas}
             obtenerId={(f) => String(f.fila)}
           />
           {puedeAplicar && (
-            <div className="mt-4 border border-ink p-4">
+            <div className="mt-4 border border-ink rounded-xl p-4">
               <Checkbox etiqueta="Confirmo que los pagos del archivo son correctos y deseo registrarlos todos." checked={confirmo} onChange={(e) => setConfirmo(e.target.checked)} />
               <Button className="mt-3" disabled={!confirmo} cargando={m.isPending && confirmo} onClick={() => enviar(true)}>
                 Aplicar carga

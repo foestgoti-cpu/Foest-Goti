@@ -64,7 +64,7 @@ export function TablaMisReportes() {
             render: (r) => (
               <span>
                 <EstadoReporteBadge estado={r.estado} />
-                {r.estado === 'FALLIDO' && r.error && <span className="mt-1 block text-sm">{r.error}</span>}
+                {r.estado === 'FALLIDO' && r.error && <span className="mt-1 block text-sm text-danger">{r.error}</span>}
               </span>
             ),
           },

@@ -76,7 +76,7 @@ Módulos PENDIENTES (uno por compañero): documentos, formatos_oficiales, asigna
 - Validación: Zod en todo body/query/params (reutiliza esquemas de `@foest/shared`). Tipado estricto, sin `any`.
 - Fechas: `timestamptz` en BD; reglas de plazo en zona `America/Bogota`; días hábiles con la tabla `festivo` (hay funciones SQL `fn_es_dia_habil`, `fn_sumar_dias_habiles`, `fn_dias_habiles_entre` en 0009 y utilidades de fecha en `modules/convocatorias/convocatorias.fechas.ts`).
 - Texto en español formal (usted). Sin emojis en código, UI ni mensajes.
-- Diseño UI estricto: solo blanco `#ffffff`, azul `#238dc1` (clases Tailwind `primary`, `primary-10`, `primary-20`) y texto negro (`ink`). Ninguna otra clase de color compila (el theme reemplaza `colors`). Sin iconos decorativos. Errores y éxitos solo con texto y bordes (componente `Alert`). Acciones críticas con `Modal` de doble intención (confirmación explícita).
+- Diseño UI estricto: solo blanco `#ffffff`, azul `#0066ff` (clases Tailwind `primary`, `primary-10`, `primary-20`) y texto negro (`ink`); rojo `#d32f2f` (`danger`, `danger-10`) solo para errores y validaciones. Ninguna otra clase de color compila (el theme reemplaza `colors`). Sin iconos decorativos. Errores y éxitos solo con texto y bordes (componente `Alert`). Acciones críticas con `Modal` de doble intención (confirmación explícita).
 
 ### 2.3 Piezas compartidas que DEBES reutilizar (no las recrees)
 

@@ -29,7 +29,7 @@ describe('AppShell', () => {
     );
     render(<RouterProvider router={router} />);
 
-    expect(screen.getByText(TEXTO_INSTITUCIONAL)).toBeInTheDocument();
+    expect(screen.getByAltText(TEXTO_INSTITUCIONAL)).toHaveAttribute('src', '/logo-municipio.svg');
     expect(screen.getByRole('navigation', { name: 'Navegacion principal' })).toBeInTheDocument();
     expect(screen.getByText('Convocatorias')).toBeInTheDocument();
     expect(screen.getByText('Contenido de prueba')).toBeInTheDocument();

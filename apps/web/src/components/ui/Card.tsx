@@ -9,7 +9,7 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
 
 export function Card({ titulo, acciones, pie, className, children, ...rest }: CardProps) {
   return (
-    <section className={cn('border border-ink bg-white', className)} {...rest}>
+    <section className={cn('overflow-hidden rounded-xl border border-ink bg-white', className)} {...rest}>
       {(titulo || acciones) && (
         <header className="flex flex-wrap items-center justify-between gap-2 border-b border-ink bg-primary-10 px-4 py-3">
           {titulo && <h2 className="text-base font-semibold">{titulo}</h2>}

@@ -229,7 +229,7 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
           <div>
             <p className="mb-3 text-sm">Estos datos provienen de su perfil y se congelan al enviar. Para corregirlos vaya a Mi perfil.</p>
             {perfil.isLoading && <Spinner />}
-            {perfil.isError && <Alert tipo="advertencia">No fue posible cargar su perfil en este momento. Verifiquelo en Mi perfil.</Alert>}
+            {perfil.isError && <Alert tipo="error">No fue posible cargar su perfil en este momento. Verifiquelo en Mi perfil.</Alert>}
             {perfil.data && (
               <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
                 {Object.entries(perfil.data)
@@ -396,7 +396,7 @@ export function FormularioMultiPaso({ postulacion, validacion, guardando, errorG
               El numero se guarda cifrado y solo se muestran los ultimos cuatro digitos.
             </p>
             {!deshabilitado('seccion_8', 'datos_pago') && (
-              <div className="border border-ink p-3">
+              <div className="border border-ink rounded-lg p-3">
                 <FormField etiqueta="Tipo" nombre="pago_tipo" obligatorio>
                   <Select placeholder="Seleccione" opciones={TIPOS_PAGO_ST.map((t) => ({ valor: t, etiqueta: TEXTO_TIPO_PAGO[t] ?? t }))} value={pago.tipo} onChange={(e) => setPago({ ...pago, tipo: e.target.value })} />
                 </FormField>

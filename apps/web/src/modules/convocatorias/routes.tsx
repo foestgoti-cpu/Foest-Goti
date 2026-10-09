@@ -8,13 +8,13 @@ import { ConvocatoriaFuncionarioDetallePage, ConvocatoriasFuncionarioPage } from
 
 /**
  * Rutas del modulo convocatorias.
- *  - Publicas: `/` (landing con convocatorias abiertas) y `/convocatorias/:id`.
+ *  - Publicas: `/convocatorias` (listado de convocatorias abiertas) y `/convocatorias/:id`.
  *  - Admin: `/admin/convocatorias`, `/admin/convocatorias/nueva`, `/admin/convocatorias/:id`.
  *  - Funcionario: `/funcionario/convocatorias` y `/funcionario/convocatorias/:id` (solo lectura).
  */
 export const convocatoriasRoutes: RutasModulo = {
   rutasPublicas: [
-    { index: true, element: <ConvocatoriasPublicasPage /> },
+    { path: 'convocatorias', element: <ConvocatoriasPublicasPage /> },
     { path: 'convocatorias/:id', element: <ConvocatoriaPublicaDetallePage /> },
   ],
   rutasAdmin: [

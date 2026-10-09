@@ -11,5 +11,5 @@ const TONO: Record<EstadoReporte, TonoBadge> = {
 };
 
 export function EstadoReporteBadge({ estado }: { estado: EstadoReporte }) {
-  return <Badge tono={TONO[estado]}>{TEXTO_ESTADO_REPORTE[estado]}</Badge>;
+  return <Badge tono={TONO[estado]} className={estado === 'FALLIDO' ? 'border-danger! bg-danger-10! text-danger!' : undefined}>{TEXTO_ESTADO_REPORTE[estado]}</Badge>;
 }

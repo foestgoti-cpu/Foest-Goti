@@ -12,6 +12,8 @@ vi.mock('../../../lib/supabase', () => ({
 }));
 
 const login = vi.fn();
+const listarPublicas = vi.fn();
+vi.mock('../../convocatorias/api', () => ({ convocatoriasApi: { listarPublicas: () => listarPublicas() } }));
 vi.mock('../api', async () => {
   const real = await vi.importActual<typeof import('../api')>('../api');
   return { ...real, authApi: { ...real.authApi, login: (email: string, password: string) => login(email, password) } };
@@ -25,22 +27,24 @@ vi.mock('../../../lib/auth/AuthProvider', async () => {
   };
 });
 
-function montar() {
+function montar(ruta = '/login') {
   const router = createMemoryRouter(
     [
+      { path: '/', element: <LoginPage /> },
       { path: '/login', element: <LoginPage /> },
+      { path: '/convocatorias', element: <p>Listado de convocatorias</p> },
       { path: '/beneficiario', element: <p>Panel del beneficiario</p> },
       { path: '/cambiar-clave', element: <p>Cambio de clave obligatorio</p> },
     ],
-    { initialEntries: ['/login'] },
+    { initialEntries: [ruta] },
   );
   render(<RouterProvider router={router} />);
 }
 
 function diligenciarYEnviar(email: string, password: string) {
-  fireEvent.change(screen.getByLabelText(/Correo electronico/), { target: { value: email } });
-  fireEvent.change(screen.getByLabelText(/^Contrasena/), { target: { value: password } });
-  fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
+  fireEvent.change(screen.getByLabelText(/Correo electrónico/), { target: { value: email } });
+  fireEvent.change(screen.getByLabelText(/^Contraseña/), { target: { value: password } });
+  fireEvent.click(screen.getByRole('button', { name: 'Iniciar sesión' }));
 }
 
 const sesion = (rol: string, forzar: boolean) => ({
@@ -73,7 +77,7 @@ describe('LoginPage', () => {
     expect(await screen.findByText(/Su cuenta se encuentra inactiva/)).toBeInTheDocument();
 
     login.mockRejectedValueOnce(new ApiRequestError(429, { code: 'CUENTA_BLOQUEADA_TEMPORAL', message: 'bloqueada' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Iniciar sesión' }));
     expect(await screen.findByText(/quedo bloqueado temporalmente/)).toBeInTheDocument();
   });
 
@@ -90,5 +94,16 @@ describe('LoginPage', () => {
     montar();
     diligenciarYEnviar('f@foest.test', 'Clave.Segura1');
     expect(await screen.findByText('Cambio de clave obligatorio')).toBeInTheDocument();
+  });
+
+  it('en / solo es inicio de sesion: no solicita convocatorias y el banner enlaza a /convocatorias', () => {
+    montar('/');
+    expect(screen.getByRole('heading', { name: '¡Te damos la bienvenida a FOEST!' })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Correo electrónico/)).toHaveFocus();
+    expect(listarPublicas).not.toHaveBeenCalled();
+    const banner = screen.getByRole('link', { name: /¿Aún no sabe a qué convocatoria puede postular?/ });
+    expect(banner).toHaveAttribute('href', '/convocatorias');
+    expect(screen.getByRole('link', { name: 'Regístrese' })).toHaveAttribute('href', '/registro');
+    expect(screen.getByRole('link', { name: '¿Olvidó su contraseña?' })).toHaveAttribute('href', '/recuperar');
   });
 });

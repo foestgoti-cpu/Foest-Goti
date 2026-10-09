@@ -7,7 +7,7 @@ const formatoCop = new Intl.NumberFormat('es-CO', { style: 'currency', currency:
 export function AprobacionPorBeneficioList({ resultados, parcial }: { resultados: ResultadoBeneficio[]; parcial: boolean }) {
   if (resultados.length === 0) return null;
   return (
-    <section aria-labelledby="resultado-beneficio-titulo" className="mt-4 border border-ink">
+    <section aria-labelledby="resultado-beneficio-titulo" className="mt-4 border border-ink rounded-xl overflow-hidden">
       <div className="border-b border-ink bg-primary-10 px-3 py-2">
         <h3 id="resultado-beneficio-titulo" className="text-base font-semibold">
           Resultado por beneficio{parcial ? ' (aprobacion parcial)' : ''}

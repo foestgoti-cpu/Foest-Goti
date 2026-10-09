@@ -60,7 +60,7 @@ export function TablaChequeoDocumental({
           const cargado = d.documento !== null;
           const disponible = d.documento?.estado_carga === 'DISPONIBLE';
           return (
-            <li key={d.tipo_codigo} className="border border-ink p-3">
+            <li key={d.tipo_codigo} className="border border-ink rounded-lg p-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <p className="font-semibold">

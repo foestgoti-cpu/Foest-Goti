@@ -26,7 +26,7 @@ export function ResumenHoras({ total, minimas }: { total: number; minimas: numbe
         aria-valuemax={meta ?? Math.max(total, 1)}
         aria-valuenow={total}
         aria-valuetext={meta ? `${horas(total)} de ${horas(meta)} horas` : `${horas(total)} horas`}
-        className="mt-2 h-4 w-full border border-ink bg-white"
+        className="mt-2 h-4 w-full border border-ink rounded-full overflow-hidden bg-white"
       >
         <div className="h-full bg-primary" style={{ width: `${porcentaje}%` }} />
       </div>

@@ -5,7 +5,7 @@ import { formatoEntero } from './TooltipGrafico';
 export function TablaDistribucion({ items, caption, etiquetaClave }: { items: ItemDistribucion[]; caption: string; etiquetaClave: string }) {
   const total = items.reduce((acc, i) => acc + i.total, 0);
   return (
-    <div className="overflow-x-auto border border-ink">
+    <div className="overflow-x-auto border border-ink rounded-xl">
       <table className="w-full border-collapse text-left text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead className="bg-primary-10">

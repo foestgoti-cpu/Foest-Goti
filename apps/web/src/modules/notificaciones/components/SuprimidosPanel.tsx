@@ -49,7 +49,7 @@ export function SuprimidosPanel() {
               ['Quejas (24 h)', resumen.data.ultimas_24h.quejas],
               ['Suprimidos activos', resumen.data.totales.suprimidos_activos],
             ].map(([etiqueta, valor]) => (
-              <div key={String(etiqueta)} className="border border-ink px-3 py-2">
+              <div key={String(etiqueta)} className="border border-ink rounded-lg px-3 py-2">
                 <dt className="text-xs uppercase tracking-wide text-ink/70">{etiqueta}</dt>
                 <dd className="text-xl font-semibold">{valor}</dd>
               </div>
@@ -95,7 +95,7 @@ export function SuprimidosPanel() {
               Motivo del levantamiento (minimo 15 caracteres)
               <Textarea className="mt-1" value={motivo} onChange={(e) => setMotivo(e.target.value)} rows={3} />
             </label>
-            {motivo.trim().length > 0 && motivo.trim().length < 15 && <p className="text-sm">El motivo debe tener al menos 15 caracteres.</p>}
+            {motivo.trim().length > 0 && motivo.trim().length < 15 && <p className="text-sm text-danger" role="alert">El motivo debe tener al menos 15 caracteres.</p>}
           </div>
         )}
       </Modal>

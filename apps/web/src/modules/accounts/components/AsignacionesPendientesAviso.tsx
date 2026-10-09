@@ -19,7 +19,8 @@ export function AsignacionesPendientesAviso({ pendientes }: { pendientes: Pendie
         Reasigne los expedientes desde el modulo de asignaciones o marque la opcion de forzar la deshabilitacion.
       </p>
       {pendientes.expedientes.length > 0 && (
-        <table className="mt-3 w-full border-collapse border border-ink text-sm">
+        <div className="mt-3 overflow-x-auto rounded-xl border border-ink">
+        <table className="w-full border-collapse text-sm">
           <caption className="sr-only">Expedientes pendientes</caption>
           <thead className="bg-primary-10">
             <tr>
@@ -38,6 +39,7 @@ export function AsignacionesPendientesAviso({ pendientes }: { pendientes: Pendie
             ))}
           </tbody>
         </table>
+        </div>
       )}
       {pendientes.pendientes > pendientes.expedientes.length && (
         <p className="mt-2 text-sm">Se muestran los primeros {pendientes.expedientes.length} de {pendientes.pendientes}.</p>

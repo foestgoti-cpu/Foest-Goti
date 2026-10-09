@@ -48,10 +48,10 @@ export function CargaEvaluadoresChart({ evaluadores, cargando, periodo }: { eval
       titulo="Carga por evaluador"
       acciones={
         <div className="flex gap-1" role="group" aria-label="Vista">
-          <button type="button" className={`border px-2 py-1 text-xs ${vista === 'grafico' ? 'border-primary bg-primary text-white' : 'border-ink bg-white'}`} onClick={() => setVista('grafico')} aria-pressed={vista === 'grafico'}>
+          <button type="button" className={`rounded-md border px-2 py-1 text-xs ${vista === 'grafico' ? 'border-primary bg-primary text-white' : 'border-ink bg-white'}`} onClick={() => setVista('grafico')} aria-pressed={vista === 'grafico'}>
             Grafico
           </button>
-          <button type="button" className={`border px-2 py-1 text-xs ${vista === 'tabla' ? 'border-primary bg-primary text-white' : 'border-ink bg-white'}`} onClick={() => setVista('tabla')} aria-pressed={vista === 'tabla'}>
+          <button type="button" className={`rounded-md border px-2 py-1 text-xs ${vista === 'tabla' ? 'border-primary bg-primary text-white' : 'border-ink bg-white'}`} onClick={() => setVista('tabla')} aria-pressed={vista === 'tabla'}>
             Tabla
           </button>
         </div>

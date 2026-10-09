@@ -40,13 +40,13 @@ export function MetricasTiemposRevision({ datos, cargando, atenuado }: MetricasT
       )}
       {publicable && datos && (
         <dl className="grid gap-3 sm:grid-cols-2">
-          <div className="border border-ink px-4 py-3">
+          <div className="border border-ink rounded-lg px-4 py-3">
             <dt className="text-sm font-semibold">Promedio</dt>
             <dd className="mt-1 text-3xl font-semibold leading-none" data-testid="tiempos-promedio">
               {datos.promedio_horas !== null ? formatearHoras(datos.promedio_horas) : '-'}
             </dd>
           </div>
-          <div className="border border-ink px-4 py-3">
+          <div className="border border-ink rounded-lg px-4 py-3">
             <dt className="text-sm font-semibold">Percentil 90</dt>
             <dd className="mt-1 text-3xl font-semibold leading-none" data-testid="tiempos-p90">
               {datos.p90_horas !== null ? formatearHoras(datos.p90_horas) : '-'}

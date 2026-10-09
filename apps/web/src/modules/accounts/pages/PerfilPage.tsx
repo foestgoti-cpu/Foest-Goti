@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
+  CATEGORIAS_SISBEN,
   ESTADOS_CIVILES,
+  GRUPOS_SISBEN,
   ESTADO_CIVIL_ETIQUETA,
   GENEROS,
   GENERO_ETIQUETA,
@@ -22,6 +24,16 @@ import { accountsApi } from '../api';
 import { useAceptarConsentimiento, useActualizarPerfil, useHabeasDataPropias, usePerfilPropio, useRadicarHabeasData } from '../hooks/usePerfil';
 import { PerfilCompletoBanner } from '../components/PerfilCompletoBanner';
 import type { PerfilBeneficiario } from '../types';
+
+/** Opciones del desplegable SISBEN (lista unica en @foest/shared); un valor historico fuera de lista se conserva. */
+export function opcionesSisben(actual: string): { valor: string; etiqueta: string }[] {
+  const opciones = GRUPOS_SISBEN.flatMap((g) =>
+    g.categorias.map((c) => ({ valor: c, etiqueta: `${c} — ${g.etiqueta.replace(/^Grupo \w — /, '')}` })),
+  );
+  const v = actual.trim();
+  if (v && !(CATEGORIAS_SISBEN as readonly string[]).includes(v)) opciones.unshift({ valor: v, etiqueta: `${v} (valor anterior)` });
+  return opciones;
+}
 
 interface FormPerfil {
   tipo_documento: string;
@@ -278,8 +290,8 @@ export function PerfilPage() {
             <FormField etiqueta="Estrato" nombre="estrato" error={errores} obligatorio>
               <Select value={form.estrato} onChange={set('estrato')} placeholder="Seleccione" opciones={['1', '2', '3', '4', '5', '6'].map((n) => ({ valor: n, etiqueta: `Estrato ${n}` }))} />
             </FormField>
-            <FormField etiqueta="Categoria SISBEN" nombre="sisben_categoria" error={errores} ayuda="Ejemplo: B3">
-              <Input value={form.sisben_categoria} onChange={set('sisben_categoria')} />
+            <FormField etiqueta="Categoria SISBEN" nombre="sisben_categoria" error={errores} ayuda="Opcional">
+              <Select value={form.sisben_categoria} onChange={set('sisben_categoria')} placeholder="Seleccione una categoría" opciones={opcionesSisben(form.sisben_categoria)} />
             </FormField>
             <FormField etiqueta="Puntaje SISBEN" nombre="sisben_puntaje" error={errores}>
               <Input value={form.sisben_puntaje} onChange={set('sisben_puntaje')} inputMode="decimal" />
@@ -312,7 +324,7 @@ export function PerfilPage() {
                 <Input type="email" value={form.ac_correo} onChange={set('ac_correo')} />
               </FormField>
             </div>
-            {errores && <p className="text-sm">{errores.issues.find((i) => i.path.join('.') === 'acudiente')?.message}</p>}
+            {errores && <p className="text-sm text-danger" role="alert">{errores.issues.find((i) => i.path.join('.') === 'acudiente')?.message}</p>}
           </Card>
         )}
 

@@ -26,3 +26,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+
+# Credenciales locales de usuarios de prueba (nunca se versionan)
+*.local.md
+*.local.txt
+credenciales-prueba.local.*

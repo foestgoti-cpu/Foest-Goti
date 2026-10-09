@@ -36,9 +36,9 @@ export function DocumentViewerModal({ abierto, documentoId, version, titulo = 'V
       {consulta.data && (
         <div>
           {mime === 'application/pdf' ? (
-            <iframe title={titulo} src={consulta.data.url} className="h-[60vh] w-full border border-ink" />
+            <iframe title={titulo} src={consulta.data.url} className="h-[60vh] w-full border border-ink rounded-lg overflow-hidden" />
           ) : (
-            <img src={consulta.data.url} alt={consulta.data.nombre_original ?? titulo} className="max-h-[60vh] w-full border border-ink object-contain" />
+            <img src={consulta.data.url} alt={consulta.data.nombre_original ?? titulo} className="max-h-[60vh] w-full border border-ink rounded-lg overflow-hidden object-contain" />
           )}
           <p className="mt-3 text-sm">
             El enlace es temporal y vence en 5 minutos.{' '}

@@ -21,7 +21,7 @@ const ENTIDAD = 'Fondo para la Educacion Superior de Tocancipa (FOEST) - Alcaldi
 
 export const LAYOUT_VERSION = 1;
 
-/** Layout institucional: solo blanco, azul #238dc1 y texto negro. */
+/** Layout institucional: solo blanco, azul #0066ff y texto negro. */
 export function layout(contenidoHtml: string, contexto: { portal_url: string; asunto: string }): string {
   const portal = contexto.portal_url;
   return `<!doctype html>
@@ -31,14 +31,14 @@ export function layout(contenidoHtml: string, contexto: { portal_url: string; as
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;">
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;border:1px solid #000000;background:#ffffff;">
-        <tr><td style="background:#238dc1;color:#ffffff;padding:16px 24px;font-size:18px;font-weight:bold;">FOEST - Fondo para la Educacion Superior de Tocancipa</td></tr>
+        <tr><td style="background:#0066ff;color:#ffffff;padding:16px 24px;font-size:18px;font-weight:bold;">FOEST - Fondo para la Educacion Superior de Tocancipa</td></tr>
         <tr><td style="padding:24px;">
           ${contenidoHtml}
           <p style="margin:24px 0 0 0;">Atentamente,<br><strong>${FIRMA}</strong></p>
         </td></tr>
         <tr><td style="border-top:1px solid #000000;padding:16px 24px;font-size:12px;color:#000000;">
           <p style="margin:0 0 8px 0;">${ENTIDAD}. Este mensaje se envio de forma automatica; por favor no responda a este correo.</p>
-          <p style="margin:0 0 8px 0;">Portal: <a href="${portal}" style="color:#238dc1;">${portal}</a></p>
+          <p style="margin:0 0 8px 0;">Portal: <a href="${portal}" style="color:#0066ff;">${portal}</a></p>
           <p style="margin:0;">Sus datos personales se tratan conforme a la Ley 1581 de 2012 y la politica de tratamiento de datos de la Alcaldia de Tocancipa. Este correo no contiene informacion sensible; la informacion detallada se consulta en el portal con su usuario y contrasena.</p>
         </td></tr>
       </table>
@@ -48,7 +48,7 @@ export function layout(contenidoHtml: string, contexto: { portal_url: string; as
 </html>`;
 }
 
-const BOTON = `{{#if enlace}}<p style="margin:16px 0;"><a href="{{enlace}}" style="display:inline-block;border:1px solid #238dc1;background:#238dc1;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Ingresar al portal</a></p>{{/if}}`;
+const BOTON = `{{#if enlace}}<p style="margin:16px 0;"><a href="{{enlace}}" style="display:inline-block;border:1px solid #0066ff;background:#0066ff;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Ingresar al portal</a></p>{{/if}}`;
 
 const GENERICA: PlantillaCorreo = {
   version: 1,
@@ -143,19 +143,19 @@ const PLANTILLAS: Partial<Record<TipoNotificacion, PlantillaCorreo>> = {
   INVITACION_FUNCIONARIO: {
     version: 1,
     asunto: '[FOEST] Invitacion para activar su cuenta de funcionario',
-    cuerpo: `<p style="margin:0 0 12px 0;">Cordial saludo.</p><p style="margin:0 0 12px 0;">{{mensaje}}</p><p style="margin:0 0 12px 0;">El enlace es de un solo uso y vence en {{horas_vigencia}} horas.</p><p style="margin:16px 0;"><a href="{{enlace_accion}}" style="display:inline-block;border:1px solid #238dc1;background:#238dc1;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Activar cuenta</a></p>`,
+    cuerpo: `<p style="margin:0 0 12px 0;">Cordial saludo.</p><p style="margin:0 0 12px 0;">{{mensaje}}</p><p style="margin:0 0 12px 0;">El enlace es de un solo uso y vence en {{horas_vigencia}} horas.</p><p style="margin:16px 0;"><a href="{{enlace_accion}}" style="display:inline-block;border:1px solid #0066ff;background:#0066ff;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Activar cuenta</a></p>`,
     obligatorias: ['titulo', 'mensaje', 'enlace_accion', 'horas_vigencia'],
   },
   VERIFICACION_CORREO: {
     version: 1,
     asunto: '[FOEST] Verifique su correo electronico',
-    cuerpo: `<p style="margin:0 0 12px 0;">Cordial saludo.</p><p style="margin:0 0 12px 0;">{{mensaje}}</p><p style="margin:16px 0;"><a href="{{enlace_accion}}" style="display:inline-block;border:1px solid #238dc1;background:#238dc1;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Verificar correo</a></p><p style="margin:0;">Si usted no solicito este registro, ignore este mensaje.</p>`,
+    cuerpo: `<p style="margin:0 0 12px 0;">Cordial saludo.</p><p style="margin:0 0 12px 0;">{{mensaje}}</p><p style="margin:16px 0;"><a href="{{enlace_accion}}" style="display:inline-block;border:1px solid #0066ff;background:#0066ff;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Verificar correo</a></p><p style="margin:0;">Si usted no solicito este registro, ignore este mensaje.</p>`,
     obligatorias: ['titulo', 'mensaje', 'enlace_accion'],
   },
   RESTABLECER_CLAVE: {
     version: 1,
     asunto: '[FOEST] Restablecimiento de contrasena',
-    cuerpo: `<p style="margin:0 0 12px 0;">Cordial saludo.</p><p style="margin:0 0 12px 0;">{{mensaje}}</p><p style="margin:16px 0;"><a href="{{enlace_accion}}" style="display:inline-block;border:1px solid #238dc1;background:#238dc1;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Restablecer contrasena</a></p><p style="margin:0;">Si usted no solicito el cambio, ignore este mensaje; su contrasena actual sigue vigente.</p>`,
+    cuerpo: `<p style="margin:0 0 12px 0;">Cordial saludo.</p><p style="margin:0 0 12px 0;">{{mensaje}}</p><p style="margin:16px 0;"><a href="{{enlace_accion}}" style="display:inline-block;border:1px solid #0066ff;background:#0066ff;color:#ffffff;padding:10px 16px;text-decoration:none;font-weight:bold;">Restablecer contrasena</a></p><p style="margin:0;">Si usted no solicito el cambio, ignore este mensaje; su contrasena actual sigue vigente.</p>`,
     obligatorias: ['titulo', 'mensaje', 'enlace_accion'],
   },
   BLOQUEO_POR_INTENTOS: {

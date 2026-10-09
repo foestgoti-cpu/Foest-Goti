@@ -33,7 +33,7 @@ export function OutboxPanel() {
     { clave: 'creado', titulo: 'Creado', render: (e) => <time dateTime={e.creado_en}>{textoFechaHora(e.creado_en)}</time> },
     { clave: 'tipo', titulo: 'Tipo', render: (e) => CATALOGO_TIPOS_NOTIFICACION[e.tipo as keyof typeof CATALOGO_TIPOS_NOTIFICACION]?.etiqueta ?? e.tipo },
     { clave: 'asunto', titulo: 'Asunto', render: (e) => e.asunto ?? '-' },
-    { clave: 'estado', titulo: 'Estado', render: (e) => <Badge tono={tonoEstado(e.estado)}>{TEXTO_ESTADO[e.estado]}</Badge> },
+    { clave: 'estado', titulo: 'Estado', render: (e) => <Badge tono={tonoEstado(e.estado)} className={e.estado === 'MUERTO' || e.estado === 'FALLIDO' ? 'border-danger! bg-danger-10! text-danger!' : undefined}>{TEXTO_ESTADO[e.estado]}</Badge> },
     { clave: 'intentos', titulo: 'Intentos', alineacion: 'derecha', render: (e) => e.intentos },
     { clave: 'proximo', titulo: 'Proximo intento', render: (e) => (e.estado === 'PENDIENTE' || e.estado === 'FALLIDO' ? textoFechaHora(e.proximo_intento_en) : '-') },
     { clave: 'error', titulo: 'Ultimo error', className: 'max-w-xs break-words', render: (e) => e.ultimo_error ?? '-' },
@@ -63,7 +63,7 @@ export function OutboxPanel() {
       {outbox.data && (
         <dl className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
           {ESTADOS_OUTBOX.map((e) => (
-            <div key={e} className="border border-ink px-3 py-2">
+            <div key={e} className="border border-ink rounded-lg px-3 py-2">
               <dt className="text-xs uppercase tracking-wide text-ink/70">{TEXTO_ESTADO[e]}</dt>
               <dd className="text-xl font-semibold">{outbox.data.conteos[e]}</dd>
             </div>

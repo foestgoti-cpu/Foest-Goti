@@ -47,7 +47,7 @@ export function SniesImportPanel() {
             <input
               type="file"
               accept=".csv,text/csv,text/plain"
-              className="campo"
+              className="campo file:mr-3 file:min-h-[40px] file:cursor-pointer file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               onChange={(e) => {
                 setArchivo(e.target.files?.[0] ?? null);
                 setResumen(null);

@@ -18,7 +18,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         ref={ref}
         id={inputId}
         type="checkbox"
-        className="mt-1 h-5 w-5 shrink-0 cursor-pointer border border-ink accent-primary"
+        className="mt-1 h-5 w-5 shrink-0 cursor-pointer rounded border border-ink accent-primary"
         {...rest}
       />
       <label htmlFor={inputId} className="cursor-pointer text-base leading-6">

@@ -54,7 +54,7 @@ export function DescargarFormulariosCard({ postulacionId, enlaceDetalle = false 
       {data && (
         <>
           {!data.puede_generar && data.motivo_bloqueo && <p className="mb-3 text-sm">{data.motivo_bloqueo}.</p>}
-          <ul className="divide-y divide-ink border border-ink">
+          <ul className="divide-y divide-ink border border-ink rounded-xl overflow-hidden">
             {data.formatos.map((r) => {
               const generando = r.formato?.estado === 'GENERANDO' || (generar.isPending && generar.variables === r.tipo);
               const vigente = r.situacion !== EstadoVigenciaFormato.NO_GENERADO ? r.formato : null;

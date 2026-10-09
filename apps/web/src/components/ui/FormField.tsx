@@ -61,7 +61,7 @@ export function FormField({ etiqueta, nombre, ayuda, error, obligatorio, childre
         </p>
       )}
       {mensaje && (
-        <p id={errorId} role="alert" className="mt-1 border-l-2 border-ink pl-2 text-sm font-medium">
+        <p id={errorId} role="alert" className="mt-1 border-l-2 border-danger pl-2 text-sm font-medium text-danger">
           {mensaje}
         </p>
       )}

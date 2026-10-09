@@ -70,7 +70,7 @@ export function CargaComiteChart({ datos, cargando, atenuado }: CargaComiteChart
                 <XAxis dataKey="categoria" tick={FUENTE_EJE} axisLine={{ stroke: REJILLA }} tickLine={false} interval={0} />
                 <YAxis allowDecimals={false} tick={FUENTE_EJE} axisLine={false} tickLine={false} width={36} />
                 <Tooltip
-                  cursor={{ fill: 'rgba(35, 141, 193, 0.10)' }}
+                  cursor={{ fill: 'rgba(0, 102, 255, 0.10)' }}
                   content={({ active, payload, label }) => {
                     if (!active || !payload || payload.length === 0) return null;
                     const p = payload[0]?.payload as FilaCarga | undefined;

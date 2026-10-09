@@ -43,7 +43,7 @@ Use ventanas de incógnito distintas (o cierre sesión) para cambiar de rol. Con
 
 1. Ingrese en `/login`. Debe llevarlo a `/admin` (panel con KPIs y alertas).
 2. **Convocatoria:** `/admin/convocatorias/nueva`. Cree una de un período que no exista (la combinación año+semestre es única), con fechas que incluyan hoy, al menos un beneficio con cupos y presupuesto. En su detalle, pestaña **Comité**, agregue a los dos funcionarios. Luego **Habilitar** (pide confirmación). Si falta comité o beneficios, debe rechazarlo con un mensaje claro.
-3. Verifique la landing pública `/` (sin iniciar sesión): debe aparecer la convocatoria con los días restantes.
+3. Verifique el listado público `/convocatorias` (sin iniciar sesión; se llega también con el banner «¿Aún no sabe a qué convocatoria puede postular?» de la pantalla de inicio de sesión `/`): debe aparecer la convocatoria con los días restantes.
 
 ### 2.2 Beneficiario (`prueba.beneficiario@foest.test`)
 

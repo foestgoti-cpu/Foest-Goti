@@ -84,7 +84,7 @@ export function ConfiguracionTable({ categoriaInicial = 'ALERTAS' }: { categoria
         {error && <Alert tipo="error" className="mb-3">{(error as Error).message}</Alert>}
         {exito && <Alert tipo="exito" className="mb-3">{exito}</Alert>}
         {conflicto && (
-          <Alert tipo="advertencia" titulo="Version desactualizada" className="mb-3">
+          <Alert tipo="error" titulo="Version desactualizada" className="mb-3">
             <p>
               La clave <span className="font-mono">{conflicto.clave}</span> fue modificada por otro usuario mientras usted la editaba. Valor vigente:{' '}
               <span className="font-mono">{conflicto.valor_actual ?? '(vacio)'}</span> (version {conflicto.version_actual}). Recargue los valores y vuelva a intentarlo.

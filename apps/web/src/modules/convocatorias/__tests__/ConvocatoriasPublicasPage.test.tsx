@@ -20,7 +20,7 @@ function renderizar() {
   );
 }
 
-describe('ConvocatoriasPublicasPage (landing)', () => {
+describe('ConvocatoriasPublicasPage (/convocatorias)', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('muestra las convocatorias abiertas devueltas por la API publica', async () => {
@@ -44,6 +44,7 @@ describe('ConvocatoriasPublicasPage (landing)', () => {
     renderizar();
     expect(await screen.findByText('Convocatoria 2026-2')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Convocatorias abiertas' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Volver al inicio de sesión' })).toHaveAttribute('href', '/login');
   });
 
   it('sin convocatorias abiertas muestra la fecha estimada de proxima apertura', async () => {

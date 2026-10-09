@@ -8,12 +8,13 @@ import { InvitacionPage } from './pages/InvitacionPage';
 import { CambiarClavePage } from './pages/CambiarClavePage';
 
 /**
- * Rutas del modulo auth (todas bajo PublicLayout). /cambiar-clave exige sesion
+ * Rutas del modulo auth (todas bajo PublicLayout; `/` y `/login` = inicio de sesion). /cambiar-clave exige sesion
  * (la pagina redirige a /login si no la hay) y es el destino obligatorio cuando
  * `forzar_cambio_clave` es true (ver lib/auth/ProtectedRoute).
  */
 export const authRoutes: RutasModulo = {
   rutasPublicas: [
+    { index: true, element: <LoginPage /> },
     { path: '/login', element: <LoginPage /> },
     { path: '/registro', element: <RegistroPage /> },
     { path: '/recuperar', element: <RecuperarPage /> },

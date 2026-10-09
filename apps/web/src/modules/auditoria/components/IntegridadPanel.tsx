@@ -54,7 +54,7 @@ export function IntegridadPanel() {
           {data.historial.length > 0 && (
             <details className="mt-4 text-sm">
               <summary className="cursor-pointer font-semibold">Historial de verificaciones ({data.historial.length})</summary>
-              <ul className="mt-2 divide-y divide-ink/30 border border-ink">
+              <ul className="mt-2 divide-y divide-ink/30 border border-ink rounded-xl overflow-hidden">
                 {data.historial.map((h) => (
                   <li key={h.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                     <span>

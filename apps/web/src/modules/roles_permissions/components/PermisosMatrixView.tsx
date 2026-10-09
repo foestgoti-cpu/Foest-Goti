@@ -15,7 +15,7 @@ export function PermisosMatrixView({ matriz }: { matriz: MatrizPermisos }) {
         const filas = matriz.filas.filter((f) => f.categoria === categoria);
         if (filas.length === 0) return null;
         return (
-          <section key={categoria} aria-labelledby={`cat-${categoria}`} className="border border-ink bg-white">
+          <section key={categoria} aria-labelledby={`cat-${categoria}`} className="border border-ink rounded-xl overflow-hidden bg-white">
             <h2 id={`cat-${categoria}`} className="border-b border-ink bg-primary-10 px-3 py-2 text-base font-semibold">
               {tituloCategoria(categoria)}
             </h2>
@@ -50,7 +50,7 @@ export function PermisosMatrixView({ matriz }: { matriz: MatrizPermisos }) {
                           <td key={r.id} className="px-3 py-2 text-center align-top">
                             <span
                               aria-label={`${ETIQUETA_ROL[r.nombre]}: ${tiene ? 'concedido' : 'no concedido'}`}
-                              className={tiene ? 'inline-block border border-primary bg-primary-20 px-2 py-0.5 font-semibold' : 'inline-block px-2 py-0.5 text-ink/60'}
+                              className={tiene ? 'inline-block border border-primary rounded-lg bg-primary-20 px-2 py-0.5 font-semibold' : 'inline-block px-2 py-0.5 text-ink/60'}
                             >
                               {tiene ? 'Si' : 'No'}
                             </span>

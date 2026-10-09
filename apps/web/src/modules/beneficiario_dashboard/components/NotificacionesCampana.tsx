@@ -55,7 +55,7 @@ function CampanaInterna({ rutaCentro }: { rutaCentro: string }) {
     <div ref={contenedor} className="relative">
       <button
         type="button"
-        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 border border-ink bg-white px-3 text-sm font-medium hover:bg-primary-10"
+        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 border border-ink rounded-lg bg-white px-3 text-sm font-medium hover:bg-primary-10"
         aria-label={etiqueta}
         aria-haspopup="dialog"
         aria-expanded={abierta}
@@ -64,13 +64,13 @@ function CampanaInterna({ rutaCentro }: { rutaCentro: string }) {
       >
         <span>Notificaciones</span>
         {noLeidas > 0 && (
-          <span className="inline-flex min-w-[24px] items-center justify-center border border-primary bg-primary px-1.5 py-0.5 text-xs font-semibold text-white" aria-hidden="true">
+          <span className="inline-flex min-w-[24px] items-center justify-center border border-primary rounded-full bg-primary px-1.5 py-0.5 text-xs font-semibold text-white" aria-hidden="true">
             {noLeidas > 99 ? '99+' : noLeidas}
           </span>
         )}
       </button>
       {abierta && (
-        <div role="dialog" aria-label="Notificaciones recientes" className="absolute right-0 z-40 mt-1 w-[min(92vw,360px)] border border-ink bg-white text-ink shadow-none">
+        <div role="dialog" aria-label="Notificaciones recientes" className="absolute right-0 z-40 mt-1 w-[min(92vw,360px)] border border-ink rounded-xl overflow-hidden bg-white text-ink shadow-none">
           <div className="border-b border-ink bg-primary-10 px-3 py-2 text-sm font-semibold">Notificaciones sin leer</div>
           {isLoading && <p className="px-3 py-3 text-sm">Cargando...</p>}
           {!isLoading && (lista?.data.length ?? 0) === 0 && <p className="px-3 py-3 text-sm">No tiene notificaciones sin leer.</p>}

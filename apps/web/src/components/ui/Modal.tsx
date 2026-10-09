@@ -69,7 +69,7 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={tituloId}
         tabIndex={-1}
-        className="w-full max-w-lg border border-ink bg-white"
+        className="w-full max-w-lg overflow-hidden rounded-xl border border-ink bg-white"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <header className="border-b border-ink bg-primary-10 px-4 py-3">

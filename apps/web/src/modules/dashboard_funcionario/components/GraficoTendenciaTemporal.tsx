@@ -59,7 +59,7 @@ export function GraficoTendenciaTemporal({ datos, cargando, atenuado }: GraficoT
       {sinDatos && <EmptyState titulo="Sin envios en el periodo" descripcion="No hay postulaciones enviadas en el rango seleccionado." />}
       {cargando && !datos && <p className="text-sm">Cargando serie...</p>}
       {items.length > 0 && verTabla && (
-        <div className="max-h-80 overflow-auto border border-ink">
+        <div className="max-h-80 overflow-auto rounded-lg border border-ink">
           <table className="w-full border-collapse text-left text-sm">
             <caption className="sr-only">Envios por dia</caption>
             <thead className="sticky top-0 bg-primary-10">

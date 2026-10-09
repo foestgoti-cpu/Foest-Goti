@@ -46,7 +46,7 @@ export function FiltrosConvocatoriaBar({ filtros, convocatorias, cargandoConvoca
 
   return (
     <form
-      className="mb-6 border border-ink bg-white px-4 py-3"
+      className="mb-6 border border-ink rounded-xl bg-white px-4 py-3"
       aria-label="Filtros del panel"
       onSubmit={(e) => e.preventDefault()}
     >
@@ -117,7 +117,7 @@ export function FiltrosConvocatoriaBar({ filtros, convocatorias, cargandoConvoca
         </fieldset>
       </div>
       {rangoInvalido && (
-        <p role="alert" className="mt-2 border-l-2 border-ink pl-2 text-sm font-medium">
+        <p role="alert" className="mt-2 border-l-2 border-danger pl-2 text-sm font-medium text-danger">
           La fecha inicial no puede ser posterior a la fecha final. Corrija el rango para actualizar el panel.
         </p>
       )}

@@ -52,7 +52,7 @@ export function GraficoTipoSolicitud({ datos, cargando, atenuado }: GraficoTipoS
               <XAxis type="number" allowDecimals={false} tick={FUENTE_EJE} axisLine={false} tickLine={false} tickFormatter={(v: number) => formatoEntero.format(Number(v))} />
               <YAxis type="category" dataKey="etiqueta" width={150} tick={FUENTE_EJE} axisLine={false} tickLine={false} />
               <Tooltip
-                cursor={{ fill: 'rgba(35, 141, 193, 0.10)' }}
+                cursor={{ fill: 'rgba(0, 102, 255, 0.10)' }}
                 content={({ active, payload }) => {
                   if (!active || !payload || payload.length === 0) return null;
                   const p = payload[0]?.payload as ItemDistribucion | undefined;

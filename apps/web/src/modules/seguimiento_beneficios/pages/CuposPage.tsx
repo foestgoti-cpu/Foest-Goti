@@ -10,7 +10,7 @@ function Barra({ pct, umbral, rayada, etiqueta }: { pct: number; umbral?: number
   return (
     <div className="flex items-center gap-2">
       <div
-        className="relative h-4 flex-1 border border-ink bg-white"
+        className="relative h-4 flex-1 border border-ink rounded-full overflow-hidden bg-white"
         role="img"
         aria-label={`${etiqueta}: ${porcentaje(pct)}${umbral ? `, umbral ${umbral} %` : ''}`}
       >
@@ -67,9 +67,9 @@ export function CuposPage() {
       {!isLoading && filas.length > 0 && (
         <Card titulo="Ocupacion por beneficio" className="mb-6">
           <div className="mb-3 flex flex-wrap gap-4 text-xs">
-            <span className="flex items-center gap-1"><span className="inline-block h-3 w-6 border border-ink bg-primary" aria-hidden="true" />Cupos</span>
+            <span className="flex items-center gap-1"><span className="inline-block h-3 w-6 border border-ink rounded bg-primary" aria-hidden="true" />Cupos</span>
             <span className="flex items-center gap-1">
-              <span className="inline-block h-3 w-6 border border-ink" style={{ backgroundImage: 'repeating-linear-gradient(45deg, var(--color-primary) 0 4px, var(--color-white) 4px 7px)' }} aria-hidden="true" />
+              <span className="inline-block h-3 w-6 border border-ink rounded" style={{ backgroundImage: 'repeating-linear-gradient(45deg, var(--color-primary) 0 4px, var(--color-white) 4px 7px)' }} aria-hidden="true" />
               Presupuesto
             </span>
           </div>

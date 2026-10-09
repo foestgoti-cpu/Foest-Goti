@@ -109,7 +109,7 @@ export function ComiteSelector({ comiteActual, guardando, errorGuardar, soloLect
           <Input aria-label="Buscar funcionario" placeholder="Buscar por nombre, correo o cargo" value={filtro} onChange={(e) => setFiltro(e.target.value)} />
         </div>
       )}
-      <div className="border border-ink">
+      <div className="border border-ink rounded-xl overflow-hidden">
         <table className="w-full border-collapse text-sm">
           <thead className="bg-primary-10">
             <tr>

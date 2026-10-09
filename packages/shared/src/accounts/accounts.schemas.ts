@@ -11,6 +11,7 @@ import {
   TipoSolicitudHabeasSchema,
   esMenorDeEdad,
 } from './accounts.types';
+import { CATEGORIAS_SISBEN } from './sisben';
 
 /**
  * Esquemas Zod del modulo accounts, compartidos por API y web
@@ -128,7 +129,7 @@ export const PerfilBeneficiarioSchema = z
     correo_notificacion_2: EmailSchema,
     estrato: z.coerce.number({ invalid_type_error: 'Seleccione el estrato' }).int().min(1, 'Seleccione el estrato').max(6, 'Seleccione el estrato'),
     sisben_categoria: opcionalVacio(
-      z.string().trim().toUpperCase().regex(/^[A-D]\d{1,2}$/, 'Categoria SISBEN no valida (ejemplo: B3)'),
+      z.string().trim().toUpperCase().refine((v) => (CATEGORIAS_SISBEN as readonly string[]).includes(v), 'Seleccione una categoria SISBEN de la lista'),
     ),
     sisben_puntaje: opcionalVacio(z.coerce.number().min(0).max(100)),
     acudiente: opcionalVacio(AcudienteSchema),

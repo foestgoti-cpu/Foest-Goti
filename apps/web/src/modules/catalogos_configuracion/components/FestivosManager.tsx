@@ -145,7 +145,7 @@ export function FestivosManager() {
           </label>
           <p className="text-sm">
             {consultaDias.isFetching && 'Calculando...'}
-            {consultaDias.error && <span>{(consultaDias.error as Error).message}</span>}
+            {consultaDias.error && <span className="text-danger">{(consultaDias.error as Error).message}</span>}
             {consultaDias.data && !consultaDias.isFetching && (
               <>
                 Resultado: <strong>{fecha(consultaDias.data.resultado)}</strong> (fin del dia en America/Bogota)
@@ -180,7 +180,7 @@ export function FestivosManager() {
       >
         <p className="mb-3 text-sm">Propuesta calculada segun la Ley 51 de 1983 (Ley Emiliani). Ajuste nombres o fechas antes de confirmar.</p>
         {consultaPropuesta.isLoading && <p className="text-sm">Calculando propuesta...</p>}
-        <div className="max-h-72 overflow-y-auto border border-ink">
+        <div className="max-h-72 overflow-y-auto border border-ink rounded-lg">
           <table className="w-full text-sm">
             <caption className="sr-only">Festivos propuestos</caption>
             <thead className="bg-primary-10">

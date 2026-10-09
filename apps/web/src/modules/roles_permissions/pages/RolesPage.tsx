@@ -16,7 +16,7 @@ export function RolesPage() {
         descripcion="Los tres roles base son inmutables. Los permisos de cada rol se resuelven en el servidor desde la matriz oficial; no se editan desde la interfaz."
         migas={[{ etiqueta: 'Panel', ruta: '/admin' }, { etiqueta: 'Seguridad' }, { etiqueta: 'Roles' }]}
         acciones={
-          <Link to="/admin/roles/matriz" className="inline-flex min-h-[44px] items-center border border-ink bg-white px-4 py-2 text-base font-medium no-underline hover:bg-primary-10">
+          <Link to="/admin/roles/matriz" className="inline-flex min-h-[44px] items-center border border-ink rounded-lg bg-white px-4 py-2 text-base font-medium no-underline hover:bg-primary-10">
             Ver matriz de permisos
           </Link>
         }
@@ -68,7 +68,7 @@ function ListaPermisos({ permisos }: { permisos: PermisoItem[] }) {
       {categorias.map((c) => (
         <div key={c}>
           <h3 className="mb-1 text-sm font-semibold uppercase tracking-wide">{tituloCategoria(c)}</h3>
-          <ul className="divide-y divide-ink/30 border border-ink">
+          <ul className="divide-y divide-ink/30 border border-ink rounded-xl overflow-hidden">
             {permisos
               .filter((p) => p.categoria === c)
               .map((p) => (
