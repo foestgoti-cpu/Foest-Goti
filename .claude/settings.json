@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm audit:*)",
+      "Bash(npm view:*)",
+      "Bash(osv-scanner:*)",
+      "Bash(node scripts/deps/verificar-informe.mjs:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(gh issue create:*)",
+      "Bash(gh issue list:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.production)",
+      "Read(./**/.env)",
+      "Edit(./package.json)",
+      "Edit(./package-lock.json)",
+      "Edit(./apps/*/package.json)",
+      "Edit(./packages/*/package.json)",
+      "Bash(npm install:*)",
+      "Bash(npm i:*)",
+      "Bash(npm ci:*)",
+      "Bash(npm update:*)",
+      "Bash(npm publish:*)",
+      "Bash(npx:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh issue close:*)"
+    ]
+  }
+}

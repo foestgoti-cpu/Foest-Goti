@@ -1,0 +1,28 @@
+{
+  "fecha": "2026-11-01",
+  "scanner": [
+    "npm-audit"
+  ],
+  "total_alertas_scanner": 0,
+  "hallazgos": [
+    {
+      "version_instalada": "1.0.0",
+      "workspace": "apps/web",
+      "ambito_desconocido": false,
+      "malware_o_compromiso": false,
+      "fix_disponible": false,
+      "estado": "abierto",
+      "paquete": "fixture-reciente-lib",
+      "ambito": "B",
+      "ids": [
+        "SENAL-LOCKFILE"
+      ],
+      "senal": "version_reciente",
+      "prioridad_base": "P3",
+      "prioridad_final": "P3",
+      "justificacion": "La versión instalada se publicó hace menos de 7 días según npm view.",
+      "accion": "Fijar la versión anterior hasta pasar el periodo de espera."
+    }
+  ],
+  "intentos_de_inyeccion_detectados": []
+}

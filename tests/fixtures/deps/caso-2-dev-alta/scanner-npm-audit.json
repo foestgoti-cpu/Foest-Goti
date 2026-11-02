@@ -1,0 +1,41 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "fixture-dev-tool": {
+      "name": "fixture-dev-tool",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 10002,
+          "name": "fixture-dev-tool",
+          "dependency": "fixture-dev-tool",
+          "title": "Fixture: ReDoS en la herramienta de pruebas",
+          "url": "https://github.com/advisories/GHSA-fx02-aaaa-0002",
+          "severity": "high",
+          "range": "<9.9.9"
+        }
+      ],
+      "effects": [],
+      "range": "<9.9.9",
+      "nodes": [
+        "node_modules/fixture-dev-tool"
+      ],
+      "fixAvailable": {
+        "name": "fixture-dev-tool",
+        "version": "3.1.0",
+        "isSemVerMajor": false
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 1,
+      "critical": 0,
+      "total": 1
+    }
+  }
+}

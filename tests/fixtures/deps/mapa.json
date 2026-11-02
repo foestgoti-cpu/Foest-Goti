@@ -1,0 +1,22 @@
+{
+  "_nota": "Mapa sintético para pruebas",
+  "por_defecto": "A",
+  "paquetes": {
+    "fixture-runtime-lib": {
+      "workspace": "apps/api",
+      "ambito": "A"
+    },
+    "fixture-dev-tool": {
+      "workspace": "raiz",
+      "ambito": "C"
+    },
+    "fixture-reciente-lib": {
+      "workspace": "apps/web",
+      "ambito": "B"
+    },
+    "fixture-compromised-tool": {
+      "workspace": "raiz",
+      "ambito": "C"
+    }
+  }
+}

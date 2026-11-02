@@ -1,0 +1,9 @@
+{
+  "caso": "Misma severidad, solo desarrollo",
+  "esperados": [
+    {
+      "paquete": "fixture-dev-tool",
+      "prioridad": "P3"
+    }
+  ]
+}

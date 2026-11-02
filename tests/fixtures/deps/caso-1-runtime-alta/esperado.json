@@ -1,0 +1,9 @@
+{
+  "caso": "Vulnerabilidad alta en runtime de la API",
+  "esperados": [
+    {
+      "paquete": "fixture-runtime-lib",
+      "prioridad": "P2"
+    }
+  ]
+}

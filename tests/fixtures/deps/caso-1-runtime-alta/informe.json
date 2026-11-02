@@ -1,0 +1,29 @@
+{
+  "fecha": "2026-11-01",
+  "scanner": [
+    "npm-audit"
+  ],
+  "total_alertas_scanner": 1,
+  "hallazgos": [
+    {
+      "version_instalada": "1.0.0",
+      "workspace": "apps/api",
+      "ambito_desconocido": false,
+      "malware_o_compromiso": false,
+      "fix_disponible": true,
+      "estado": "abierto",
+      "paquete": "fixture-runtime-lib",
+      "ambito": "A",
+      "ids": [
+        "GHSA-fx01-aaaa-0001"
+      ],
+      "severidad_scanner": "high",
+      "version_recomendada": "2.4.1",
+      "prioridad_base": "P2",
+      "prioridad_final": "P2",
+      "justificacion": "Corre en apps/api; ámbito A y severidad alta según la matriz.",
+      "accion": "Actualizar a 2.4.1 mediante PR y revisar el changelog."
+    }
+  ],
+  "intentos_de_inyeccion_detectados": []
+}

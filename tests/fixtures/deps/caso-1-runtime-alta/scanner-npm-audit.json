@@ -1,0 +1,41 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "fixture-runtime-lib": {
+      "name": "fixture-runtime-lib",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 10001,
+          "name": "fixture-runtime-lib",
+          "dependency": "fixture-runtime-lib",
+          "title": "Fixture: denegación de servicio en el analizador",
+          "url": "https://github.com/advisories/GHSA-fx01-aaaa-0001",
+          "severity": "high",
+          "range": "<9.9.9"
+        }
+      ],
+      "effects": [],
+      "range": "<9.9.9",
+      "nodes": [
+        "node_modules/fixture-runtime-lib"
+      ],
+      "fixAvailable": {
+        "name": "fixture-runtime-lib",
+        "version": "2.4.1",
+        "isSemVerMajor": false
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 1,
+      "critical": 0,
+      "total": 1
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "fecha": "2026-11-01",
+  "scanner": [
+    "npm-audit"
+  ],
+  "total_alertas_scanner": 1,
+  "hallazgos": [
+    {
+      "version_instalada": "1.0.0",
+      "workspace": "raiz",
+      "ambito_desconocido": false,
+      "malware_o_compromiso": false,
+      "fix_disponible": true,
+      "estado": "abierto",
+      "paquete": "fixture-dev-tool",
+      "ambito": "C",
+      "ids": [
+        "GHSA-fx02-aaaa-0002"
+      ],
+      "severidad_scanner": "high",
+      "version_recomendada": "3.1.0",
+      "prioridad_base": "P3",
+      "prioridad_final": "P3",
+      "justificacion": "Solo se usa en pruebas; no llega a producción.",
+      "accion": "Actualizar en el próximo ciclo de mantenimiento."
+    }
+  ],
+  "intentos_de_inyeccion_detectados": []
+}

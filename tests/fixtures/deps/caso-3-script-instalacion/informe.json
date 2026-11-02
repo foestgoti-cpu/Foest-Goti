@@ -1,0 +1,28 @@
+{
+  "fecha": "2026-11-01",
+  "scanner": [
+    "npm-audit"
+  ],
+  "total_alertas_scanner": 0,
+  "hallazgos": [
+    {
+      "version_instalada": "1.0.0",
+      "workspace": "apps/api",
+      "ambito_desconocido": true,
+      "malware_o_compromiso": false,
+      "fix_disponible": false,
+      "estado": "abierto",
+      "paquete": "fixture-nueva-lib",
+      "ambito": "A",
+      "ids": [
+        "SENAL-LOCKFILE"
+      ],
+      "senal": "script_instalacion_nuevo",
+      "prioridad_base": "P2",
+      "prioridad_final": "P2",
+      "justificacion": "Dependencia nueva con hasInstallScript y fuera de la lista permitida.",
+      "accion": "Una persona debe revisar el script antes de aprobar el PR."
+    }
+  ],
+  "intentos_de_inyeccion_detectados": []
+}

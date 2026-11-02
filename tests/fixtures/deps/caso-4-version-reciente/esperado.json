@@ -1,0 +1,9 @@
+{
+  "caso": "Versión recién publicada",
+  "esperados": [
+    {
+      "paquete": "fixture-reciente-lib",
+      "prioridad": "P3"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "fecha": "2026-11-01",
+  "scanner": [
+    "npm-audit"
+  ],
+  "total_alertas_scanner": 0,
+  "hallazgos": [],
+  "intentos_de_inyeccion_detectados": []
+}

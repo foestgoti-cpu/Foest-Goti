@@ -1,0 +1,29 @@
+{
+  "_estado": "BORRADOR: nombres de paquete propuestos desde el README. Verificar con package.json y package-lock.json.",
+  "_ver": "docs/seguridad/mapa-dependencias.md describe el criterio de cada ámbito.",
+  "por_defecto": "A",
+  "paquetes": {
+    "express": { "workspace": "apps/api", "ambito": "A" },
+    "helmet": { "workspace": "apps/api", "ambito": "A" },
+    "prisma": { "workspace": "apps/api", "ambito": "A" },
+    "@prisma/client": { "workspace": "apps/api", "ambito": "A" },
+    "bcrypt": { "workspace": "apps/api", "ambito": "A" },
+    "bullmq": { "workspace": "apps/api", "ambito": "A" },
+    "puppeteer": { "workspace": "apps/api", "ambito": "A" },
+    "handlebars": { "workspace": "apps/api", "ambito": "A" },
+    "pdf-lib": { "workspace": "apps/api", "ambito": "A" },
+    "qrcode": { "workspace": "apps/api", "ambito": "A" },
+    "zod": { "workspace": "packages/shared", "ambito": "A" },
+    "react": { "workspace": "apps/web", "ambito": "B" },
+    "react-dom": { "workspace": "apps/web", "ambito": "B" },
+    "@tanstack/react-query": { "workspace": "apps/web", "ambito": "B" },
+    "recharts": { "workspace": "apps/web", "ambito": "B" },
+    "vite": { "workspace": "apps/web", "ambito": "C" },
+    "tailwindcss": { "workspace": "apps/web", "ambito": "C" },
+    "jest": { "workspace": "apps/api", "ambito": "C" },
+    "supertest": { "workspace": "apps/api", "ambito": "C" },
+    "vitest": { "workspace": "apps/web", "ambito": "C" },
+    "@testing-library/react": { "workspace": "apps/web", "ambito": "C" },
+    "@playwright/test": { "workspace": "raiz", "ambito": "C" }
+  }
+}

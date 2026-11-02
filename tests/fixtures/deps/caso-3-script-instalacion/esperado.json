@@ -1,0 +1,9 @@
+{
+  "caso": "Dependencia nueva con script de instalación",
+  "esperados": [
+    {
+      "paquete": "fixture-nueva-lib",
+      "prioridad": "P2"
+    }
+  ]
+}
