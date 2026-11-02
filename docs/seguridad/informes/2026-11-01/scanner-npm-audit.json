@@ -1,0 +1,716 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@jest/core": {
+      "name": "@jest/core",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/reporters",
+        "@jest/transform",
+        "jest-config",
+        "jest-resolve-dependencies",
+        "jest-runner",
+        "jest-runtime",
+        "jest-snapshot"
+      ],
+      "effects": [
+        "jest",
+        "jest-cli"
+      ],
+      "range": ">=25.2.0-alpha.86",
+      "nodes": [
+        "node_modules/@jest/core"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@jest/expect": {
+      "name": "@jest/expect",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "jest-snapshot"
+      ],
+      "effects": [
+        "@jest/globals",
+        "jest-circus"
+      ],
+      "range": ">=30.5.0",
+      "nodes": [
+        "node_modules/@jest/expect"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@jest/globals": {
+      "name": "@jest/globals",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/expect"
+      ],
+      "effects": [
+        "jest-runtime"
+      ],
+      "range": ">=30.5.0",
+      "nodes": [
+        "node_modules/@jest/globals"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@jest/reporters": {
+      "name": "@jest/reporters",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/transform",
+        "glob"
+      ],
+      "effects": [
+        "@jest/core"
+      ],
+      "range": ">=30.0.0-alpha.1",
+      "nodes": [
+        "node_modules/@jest/reporters"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@jest/transform": {
+      "name": "@jest/transform",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "babel-plugin-istanbul"
+      ],
+      "effects": [
+        "@jest/core",
+        "@jest/reporters",
+        "babel-jest",
+        "jest-runner",
+        "jest-runtime",
+        "jest-snapshot"
+      ],
+      "range": ">=30.5.0",
+      "nodes": [
+        "node_modules/@jest/transform"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "babel-jest": {
+      "name": "babel-jest",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/transform",
+        "babel-plugin-istanbul"
+      ],
+      "effects": [
+        "jest-config"
+      ],
+      "range": ">=30.5.0",
+      "nodes": [
+        "node_modules/babel-jest"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "babel-plugin-istanbul": {
+      "name": "babel-plugin-istanbul",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "test-exclude"
+      ],
+      "effects": [
+        "@jest/transform",
+        "babel-jest"
+      ],
+      "range": ">=8.0.0",
+      "nodes": [
+        "node_modules/babel-plugin-istanbul"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "body-parser": {
+      "name": "body-parser",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1243073,
+          "name": "body-parser",
+          "dependency": "body-parser",
+          "title": "body-parser vulnerable to Denial of Service via trailing bytes after a compressed request body",
+          "url": "https://github.com/advisories/GHSA-27r3-jxmh-p828",
+          "severity": "high",
+          "cwe": [
+            "CWE-248"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<1.20.9"
+        }
+      ],
+      "effects": [],
+      "range": "<1.20.9",
+      "nodes": [
+        "node_modules/body-parser"
+      ],
+      "fixAvailable": true
+    },
+    "chromium-bidi": {
+      "name": "chromium-bidi",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "zod"
+      ],
+      "effects": [
+        "puppeteer",
+        "puppeteer-core"
+      ],
+      "range": "0.5.13 - 157.0.8081-0",
+      "nodes": [
+        "node_modules/chromium-bidi"
+      ],
+      "fixAvailable": true
+    },
+    "deepmerge": {
+      "name": "deepmerge",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1243505,
+          "name": "deepmerge",
+          "dependency": "deepmerge",
+          "title": "deepmerge mergeObject() allows prototype poisoning of returned objects",
+          "url": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+          "severity": "low",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=4.2.0 <=4.3.1"
+        }
+      ],
+      "effects": [
+        "jest-config"
+      ],
+      "range": ">=4.2.0",
+      "nodes": [
+        "node_modules/deepmerge"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "glob": {
+      "name": "glob",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1244013,
+          "name": "glob",
+          "dependency": "glob",
+          "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+          "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=9.0.0 <=14.0.1"
+        },
+        "minimatch"
+      ],
+      "effects": [
+        "@jest/reporters",
+        "jest-config",
+        "jest-runtime",
+        "test-exclude"
+      ],
+      "range": "3.0.0 - 14.0.1",
+      "nodes": [
+        "node_modules/glob",
+        "node_modules/test-exclude/node_modules/glob"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest": {
+      "name": "jest",
+      "severity": "low",
+      "isDirect": true,
+      "via": [
+        "@jest/core",
+        "jest-cli"
+      ],
+      "effects": [
+        "ts-jest"
+      ],
+      "range": ">=25.2.0-alpha.86",
+      "nodes": [
+        "node_modules/jest"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest-circus": {
+      "name": "jest-circus",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/expect",
+        "jest-runtime",
+        "jest-snapshot"
+      ],
+      "effects": [
+        "jest-config"
+      ],
+      "range": ">=30.0.0-alpha.1",
+      "nodes": [
+        "node_modules/jest-circus"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest-cli": {
+      "name": "jest-cli",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@jest/core",
+        "jest-config"
+      ],
+      "effects": [
+        "jest"
+      ],
+      "range": ">=25.2.0-alpha.86",
+      "nodes": [
+        "node_modules/jest-cli"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest-config": {
+      "name": "jest-config",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "babel-jest",
+        "deepmerge",
+        "glob",
+        "jest-circus",
+        "jest-runner"
+      ],
+      "effects": [
+        "@jest/core",
+        "jest-cli"
+      ],
+      "range": ">=25.2.0-alpha.86",
+      "nodes": [
+        "node_modules/jest-config"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest-resolve-dependencies": {
+      "name": "jest-resolve-dependencies",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "jest-snapshot"
+      ],
+      "effects": [
+        "@jest/core"
+      ],
+      "range": ">=30.5.0",
+      "nodes": [
+        "node_modules/jest-resolve-dependencies"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest-runner": {
+      "name": "jest-runner",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/transform",
+        "jest-runtime"
+      ],
+      "effects": [
+        "@jest/core",
+        "jest-config"
+      ],
+      "range": ">=30.0.0-alpha.1",
+      "nodes": [
+        "node_modules/jest-runner"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest-runtime": {
+      "name": "jest-runtime",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/globals",
+        "@jest/transform",
+        "glob",
+        "jest-snapshot"
+      ],
+      "effects": [
+        "@jest/core",
+        "jest-circus",
+        "jest-runner"
+      ],
+      "range": ">=30.0.0-alpha.1",
+      "nodes": [
+        "node_modules/jest-runtime"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jest-snapshot": {
+      "name": "jest-snapshot",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@jest/transform"
+      ],
+      "effects": [
+        "@jest/core",
+        "@jest/expect",
+        "jest-circus",
+        "jest-resolve-dependencies",
+        "jest-runtime"
+      ],
+      "range": ">=30.5.0",
+      "nodes": [
+        "node_modules/jest-snapshot"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "minimatch": {
+      "name": "minimatch",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1244012,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has potential denial of service via globparts amplification",
+          "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-405"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<11.0.1"
+        }
+      ],
+      "effects": [
+        "glob",
+        "test-exclude"
+      ],
+      "range": "<11.0.1",
+      "nodes": [
+        "node_modules/minimatch",
+        "node_modules/test-exclude/node_modules/glob/node_modules/minimatch"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "nodemailer": {
+      "name": "nodemailer",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1243091,
+          "name": "nodemailer",
+          "dependency": "nodemailer",
+          "title": "Nodemailer: A nested comment ends early in addressparser, releasing the rest of the comment as a recipient",
+          "url": "https://github.com/advisories/GHSA-8c8m-p3m8-cjg8",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-20",
+            "CWE-436"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N"
+          },
+          "range": ">=3.0.0 <10.1.4"
+        },
+        {
+          "source": 1243092,
+          "name": "nodemailer",
+          "dependency": "nodemailer",
+          "title": "Nodemailer: A \";\" inside a quoted string or comment ends an address group early in addressparser, turning display text into a recipient",
+          "url": "https://github.com/advisories/GHSA-m943-m63m-w62w",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-20",
+            "CWE-436"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N"
+          },
+          "range": ">=3.0.0 <10.1.4"
+        },
+        {
+          "source": 1243093,
+          "name": "nodemailer",
+          "dependency": "nodemailer",
+          "title": "Nodemailer: A \">\" inside a quoted local part ends an angle-addr early in addressparser, delivering to a domain the header does not name",
+          "url": "https://github.com/advisories/GHSA-85x2-q946-cp5h",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-20",
+            "CWE-436"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N"
+          },
+          "range": ">=3.0.0 <10.1.4"
+        }
+      ],
+      "effects": [],
+      "range": "3.0.0 - 10.1.3",
+      "nodes": [
+        "node_modules/nodemailer"
+      ],
+      "fixAvailable": true
+    },
+    "puppeteer": {
+      "name": "puppeteer",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "chromium-bidi",
+        "puppeteer-core"
+      ],
+      "effects": [],
+      "range": "22.5.0 - 25.12.0",
+      "nodes": [
+        "node_modules/puppeteer"
+      ],
+      "fixAvailable": true
+    },
+    "puppeteer-core": {
+      "name": "puppeteer-core",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "chromium-bidi"
+      ],
+      "effects": [
+        "puppeteer"
+      ],
+      "range": "22.5.0 - 25.12.0",
+      "nodes": [
+        "node_modules/puppeteer-core"
+      ],
+      "fixAvailable": true
+    },
+    "qs": {
+      "name": "qs",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1243687,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs : qs.stringify with arrayFormat 'comma' throws an uncaught TypeError on array elements carrying a non-callable own toString (DoS)",
+          "url": "https://github.com/advisories/GHSA-6pq8-jhm2-2vcw",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-248",
+            "CWE-704"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=6.7.0 <=6.16.0"
+        }
+      ],
+      "effects": [],
+      "range": "6.7.0 - 6.16.0",
+      "nodes": [
+        "node_modules/qs"
+      ],
+      "fixAvailable": true
+    },
+    "test-exclude": {
+      "name": "test-exclude",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "glob",
+        "minimatch"
+      ],
+      "effects": [
+        "babel-plugin-istanbul"
+      ],
+      "range": "4.2.2 || >=5.0.0",
+      "nodes": [
+        "node_modules/test-exclude"
+      ],
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "ts-jest": {
+      "name": "ts-jest",
+      "severity": "low",
+      "isDirect": true,
+      "via": [
+        "jest"
+      ],
+      "effects": [],
+      "range": ">=25.10.0-alpha.1",
+      "nodes": [
+        "node_modules/ts-jest"
+      ],
+      "fixAvailable": {
+        "name": "ts-jest",
+        "version": "25.5.1",
+        "isSemVerMajor": true
+      }
+    },
+    "zod": {
+      "name": "zod",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1243066,
+          "name": "zod",
+          "dependency": "zod",
+          "title": "Zod can exhaust memory while validating oversized constrained collections",
+          "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+          "severity": "high",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<4.6.6"
+        }
+      ],
+      "effects": [
+        "chromium-bidi"
+      ],
+      "range": "<4.6.6",
+      "nodes": [
+        "node_modules/zod"
+      ],
+      "fixAvailable": {
+        "name": "zod",
+        "version": "4.6.7",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 4,
+      "moderate": 18,
+      "high": 5,
+      "critical": 0,
+      "total": 27
+    },
+    "dependencies": {
+      "prod": 221,
+      "dev": 635,
+      "optional": 117,
+      "peer": 35,
+      "peerOptional": 0,
+      "total": 857
+    }
+  }
+}

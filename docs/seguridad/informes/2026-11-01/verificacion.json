@@ -1,0 +1,16 @@
+{
+  "resultado": "APROBADO",
+  "codigoSalida": 0,
+  "graves": 0,
+  "errores": 0,
+  "avisos": 0,
+  "problemas": [],
+  "metricas": {
+    "hallazgos": 6,
+    "prioridad_correcta": 6,
+    "p1_degradados": 0,
+    "ids_inventados": 0,
+    "alertas_omitidas": 0,
+    "subidas": 5
+  }
+}
